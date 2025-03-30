@@ -1,0 +1,48 @@
+/* Styles personnalisés pour le formulaire */
+.card {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.p-inputtext {
+  width: 100%;
+}
+
+.p-error {
+  color: #dc2626; /* Rouge */
+  font-size: 0.875rem; /* 14px */
+  margin-top: 0.25rem; /* 4px */
+}
+
+/* Styles pour les messages */
+.p-message {
+  margin-top: 1rem;
+}
+
+.p-message-success {
+  background-color: #d1fae5; /* Vert clair */
+  color: #065f46; /* Vert foncé */
+}
+
+.p-message-error {
+  background-color: #fee2e2; /* Rouge clair */
+  color: #dc2626; /* Rouge */
+}
+
+/* Styles pour le bouton */
+.p-button {
+  background-color: #3b82f6; /* Bleu */
+  border-color: #3b82f6;
+}
+
+.p-button:hover {
+  background-color: #2563eb; /* Bleu plus foncé */
+  border-color: #2563eb;
+}

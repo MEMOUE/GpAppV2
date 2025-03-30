@@ -1,0 +1,96 @@
+<app-menu></app-menu>
+
+<div class="container">
+  <h2>Génération de la Facture</h2>
+
+  <form [formGroup]="factureForm" (ngSubmit)="generateInvoice()">
+    <!-- Sélection du programme -->
+    <div class="field">
+      <label for="programme">Programme GP</label>
+      <p-dropdown
+        id="programme"
+        formControlName="programme"
+        [options]="programmes"
+        optionLabel="description"
+        placeholder="Sélectionnez un programme"
+        (onChange)="onProgrammeChange()"
+      ></p-dropdown>
+    </div>
+
+    <!-- Détails du programme sélectionné -->
+    <div *ngIf="selectedProgramme" class="programme-details">
+      <h3>Détails du Programme</h3>
+      <p><strong>Départ :</strong> {{ selectedProgramme.depart }}</p>
+      <p><strong>Destination :</strong> {{ selectedProgramme.destination }}</p>
+      <p><strong>Prix par KG :</strong> {{ selectedProgramme.prix }} €</p>
+      <p><strong>Garantie :</strong> {{ selectedProgramme.garantie }} €</p>
+      <p><strong>Agence :</strong> {{ selectedProgramme.agentGp.nomagence }}</p>
+      <p><strong>Adresse :</strong> {{ selectedProgramme.agentGp.adresse }}</p>
+      <p><strong>Téléphone :</strong> {{ selectedProgramme.agentGp.telephone }}</p>
+    </div>
+
+    <!-- Nom du client -->
+    <div class="field">
+      <label for="nomClient">Nom Client</label>
+      <input id="nomClient" type="text" pInputText formControlName="nomClient" />
+    </div>
+
+    <!-- Adresse du client -->
+    <div class="field">
+      <label for="adresseClient">Adresse Client</label>
+      <input id="adresseClient" type="text" pInputText formControlName="adresseClient" />
+    </div>
+
+    <!-- Laveur de bagage -->
+    <div class="field">
+      <label for="laveurBagage">Laveur du Bagage</label>
+      <input id="laveurBagage" type="text" pInputText formControlName="laveurBagage" />
+    </div>
+
+    <!-- Nombre de KG -->
+    <div class="field">
+      <label for="nombreKg">Nombre de KG</label>
+      <input
+        id="nombreKg"
+        type="number"
+        pInputNumber
+        formControlName="nombreKg"
+        (input)="calculerPrixTransport()"
+      />
+    </div>
+
+    <!-- Prix du transport -->
+    <div class="field">
+      <label for="prixTransport">Prix Transport</label>
+      <input id="prixTransport" type="number" pInputNumber formControlName="prixTransport" />
+    </div>
+
+    <!-- Zone de signature -->
+    <div class="field">
+      <label>Signature de l'Agence GP</label>
+      <canvas #signatureCanvas width="400" height="200" style="border: 1px solid #000;"></canvas>
+      <button type="button" pButton icon="pi pi-times" [rounded]="true" severity="danger" [outlined]="true" label="Effacer" (click)="clearSignature()"></button>
+    </div>
+
+    <!-- Bouton de génération de la facture -->
+    <button type="submit" pButton icon="pi pi-check" [rounded]="true" [outlined]="true" severity="info" label="Générer la Facture" [disabled]="!factureForm.valid || !signatureData"></button>
+  </form>
+
+  <!-- Boutons de téléchargement et de partage -->
+  <div *ngIf="factureGeneree" class="invoice-actions">
+    <!-- Bouton de téléchargement du PDF -->
+    <button pButton icon="pi pi-download" [rounded]="true" [outlined]="true" severity="success" label="Télécharger la Facture (PDF)" (click)="downloadPDF()"></button>
+
+    <!-- Bouton de partage -->
+    <button pButton icon="pi pi-share-alt" [rounded]="true" [outlined]="true" severity="help" label="Partager" (click)="toggleShareOptions()"></button>
+
+    <!-- Options de partage (WhatsApp et e-mail) -->
+    <div *ngIf="showShareOptions" class="share-options">
+      <!-- Bouton WhatsApp -->
+      <button pButton [rounded]="true" [outlined]="true" severity="success" icon="pi pi-whatsapp" (click)="shareViaWhatsApp()"></button>
+
+      <!-- Bouton e-mail -->
+      <button pButton [rounded]="true" [outlined]="true" severity="success" icon="pi pi-envelope" (click)="shareViaEmail()"></button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,124 @@
+<div class="hero_area">
+  <!-- Header Section Start -->
+  <header class="header_section">
+<!--    <div class="header_top bg-info">-->
+<!--      <div class="container-fluid">-->
+<!--        <div class="contact_nav d-flex justify-content-between">-->
+<!--          <a href="tel:+221784886752" style="color: black;">-->
+<!--            <i class="pi pi-phone"></i>-->
+<!--          </a>-->
+<!--          <a href="mailto:gpmonde22@gmail.com" style="color: black;">-->
+<!--            <i class="pi pi-envelope"></i>-->
+<!--          </a>-->
+<!--          <a href="#" style="color: black;">-->
+<!--            <i class="pi pi-map-marker"></i>-->
+<!--            <span>Siège</span>-->
+<!--          </a>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+    <div class="header_bottom bg-body-secondary">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg custom_nav-container d-flex justify-content-between align-items-center">
+          <!-- Logo Section -->
+          <a class="navbar-brand" routerLink="/">
+            <img src="/logo2.png" alt="GpMonde Logo" width="90" height="50" class="d-inline-block align-top">
+          </a>
+
+          <!-- Right Side Navigation -->
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/">
+                  <i class="pi pi-home"></i> {{ 'home' | translate }} <!-- Texte traduit -->
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" routerLink="besoingp">
+                  <i class="pi pi-bell"></i> {{ 'notify' | translate }} <!-- Texte traduit -->
+                </a>
+              </li>
+              <li class="nav-item">
+                <a *ngIf="isAdmin()" class="nav-link" href="/accueilgp">
+                  <i class="pi pi-chart-line"></i> {{ 'dashboard' | translate }} <!-- Texte traduit -->
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" routerLink="#contact">
+                  <i class="pi pi-envelope"></i> {{ 'contact' | translate }} <!-- Texte traduit -->
+                </a>
+              </li>
+
+              <!-- Sélecteur de langue -->
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="languageDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i class="pi pi-globe"></i> {{ 'language' | translate }} <!-- Texte traduit -->
+                </a>
+                <div class="dropdown-menu" aria-labelledby="languageDropdown">
+                  <a class="dropdown-item" (click)="changeLanguage('fr')">
+                    <img src="fr.png" alt="Drapeau français" width="20" height="15"> Français
+                  </a>
+                  <a class="dropdown-item" (click)="changeLanguage('en')">
+                    <img src="bg.png" alt="Drapeau britannique" width="20" height="15"> English
+                  </a>
+                </div>
+              </li>
+
+              <!-- Menu utilisateur -->
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i class="pi pi-user"></i> {{ 'account' | translate }} <!-- Texte traduit -->
+                </a>
+                <div class="dropdown-menu" aria-labelledby="userDropdown">
+                  <a *ngIf="!(isAuthenticated$ | async)" class="dropdown-item" routerLink="/login">
+                    <i class="pi pi-sign-in"></i> {{ 'login' | translate }} <!-- Texte traduit -->
+                  </a>
+                  <a *ngIf="!(isAuthenticated$ | async)" class="dropdown-item" routerLink="/register">
+                    <i class="pi pi-user-plus"></i> {{ 'register' | translate }} <!-- Texte traduit -->
+                  </a>
+                  <a *ngIf="isAuthenticated$ | async" class="dropdown-item">
+                    <i class="pi pi-user"></i> {{ 'profile' | translate }} <!-- Texte traduit -->
+                  </a>
+                  <a *ngIf="isAuthenticated$ | async" class="dropdown-item" (click)="logout()">
+                    <i class="pi pi-sign-out"></i> {{ 'logout' | translate }} <!-- Texte traduit -->
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+  <!-- Header Section End -->
+</div>
+<router-outlet></router-outlet>

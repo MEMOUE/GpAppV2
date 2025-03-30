@@ -1,0 +1,118 @@
+<div class="container mb-5">
+  <div class="row justify-content-center">
+
+    <!-- Menu pour les admins (caché sur mobile) -->
+    <div class="col-md-3 col-12 d-none d-md-block" *ngIf="isAdmin()">
+      <app-menu></app-menu>
+    </div>
+
+    <!-- Bouton pour afficher/masquer le formulaire -->
+    <div class="col-12 col-md-9 mt-4">
+      <button
+        pButton
+        [label]="showForm ? 'Masquer le formulaire' : 'Publier un besoin'"
+        [icon]="showForm ? 'pi pi-times' : 'pi pi-pencil'"
+        (click)="showForm = !showForm"
+        class="p-button-rounded p-button-info mb-3 w-100">
+      </button>
+
+      <!-- Formulaire (visible si showForm est vrai) -->
+      <div *ngIf="showForm">
+        <p-message *ngIf="responseMessage" [severity]="messageType" [text]="responseMessage" class="mb-4"></p-message>
+
+        <form [formGroup]="addBesoinForm" (ngSubmit)="onSubmit()" class="text-center">
+
+          <!-- Champ téléphone -->
+          <div class="p-field">
+            <input
+              id="telephone"
+              pInputText
+              formControlName="telephone"
+              placeholder="Entrez votre numéro de téléphone"
+              class="w-100">
+            <div *ngIf="addBesoinForm.get('telephone')?.invalid && addBesoinForm.get('telephone')?.touched" class="p-error">
+              Le téléphone est requis.
+            </div>
+          </div>
+
+          <!-- Champ date limite -->
+          <div class="p-field mt-3">
+            <p-calendar
+              id="dateline"
+              formControlName="dateline"
+              dateFormat="dd/mm/yy"
+              [showIcon]="true"
+              placeholder="Date Limite"
+              class="w-100">
+            </p-calendar>
+            <div *ngIf="addBesoinForm.get('dateline')?.invalid && addBesoinForm.get('dateline')?.touched" class="p-error">
+              La date limite est requise.
+            </div>
+          </div>
+
+          <!-- Champ description -->
+          <div class="p-field mt-3">
+            <textarea
+              id="description"
+              pTextarea
+              formControlName="description"
+              rows="3"
+              placeholder="Entrez la description de votre besoin"
+              class="w-100">
+            </textarea>
+            <div *ngIf="addBesoinForm.get('description')?.invalid && addBesoinForm.get('description')?.touched" class="p-error">
+              La description est requise.
+            </div>
+          </div>
+
+          <!-- Bouton de soumission -->
+          <div class="p-field mt-3">
+            <p-button
+              label="Soumettre"
+              icon="pi pi-check"
+              type="submit"
+              [disabled]="addBesoinForm.invalid"
+              class="p-button-primary w-100">
+            </p-button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des besoins -->
+  <div class="row mt-4">
+    <div class="col-md-4 col-12 mb-4" *ngFor="let besoin of besoins">
+      <div class="card border-info shadow-sm">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center">
+            <i class="pi pi-user" style="font-size: 1.5rem;"></i>
+            <span class="ml-2">{{ besoin.utilisateur.username }}</span>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <h5 class="card-title">{{ besoin.description }}</h5>
+          <p class="card-text">Dateline: {{ besoin.dateline | date: 'short' }}</p>
+        </div>
+
+        <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+          <!-- Boutons WhatsApp et appel -->
+          <div>
+            <button pButton icon="pi pi-whatsapp" class="p-button-success p-button-rounded " (click)="openWhatsapp(besoin.telephone)">
+            </button>
+            <button pButton icon="pi pi-phone" class="p-button-info p-button-rounded " (click)="callPhone(besoin.telephone)">
+            </button>
+          </div>
+
+          <!-- Boutons Modifier / Supprimer -->
+          <div *ngIf="isOwner(besoin.utilisateur.id)">
+<!--            <button pButton icon="pi pi-pencil" class="p-button-warning p-button-rounded " (click)="onEdit(besoin.id)"></button>-->
+            <button pButton icon="pi pi-trash" class="p-button-danger p-button-rounded " (click)="onDelete(besoin.id)"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

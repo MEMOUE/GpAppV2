@@ -1,0 +1,110 @@
+<div class="container mb-5">
+  <div class="row">
+    <div class="col-md-3">
+      <app-menu></app-menu>
+    </div>
+    <div class="col-md-9 mt-3">
+      <!-- Formulaire de création/mise à jour -->
+      <form [formGroup]="gpForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input
+            id="description"
+            formControlName="description"
+            class="form-control"
+            placeholder="Enter program description"
+          />
+          <!-- Error message for 'description' -->
+          <div *ngIf="gpForm.get('description')?.invalid && gpForm.get('description')?.touched" class="p-error">
+            La description est obligatoire.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="depart">Depart</label>
+          <input
+            id="depart"
+            formControlName="depart"
+            class="form-control"
+            placeholder="Enter departure location"
+          />
+          <!-- Error message for 'depart' -->
+          <div *ngIf="gpForm.get('depart')?.invalid && gpForm.get('depart')?.touched" class="p-error">
+            Le champ départ est requis.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="destination">Destination</label>
+          <input
+            id="destination"
+            formControlName="destination"
+            class="form-control"
+            placeholder="Enter destination"
+          />
+          <!-- Error message for 'destination' -->
+          <div *ngIf="gpForm.get('destination')?.invalid && gpForm.get('destination')?.touched" class="p-error">
+            Le champ destination est requis.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="prix">Prix (par kg)</label>
+          <p-inputNumber
+            id="prix"
+            formControlName="prix"
+            class="form-control"
+            placeholder="Enter price per kg"
+            [min]="0"
+            [mode]="'decimal'"
+            locale="en-US"
+            [useGrouping]="true"
+          ></p-inputNumber>
+          <!-- Error message for 'prix' -->
+          <div *ngIf="gpForm.get('prix')?.invalid && gpForm.get('prix')?.touched" class="p-error">
+            Le prix est requis et doit être supérieur à 0.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="dateline">Dateline</label>
+          <p-calendar
+            id="dateline"
+            formControlName="dateline"
+            class="form-control"
+            placeholder="Enter Date Limite"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+          ></p-calendar>
+          <!-- Error message for 'dateline' -->
+          <div *ngIf="gpForm.get('dateline')?.invalid && gpForm.get('dateline')?.touched" class="p-error">
+            La date limite est obligatoire.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="garantie">Garantie (%)</label>
+          <p-inputNumber
+            id="garantie"
+            formControlName="garantie"
+            class="form-control"
+            placeholder="Enter guarantee de remboursement"
+            [min]="0"
+            [max]="100"
+            [mode]="'decimal'"
+          ></p-inputNumber>
+          <!-- Error message for 'garantie' -->
+          <div *ngIf="gpForm.get('garantie')?.invalid && gpForm.get('garantie')?.touched" class="p-error">
+            La garantie est obligatoire et doit être comprise entre 0 et 100%.
+          </div>
+        </div>
+
+        <p-button  [disabled]="gpForm.invalid" type="submit"  icon="pi pi-check" label="{{ existingProgram ? 'Mise à jour' : 'Publier' }}"></p-button>
+      </form>
+
+      <!-- Affichage des messages -->
+      <p-message *ngIf="responseMessage" [severity]="messageType" [text]="responseMessage" class="mb-5"></p-message>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

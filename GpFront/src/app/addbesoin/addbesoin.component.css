@@ -1,0 +1,33 @@
+.card {
+  width: 100%;  /* Utilisation de la largeur complète disponible */
+  max-width: 20rem;  /* Largeur maximale pour éviter d'être trop large */
+  margin-bottom: 20px; /* Espacement entre les cartes */
+}
+
+.card-header {
+  background-color: #17a2b8; /* Couleur de fond de l'en-tête */
+  color: white;  /* Couleur du texte dans l'en-tête */
+  font-weight: bold;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card-title {
+  font-size: 1.2rem;  /* Augmenter la taille du titre */
+}
+
+.card-text {
+  font-size: 1rem;
+  color: #6c757d; /* Couleur du texte */
+}
+
+.p-button-success {
+  background-color: #25d366; /* Couleur du bouton WhatsApp */
+  border-color: #25d366;
+}
+button{
+  margin:2px
+}
+

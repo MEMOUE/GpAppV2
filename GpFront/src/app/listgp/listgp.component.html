@@ -1,0 +1,75 @@
+<div class="container-fluid mt-5 mb-5 ">
+  <!-- Message si aucune offre n'est disponible -->
+  <div *ngIf="offres.length === 0" class="text-center mt-4">
+    <p class="text-muted">Aucun programme disponible pour le moment.</p>
+    <p-button label="Publier un besoin" icon="pi pi-plus-circle" (onClick)="goToPublication()" class="p-button-primary"></p-button>
+  </div>
+
+  <!-- Affichage des offres -->
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3  row-cols-xl-5 g-4">
+    <div class="col" *ngFor="let programme of offres">
+      <div class="card h-100 shadow-sm" style="border-radius: 15px; overflow: hidden;">
+        <!-- Nom de l'agence -->
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+          <i class="pi pi-user me-2"></i>
+          <strong>{{ programme.agentGp.nomagence }}</strong>
+        </div>
+
+        <!-- Image -->
+        <img src="icons/bag1.png" class="card-img-top img-fluid" alt="Programme image" style="height: 180px; object-fit: cover;">
+
+        <!-- Corps de la carte -->
+        <div class="card-body">
+          <h5 class="card-title text-center mb-3" style="font-size: 1.25rem; color: #333;">
+            {{ programme.depart }} <i class="pi pi-arrow-right mx-2"></i> {{ programme.destination }}
+          </h5>
+          <p class="card-text">
+            <i class="pi pi-tag me-2"></i>
+            <strong>Prix/Kg:</strong> {{ programme.prix | currency }}
+          </p>
+          <p class="card-text">
+            <i class="pi pi-calendar me-2"></i>
+            <strong>Date limite:</strong> {{ programme.dateline }}
+          </p>
+        </div>
+
+        <!-- Footer avec les boutons -->
+        <div class="card-footer bg-light d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <!-- Boutons de contact -->
+          <div class="btn-group">
+            <button class="btn btn-success btn-sm" (click)="window.open('https://wa.me/{{ programme.agentGp.telephone }}', '_blank')">
+              <i class="pi pi-whatsapp"></i>
+            </button>
+            <button class="btn btn-info btn-sm" (click)="window.location.href='tel:+{{ programme.agentGp.telephone }}'">
+              <i class="pi pi-phone"></i>
+            </button>
+            <button class="btn btn-warning btn-sm" (click)="window.open('sms:+{{ programme.agentGp.telephone }}', '_blank')">
+              <i class="pi pi-comment"></i>
+            </button>
+          </div>
+
+          <!-- Boutons d'action pour le propriétaire -->
+          <div class="p-buttonset" *ngIf="isOwner(programme.agentGp.id)">
+            <p-button icon="pi pi-pencil" class="p-button-primary p-button-sm" (click)="onEdit(programme.id)"></p-button>
+            <p-button icon="pi pi-trash" severity="danger" class="p-button-sm" (click)="onDelete(programme.id)"></p-button>
+          </div>
+
+          <!-- Bouton Détails -->
+          <p-button icon="pi pi-info-circle" label="Détails" class="p-button-secondary p-button-sm" (click)="showDetails(programme)"></p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fenêtre modale pour les détails -->
+<p-dialog header="Détails du Programme" [(visible)]="displayDetails" [modal]="true" [style]="{width: '50vw'}">
+  <div *ngIf="selectedProgramme">
+    <p><strong>Description:</strong> {{ selectedProgramme.description || 'Non spécifié' }}</p>
+    <p><strong>Départ:</strong> {{ selectedProgramme.depart || 'Non spécifié' }}</p>
+    <p><strong>Destination:</strong> {{ selectedProgramme.destination || 'Non spécifié' }}</p>
+    <p><strong>Prix/Kg:</strong> {{ selectedProgramme.prix | currency }}</p>
+    <p><strong>Date limite:</strong> {{ selectedProgramme.dateline }}</p>
+    <p><strong>Garantie:</strong> {{ selectedProgramme.garantie }}% de la valeur du colis</p>
+  </div>
+</p-dialog>

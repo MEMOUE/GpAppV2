@@ -1,0 +1,26 @@
+<footer class="footer bg-dark text-white">
+  <div class="footer-container">
+    <div class="footer-logo">
+      <img src="logo2.png" alt="GpMonde Logo" class="logo" />
+    </div>
+    <div class="footer-links">
+      <ul class="link-list">
+        <li><a href="/about" class="link">{{ 'footer.about' | translate }}</a></li>
+        <li><a href="/services" class="link">{{ 'footer.services' | translate }}</a></li>
+        <li><a href="/contact" class="link">{{ 'footer.contact' | translate }}</a></li>
+        <li><a href="/privacy-policy" class="link">{{ 'footer.privacy_policy' | translate }}</a></li>
+      </ul>
+    </div>
+    <div class="footer-social">
+      <ul class="social-list">
+        <li><a href="https://www.facebook.com/gpmonde" target="_blank" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a></li>
+        <li><a href="https://twitter.com/gpmonde" target="_blank" class="social-icon twitter"><i class="fab fa-twitter"></i></a></li>
+        <li><a href="https://www.instagram.com/gpmonde" target="_blank" class="social-icon instagram"><i class="fab fa-instagram"></i></a></li>
+        <li><a href="https://www.linkedin.com/company/gpmonde" target="_blank" class="social-icon linkedin"><i class="fab fa-linkedin"></i></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p [innerHTML]="'footer.copyright' | translate: { currentYear: currentYear }"></p>
+  </div>
+</footer>

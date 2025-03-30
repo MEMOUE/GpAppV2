@@ -1,0 +1,52 @@
+<div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5 flex justify-content-center flex-wrap">
+  <!-- Message si aucune offre n'est disponible -->
+  <div *ngIf="agences.length === 0" class="  text-center mt-4">
+    <p class="text-muted">Aucun programme disponible pour le moment.</p>
+    <p-button label="Publier un besoin" icon="pi pi-plus-circle" (onClick)="goToPublication()" class="p-button-primary"></p-button>
+  </div>
+  <div class="col" *ngFor="let agence of agences">
+    <div class="card h-100" style="max-width: 320px; margin: 0 auto;">
+
+      <!-- Nom de l'agence avec l'icône -->
+      <div class="card-header bg-info d-flex align-items-center">
+        <i class="pi pi-user me-2"></i>
+        <strong>{{ agence.username }}</strong>
+      </div>
+
+      <!-- Image -->
+      <img src="images/agencegp.jpg" class="card-img-top img-fluid" alt="Programme image" style="max-height: 200px; object-fit: contain;">
+
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="pi pi-building"></i> {{ agence.nomagence }}
+        </h5>
+        <p><i class="pi pi-map-marker"></i> {{ agence.adresse }}</p>
+        <p><i class="pi pi-phone"></i> {{ agence.telephone }}</p>
+      </div>
+
+
+      <!-- Footer avec boutons d'action -->
+      <div class="card-footer d-flex justify-content-between">
+        <button pButton icon="pi pi-whatsapp" class="p-button-success p-button-rounded" (click)="contactAgent(agence.telephone)"></button>
+        <button pButton icon="pi pi-phone" class="p-button-info p-button-rounded" (click)="callAgent(agence.telephone)"></button>
+        <button pButton label="Détails" icon="pi pi-info-circle" class="p-button-primary p-button-sm" (click)="openDetailDialog(agence)"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dialog pour afficher les détails de l'agence -->
+<p-dialog header="Détails de l'Agence" [(visible)]="displayDialog" [modal]="true" [closable]="true" [style]="{width: '50vw'}">
+  <div *ngIf="selectedAgence">
+    <h4>{{ selectedAgence.nomagence }}</h4>
+    <p><strong>Adresse:</strong> {{ selectedAgence.adresse }}</p>
+    <p><strong>Téléphone:</strong> {{ selectedAgence.telephone }}</p>
+    <p><strong>Email:</strong> {{ selectedAgence.email }}</p>
+    <p><strong>Destinations:</strong></p>
+    <ul>
+      <li *ngFor="let destination of selectedAgence.destinations">{{ destination }}</li>
+    </ul>
+  </div>
+</p-dialog>
+
+<app-footer></app-footer>

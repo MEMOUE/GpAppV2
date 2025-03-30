@@ -1,0 +1,177 @@
+<div class="card flex justify-content-center">
+  <div class="p-fluid">
+    <!-- Formulaire principal -->
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+      <!-- Champ Username -->
+      <div class="field">
+        <label for="username">{{ 'registration.username' | translate }}</label>
+        <input
+          pInputText
+          id="username"
+          formControlName="username"
+          [placeholder]="'registration.placeholders.username' | translate"
+        />
+        <small
+          *ngIf="registrationForm.get('username')?.invalid && registrationForm.get('username')?.touched"
+          class="p-error"
+        >
+          {{ getErrorMessage('username') }}
+        </small>
+      </div>
+
+      <!-- Champ Password -->
+      <div class="field">
+        <label for="password">{{ 'registration.password' | translate }}</label>
+        <input
+          pInputText
+          id="password"
+          type="password"
+          formControlName="password"
+          [placeholder]="'registration.placeholders.password' | translate"
+        />
+        <small
+          *ngIf="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched"
+          class="p-error"
+        >
+          {{ getErrorMessage('password') }}
+        </small>
+      </div>
+
+      <!-- Champ Confirm Password -->
+      <div class="field">
+        <label for="confirmPassword">{{ 'registration.confirmPassword' | translate }}</label>
+        <input
+          pInputText
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          [placeholder]="'registration.placeholders.confirmPassword' | translate"
+        />
+        <small
+          *ngIf="registrationForm.get('confirmPassword')?.invalid && registrationForm.get('confirmPassword')?.touched"
+          class="p-error"
+        >
+          {{ getErrorMessage('confirmPassword') }}
+        </small>
+      </div>
+
+      <!-- Champ Email -->
+      <div class="field">
+        <label for="email">{{ 'registration.email' | translate }}</label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          formControlName="email"
+          [placeholder]="'registration.placeholders.email' | translate"
+        />
+        <small
+          *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched"
+          class="p-error"
+        >
+          {{ getErrorMessage('email') }}
+        </small>
+      </div>
+
+      <!-- Checkbox Agent GP -->
+      <div class="field-checkbox">
+        <p-checkbox
+          id="isAgentGp"
+          formControlName="isAgentGp"
+          [binary]="true"
+        ></p-checkbox>
+        <label for="isAgentGp">{{ 'registration.isAgentGp' | translate }}</label>
+      </div>
+
+      <!-- Champs supplémentaires pour les agents GP -->
+      <div *ngIf="registrationForm.get('isAgentGp')?.value" class="agent-fields">
+        <!-- Champ Nom Agence -->
+        <div class="field">
+          <label for="nomagence">{{ 'registration.nomagence' | translate }}</label>
+          <input
+            pInputText
+            id="nomagence"
+            formControlName="nomagence"
+            [placeholder]="'registration.placeholders.nomagence' | translate"
+          />
+          <small
+            *ngIf="registrationForm.get('nomagence')?.invalid && registrationForm.get('nomagence')?.touched"
+            class="p-error"
+          >
+            {{ getErrorMessage('nomagence') }}
+          </small>
+        </div>
+
+        <!-- Champ Adresse -->
+        <div class="field">
+          <label for="adresse">{{ 'registration.adresse' | translate }}</label>
+          <input
+            pInputText
+            id="adresse"
+            formControlName="adresse"
+            [placeholder]="'registration.placeholders.adresse' | translate"
+          />
+          <small
+            *ngIf="registrationForm.get('adresse')?.invalid && registrationForm.get('adresse')?.touched"
+            class="p-error"
+          >
+            {{ getErrorMessage('adresse') }}
+          </small>
+        </div>
+
+        <!-- Champ Téléphone -->
+        <div class="field">
+          <label for="telephone">{{ 'registration.telephone' | translate }}</label>
+          <input
+            pInputText
+            id="telephone"
+            formControlName="telephone"
+            [placeholder]="'registration.placeholders.telephone' | translate"
+          />
+          <small
+            *ngIf="registrationForm.get('telephone')?.invalid && registrationForm.get('telephone')?.touched"
+            class="p-error"
+          >
+            {{ getErrorMessage('telephone') }}
+          </small>
+        </div>
+
+        <!-- Champ Destinations -->
+        <div class="field">
+          <label for="destinations">{{ 'registration.destinations' | translate }}</label>
+          <input
+            pInputText
+            id="destinations"
+            formControlName="destinations"
+            [placeholder]="'registration.placeholders.destinations' | translate"
+          />
+        </div>
+      </div>
+
+      <!-- Messages de succès et d'erreur -->
+      <div *ngIf="successMessage" class="p-message p-message-success">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="p-message p-message-error">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Bouton de soumission -->
+      <div class="flex justify-content-center">
+        <p-button
+          [label]="'registration.submitButton' | translate"
+          icon="pi pi-check"
+          type="submit"
+          [disabled]="registrationForm.invalid"
+        ></p-button>
+      </div>
+    </form>
+    <!-- Lien vers la connexion -->
+    <div class="text-center mt-4">
+      <span class="text-sm">{{ 'registe.alreadyHaveAccount' | translate }}</span>
+      <a href="/login" class="text-blue-500 hover:text-blue-700 text-sm font-semibold">
+        {{ 'registe.signIn' | translate }}
+      </a>
+    </div>
+  </div>
+</div>

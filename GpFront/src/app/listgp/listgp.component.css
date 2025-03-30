@@ -1,0 +1,60 @@
+/* Styles pour les cartes */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  width: 100%; /* La carte prend toute la largeur disponible */
+  max-width: 100%; /* Pas de limite de largeur */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 10px 15px;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.card-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #eee;
+  padding: 10px 15px;
+  display: flex;
+  flex-wrap: wrap; /* Permet aux éléments de passer à la ligne si nécessaire */
+  gap: 10px; /* Espacement entre les éléments */
+  justify-content: space-between; /* Répartit l'espace entre les éléments */
+  align-items: center;
+}
+
+/* Boutons */
+.btn-group .btn {
+  margin-right: 5px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-button {
+  margin: 0 3px;
+  white-space: nowrap; /* Empêche le texte de passer à la ligne */
+}

@@ -1,0 +1,64 @@
+<button (click)="toggleMenu()" class="menu-toggle-btn">
+  <i class="pi pi-bars"></i>
+</button>
+<div class="sidebar-menu" [class.open]="isMenuOpen">
+  <ul>
+    <li>
+      <a href="/accueilgp">
+        <i class="pi pi-home"></i>
+        <span *ngIf="isMenuOpen">{{ 'sidebar.home' | translate }}</span>
+      </a>
+    </li>
+    <li>
+      <a href="/facture">
+        <i class="pi pi-file"></i>
+        <span *ngIf="isMenuOpen">{{ 'sidebar.invoice' | translate }}</span>
+      </a>
+    </li>
+    <li>
+      <a href="/addgp">
+        <i class="pi pi-globe"></i>
+        <span *ngIf="isMenuOpen">{{ 'sidebar.addGP' | translate }}</span>
+      </a>
+    </li>
+    <li>
+      <a href="/besoingp">
+        <i class="pi pi-bookmark"></i>
+        <span *ngIf="isMenuOpen">{{ 'sidebar.needGP' | translate }}</span>
+      </a>
+    </li>
+<!--    <li>-->
+<!--      <a href="/listgp">-->
+<!--        <i class="pi pi-tags"></i>-->
+<!--        <span *ngIf="isMenuOpen">{{ 'sidebar.offersGP' | translate }}</span>-->
+<!--      </a>-->
+<!--    </li>-->
+    <li>
+      <a href="/publicite">
+        <i class="pi pi-cart-plus"></i>
+        <span *ngIf="isMenuOpen">{{ 'sidebar.buyAd' | translate }}</span>
+      </a>
+    </li>
+    <li>
+      <a href="/partenariat">
+        <i class="pi pi-users"></i>
+        <span *ngIf="isMenuOpen">{{ 'sidebar.partnership' | translate }}</span>
+      </a>
+    </li>
+<!--    <li>-->
+<!--      <a href="/avis">-->
+<!--        <i class="pi pi-comments"></i>-->
+<!--        <span *ngIf="isMenuOpen">{{ 'sidebar.message' | translate }}</span>-->
+<!--      </a>-->
+<!--    </li>-->
+    <li>
+      <a href="/historique">
+        <i class="pi pi-clock"></i>
+        <span *ngIf="isMenuOpen">{{ 'sidebar.history' | translate }}</span>
+      </a>
+    </li>
+  </ul>
+  <button (click)="toggleMenu()" class="menu-toggle-btn-arrow">
+    <i class="pi" [ngClass]="isMenuOpen ? 'pi-chevron-left' : 'pi-chevron-right'"></i>
+  </button>
+</div>

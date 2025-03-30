@@ -1,0 +1,92 @@
+<div class="card flex justify-content-center">
+  <div class="p-fluid">
+    <!-- Formulaire principal -->
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col gap-6 w-full md:w-2/3"
+    >
+      <div class="grid grid-cols-1 gap-4">
+        <!-- Champ Email -->
+        <div class="field">
+          <label for="email" class="block text-right font-semibold">
+            {{ 'LoginComponent.email' | translate }}
+          </label>
+          <div class="p-inputgroup">
+            <input
+              pInputText
+              id="email"
+              formControlName="email"
+              [placeholder]="'LoginComponent.emailPlaceholder' | translate"
+              aria-label="email"
+              type="email"
+              [attr.disabled]="isLockedOut() ? '' : null"
+            />
+          </div>
+          <small
+            *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            class="p-error"
+          >
+            {{ 'LoginComponent.errors.emailRequired' | translate }}
+          </small>
+        </div>
+
+        <!-- Champ Password -->
+        <div class="field">
+          <label for="password" class="block text-right font-semibold">
+            {{ 'LoginComponent.password' | translate }}
+          </label>
+          <div class="p-inputgroup">
+            <input
+              pInputText
+              id="password"
+              formControlName="password"
+              type="password"
+              [placeholder]="'LoginComponent.passwordPlaceholder' | translate"
+              aria-label="password"
+              [attr.disabled]="isLockedOut() ? '' : null"
+            />
+          </div>
+          <small
+            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            class="p-error"
+          >
+            {{ 'LoginComponent.errors.passwordRequired' | translate }}
+          </small>
+        </div>
+      </div>
+
+      <!-- Messages de succès et d'erreur -->
+      <div *ngIf="successMessage" class="p-message p-message-success">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="p-message p-message-error">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Bouton de connexion -->
+      <div class="flex justify-center">
+        <p-button
+          [label]="'LoginComponent.submitButton' | translate"
+          icon="pi pi-user"
+          type="submit"
+          [disabled]="loginForm.invalid || isLockedOut()"
+        ></p-button>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="/forgot-password" class="text-blue-500 hover:text-blue-700 text-sm">
+          {{ 'LoginComponent.forgotPassword' | translate }}
+        </a>
+      </div>
+
+      <!-- Lien vers l'inscription -->
+      <div class="text-center mt-4">
+        <span class="text-sm">{{ 'Login.noAccount' | translate }}</span>
+        <a href="/register" class="text-blue-500 hover:text-blue-700 text-sm font-semibold">
+          {{ 'Login.signUp' | translate }}
+        </a>
+      </div>
+    </form>
+  </div>
+</div>

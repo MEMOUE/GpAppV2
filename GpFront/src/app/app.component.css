@@ -1,0 +1,18 @@
+.navbar-nav .nav-item {
+  margin-right: 15px;
+}
+
+.navbar-nav .nav-item:last-child {
+  margin-right: 0;
+}
+/* Aligner les drapeaux avec le texte */
+.dropdown-item img {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* Taille des drapeaux */
+.dropdown-item img {
+  width: 20px;
+  height: 15px;
+}
