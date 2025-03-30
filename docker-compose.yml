@@ -11,6 +11,8 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      - gpmonde_network
     restart: unless-stopped
 
   backend:
@@ -23,6 +25,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/gpmonde_db
       SPRING_DATASOURCE_USERNAME: gpuser
       SPRING_DATASOURCE_PASSWORD: GpMonde@2022
+    networks:
+      - gpmonde_network
     restart: unless-stopped
 
   frontend:
@@ -31,7 +35,12 @@ services:
       - "80:80"
     depends_on:
       - backend
+    networks:
+      - gpmonde_network
     restart: unless-stopped
+
+networks:
+  gpmonde_network:
 
 volumes:
   mysql_data:
