@@ -17,7 +17,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copier le fichier JAR spécifique du build dans l'image de production
-COPY --from=build /app/build/libs/ton-application.jar app.jar
+COPY --from=build /app/build/libs/BackGp-0.0.1-SNAPSHOT.jar app.jar
 
 # Copier le répertoire uploads pour les fichiers envoyés
 COPY uploads/ /app/uploads/
