@@ -1,37 +1,37 @@
 version: '3.8'
-
 services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: gpmonde_db
+      MYSQL_USER: gpuser
+      MYSQL_PASSWORD: GpMonde@2022
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+
+  backend:
+    build: ./BackGp
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/gpmonde_db
+      SPRING_DATASOURCE_USERNAME: gpuser
+      SPRING_DATASOURCE_PASSWORD: GpMonde@2022
+    restart: unless-stopped
+
   frontend:
-    build:
-      context: ./GpFront
-      dockerfile: Dockerfile
+    build: ./GpFront
     ports:
       - "80:80"
     depends_on:
       - backend
-
-  backend:
-    build:
-      context: ./BackGp
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/yourdatabase
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: yourpassword
-    depends_on:
-      - db
-
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: yourpassword
-      MYSQL_DATABASE: yourdatabase
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
 
 volumes:
   mysql_data:
