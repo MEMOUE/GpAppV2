@@ -18,7 +18,7 @@ RUN npm run build --configuration=production
 FROM nginx:alpine
 
 # Copie des fichiers de build vers le dossier nginx
-COPY --from=build /app/dist/gp-front /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Copie du fichier de configuration Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
