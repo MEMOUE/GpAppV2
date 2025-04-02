@@ -1,31 +1,22 @@
-# Build stage
-FROM node:18 AS build
+# Étape de build
+FROM node:18 AS builder
 WORKDIR /app
-
-# Copie des fichiers package.json et package-lock.json pour installer les dépendances en premier
 COPY package*.json ./
-
-# Installation des dépendances
-RUN npm ci --legacy-peer-deps
-
-# Copie du reste du projet
+RUN npm install --legacy-peer-deps
 COPY . .
-
-# Compilation du projet en mode production
 RUN npm run build --configuration=production
 
-# Production stage
+# Étape de production
 FROM nginx:alpine
 
-# Suppression de la configuration par défaut
+# Suppression des configurations par défaut
 RUN rm -rf /etc/nginx/conf.d/*
 
-# Copie des fichiers de build et de configuration
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copie des fichiers de build
+COPY --from=builder /app/dist/gp-front /usr/share/nginx/html
 
-# Exposition du port 80
+# Copie de la configuration Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+
 EXPOSE 80
-
-# Démarrage de Nginx
 CMD ["nginx", "-g", "daemon off;"]
