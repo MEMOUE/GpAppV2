@@ -1,0 +1,131 @@
+{
+  "home": "Accueil",
+  "dashboard": "Tableau de bord",
+  "notify": "Notifier",
+  "contact": "Contact",
+  "account": "Compte",
+  "login": "Connexion",
+  "register": "Inscription",
+  "profile": "Profil",
+  "logout": "Déconnexion",
+  "language": "Langue",
+  "OFFRE_GP": "OffreGp",
+  "AGENCE_GP": "AgenceGp",
+  "PROGRAMMES_GP": "Programmes GP",
+  "DEPART_PLACEHOLDER": "Lieu de départ",
+  "DESTINATION_PLACEHOLDER": "Destination",
+  "COUNTRY_CITY_PLACEHOLDER": "Pays ou Ville",
+  "SEARCH_BUTTON": "Rechercher",
+  "WHO_WE_ARE": "Qui sommes-nous ?",
+  "MISSION": "GpMonde est une plateforme de mise en relation innovante entre différentes entités et clients. Notre mission est de rendre chaque expérience de transport et de service plus fluide, rapide et sécurisée.",
+  "STATISTICS": "Nos Statistiques",
+  "SATISFIED_CLIENTS": "Clients Satisfaits",
+  "SUCCESSFUL_DELIVERIES": "Livraisons Réussies",
+  "COVERED_DESTINATIONS": "Destinations Couvertes",
+  "GP_AGENCIES": "Agences GP Utilisatrices",
+  "ASSISTANT": "Assistant",
+  "PHONE": "Téléphone",
+  "EMAIL": "Email",
+  "TESTIMONIALS": "Ce que disent nos clients",
+  "TESTIMONIAL_1": "GpMonde a rendu mon expérience de voyage beaucoup plus facile et agréable. Service de qualité et équipe formidable !",
+  "TESTIMONIAL_2": "Le service client est exceptionnel, et mes colis sont toujours livrés à temps, peu importe la destination.",
+  "TESTIMONIAL_3": "Je recommande fortement GpMonde pour tous vos besoins de transport et de logistique. Efficace et fiable.",
+
+  "footer": {
+    "about": "À propos",
+    "services": "Services",
+    "contact": "Contact",
+    "privacy_policy": "Politique de confidentialité",
+    "copyright": "&copy; {{currentYear}} GpMonde. Tous droits réservés."
+  },
+  "sidebar": {
+    "home": "Accueil",
+    "invoice": "Facture",
+    "addGP": "Ajouter GP",
+    "needGP": "BesoinGP",
+    "offersGP": "OffresGP",
+    "buyAd": "Acheter Pub",
+    "partnership": "Partenariat",
+    "message": "Message",
+    "history": "Historique"
+  },
+
+  "LoginComponent": {
+    "email": "Email",
+    "password": "Mot de passe",
+    "emailPlaceholder": "Entrez votre email",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "submitButton": "Se connecter",
+    "forgotPassword": "Mot de passe oublié ?",
+    "errors": {
+      "emailRequired": "Une adresse email valide est requise.",
+      "passwordRequired": "Le mot de passe est requis."
+    }
+  },
+
+  "registration": {
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmez le mot de passe",
+    "email": "Email",
+    "isAgentGp": "Êtes-vous un Agent GP ?",
+    "nomagence": "Nom Agence",
+    "adresse": "Adresse",
+    "telephone": "Téléphone",
+    "destinations": "Destinations",
+    "placeholders": {
+      "username": "Entrez votre nom d'utilisateur",
+      "password": "Entrez votre mot de passe",
+      "confirmPassword": "Confirmez votre mot de passe",
+      "email": "Entrez votre email",
+      "nomagence": "Entrez le nom de votre agence",
+      "adresse": "Entrez votre adresse",
+      "telephone": "Entrez votre numéro de téléphone",
+      "destinations": "Entrez les destinations (séparées par des virgules)"
+    },
+    "errors": {
+      "required": "Ce champ est obligatoire.",
+      "email": "Veuillez entrer une adresse email valide.",
+      "minlength": "Ce champ doit contenir au moins {{ minLength }} caractères.",
+      "maxlength": "Ce champ ne doit pas dépasser {{ maxLength }} caractères.",
+      "passwordMismatch": "Les mots de passe ne correspondent pas."
+    },
+    "successMessage": "Inscription réussie !",
+    "errorMessage": "Une erreur s'est produite lors de l'inscription.",
+    "submitButton": "Inscription"
+  },
+
+  "homegp": {
+    "welcomeTitle": "Bienvenue à l'Accueil de l'Agent GP",
+    "welcomeMessage": "Nous sommes ravis de vous accueillir sur notre plateforme dédiée aux agents et agences GP.",
+    "exploreMessage": "Explorez nos fonctionnalités et services pour optimiser vos opérations et améliorer votre expérience."
+  },
+
+
+  "Login": {
+    "noAccount": "Vous n'avez pas de compte ?",
+    "signUp": "Inscrivez-vous ici"
+  },
+  "registe": {
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "signIn": "Connectez-vous ici"
+  },
+  "resetPassword": {
+    "newPassword": "Nouveau mot de passe",
+    "placeholders": {
+      "newPassword": "Entrez votre nouveau mot de passe",
+      "confirmPassword": "Confirmez votre nouveau mot de passe"
+    },
+    "confirmPassword": "Confirmez le mot de passe",
+    "submitButton": "Réinitialiser le mot de passe"
+  },
+  "forgotPassword": {
+    "email": "Adresse e-mail",
+    "placeholders": {
+      "email": "Entrez votre adresse e-mail"
+    },
+    "submitButton": "Envoyer le lien de réinitialisation",
+    "backToLogin": "Retour à la connexion"
+  }
+
+}
