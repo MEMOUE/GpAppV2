@@ -1,17 +1,26 @@
-FROM gradle:8.3-jdk17 as build
+# Étape de construction avec Gradle
+FROM gradle:7.6-jdk17 AS build
 
+# Définir le répertoire de travail
 WORKDIR /app
+
+# Copier le code source dans le conteneur
 COPY . .
-RUN gradle build -x test --no-daemon
 
-FROM eclipse-temurin:17-jdk-alpine
+# Construire le projet avec Gradle, en excluant les tests
+RUN gradle build --no-daemon -x test
 
+# Étape de production
+FROM openjdk:17-jdk-slim
+
+# Définir le répertoire de travail
 WORKDIR /app
+
+# Copier le fichier JAR spécifique du build dans l'image de production
 COPY --from=build /app/build/libs/BackGp-0.0.1-SNAPSHOT.jar app.jar
 
-# Créer le répertoire d'uploads
-RUN mkdir -p /app/uploads
-VOLUME /app/uploads
-
+# Exposer le port sur lequel l'application écoute
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+
+# Commande d'exécution de l'application
+ENTRYPOINT ["java", "-jar", "app.jar"]
