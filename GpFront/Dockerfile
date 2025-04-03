@@ -1,33 +1,25 @@
 # Étape de build
-FROM node:18-alpine AS builder
+FROM node:18 as build
+
 WORKDIR /app
-
-# Copie et installation des dépendances
 COPY package*.json ./
-RUN npm install --legacy-peer-deps && npm cache clean --force
-
-# Copie du projet et build
+RUN npm install
 COPY . .
-RUN npm run build --configuration=production
+RUN npm run build
 
 # Étape de production avec Nginx
-FROM nginx:alpine
+FROM nginx:stable-alpine
 
-# Suppression des configurations par défaut
-RUN rm -rf /etc/nginx/conf.d/*
+# Copier la configuration Nginx personnalisée
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Ajout d'un utilisateur non-root pour la sécurité
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
+# Copier les fichiers de build de l'application
+COPY --from=build /app/dist/gp-front/browser /usr/share/nginx/html
 
-# Copie des fichiers de build
-COPY --from=builder /app/dist/gp-front/browser /usr/share/nginx/html
+# Créer le répertoire pour LetsEncrypt
+RUN mkdir -p /var/www/certbot
 
-# Copie de la configuration Nginx
-COPY --chown=appuser:appgroup nginx.conf /etc/nginx/nginx.conf
-
-# Exposition du port 80
 EXPOSE 80
+EXPOSE 443
 
-# Commande de démarrage
 CMD ["nginx", "-g", "daemon off;"]
