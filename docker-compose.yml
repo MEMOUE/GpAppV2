@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Service MySQL
+  # Base de données MySQL
   mysql:
     image: mysql:8.0
     container_name: mysql-db
@@ -23,7 +23,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Service Backend Spring Boot
+  # Backend Spring Boot
   backend:
     build:
       context: ./BackGp
@@ -45,7 +45,7 @@ services:
     networks:
       - app-network
 
-  # Service Frontend Angular
+  # Frontend Angular (build only)
   frontend:
     build:
       context: ./GpFront
@@ -54,16 +54,13 @@ services:
     restart: always
     depends_on:
       - backend
-    ports:
-      - "80:80"
-      - "443:443"
     networks:
       - app-network
     volumes:
-      - ./ssl:/etc/nginx/ssl
-      - ./certbot:/var/www/certbot
+      # Le répertoire dist sera accessible à Nginx sur l’hôte
+      - ./GpFront/dist:/usr/share/nginx/html
 
-  # Service pour obtenir et renouveler les certificats SSL
+  # Certbot (optionnel - pour HTTPS avec Let's Encrypt)
   certbot:
     image: certbot/certbot
     container_name: certbot

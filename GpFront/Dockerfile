@@ -1,28 +1,17 @@
-# Étape de build
-FROM node:18 as build
+# Étape de build Angular
+FROM node:16-alpine as build
 
 WORKDIR /app
-COPY package*.json ./
 
-RUN npm install --legacy-peer-deps
+COPY ./ ./
 
-COPY . .
+# Corriger la commande d’installation des dépendances
+RUN npm install --legacy-peer-deps && npm run build --prod
 
-RUN npm run build
+# Étape de production - Nginx ne sera pas utilisé ici car il est sur l'hôte
+FROM alpine
 
-# Étape de production avec Nginx
-FROM nginx:stable-alpine
+WORKDIR /app
 
-# Copier la configuration Nginx personnalisée
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copier les fichiers de build de l'application
-COPY --from=build /app/dist/gp-front/browser /usr/share/nginx/html
-
-# Créer le répertoire pour LetsEncrypt
-RUN mkdir -p /var/www/certbot
-
-EXPOSE 80
-EXPOSE 443
-
-CMD ["nginx", "-g", "daemon off;"]
+# Juste copier les fichiers générés
+COPY --from=build /app/dist/gp-front/browser /app/dist
