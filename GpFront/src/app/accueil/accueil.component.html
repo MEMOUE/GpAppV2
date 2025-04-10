@@ -33,10 +33,9 @@
       </div>
     </div>
   </div>
-
   <!-- Nouvelle section : Programmes GP défilants -->
   <section *ngIf="programmegps.length > 0" class="programmes-gp">
-    <h2 class="text-center">{{ 'PROGRAMMES_GP' | translate }}</h2>
+    <h4 class="text-center ">{{ 'PROGRAMMES_GP' | translate }}</h4>
     <div class="programmes-container">
       <!-- Flèche gauche -->
       <button pButton class="scroll-button left" (click)="scrollLeft()">
@@ -46,13 +45,13 @@
       <!-- Conteneur des programmes -->
       <div class="programmes-wrapper" (mouseenter)="pauseScroll()" (mouseleave)="resumeScroll()">
         <!-- Afficher les programmes deux fois pour créer une boucle -->
-        <div *ngFor="let programme of programmegps" class="programme-card">
+        <div *ngFor="let programme of programmegps" class="programme-card" >
           <div class="card-header bg-info text-white d-flex align-items-center">
             <i class="pi pi-user me-2"></i>
             <strong>{{ programme.agentGp.nomagence }}</strong>
           </div>
-          <img src="icons/bag1.png" class="card-img-top img-fluid" alt="Programme image" style="height: 110px; object-fit: cover;">
-          <div class="card-body">
+          <img src="icons/bag1.png" class="card-img-top img-fluid" alt="Programme image" style="height: 110px; object-fit: cover;" (click)="showDetails(programme)">
+          <div class="card-body" (click)="showDetails(programme)">
             <h5 class="card-title text-center mb-3" style="font-size: 1rem; color: #333;">
               {{ programme.depart }} <i class="pi pi-arrow-right mx-2"></i> {{ programme.destination }}
             </h5>
@@ -67,17 +66,14 @@
           </div>
           <!-- Boutons de contact -->
           <div class="card-footer bg-light d-flex justify-content-center gap-2">
-            <button pButton class="btn btn-success btn-sm" (click)="openWhatsApp(programme.agentGp.telephone)">
-              <i class="pi pi-whatsapp"></i>
-            </button>
-            <button pButton class="btn btn-info btn-sm" (click)="makePhoneCall(programme.agentGp.telephone)">
-              <i class="pi pi-phone"></i>
-            </button>
-            <button pButton class="btn btn-warning btn-sm" (click)="sendSms(programme.agentGp.telephone)">
-              <i class="pi pi-comment"></i>
-            </button>
-            <p-button icon="pi pi-info-circle" label="Détails" class="p-button-secondary p-button-sm" (click)="showDetails(programme)"></p-button>
+            <p-button icon="pi pi-whatsapp" [rounded]="true" severity="success" [outlined]="true" (click)="openWhatsApp(programme.agentGp.telephone)"/>
+            <p-button icon="pi pi-phone" [rounded]="true" severity="info" [outlined]="true" (click)="makePhoneCall(programme.agentGp.telephone)"/>
+            <p-button icon="pi pi-comment" [rounded]="true" severity="warning" [outlined]="true" (click)="sendSms(programme.agentGp.telephone)"/>
+            <div>
+              <p-button icon="pi pi-map-marker" [rounded]="true" [text]="true" [raised]="true"></p-button>
+            </div>
           </div>
+
         </div>
         <!-- Dupliquer les programmes pour créer une boucle -->
         <div *ngFor="let programme of programmegps" class="programme-card">
@@ -85,8 +81,8 @@
             <i class="pi pi-user me-2"></i>
             <strong>{{ programme.agentGp.nomagence }}</strong>
           </div>
-          <img src="icons/bag1.png" class="card-img-top img-fluid" alt="Programme image" style="height: 120px; object-fit: cover;">
-          <div class="card-body">
+          <img src="icons/bag1.png" class="card-img-top img-fluid" alt="Programme image" style="height: 120px; object-fit: cover;" (click)="showDetails(programme)">
+          <div class="card-body" (click)="showDetails(programme)">
             <h5 class="card-title text-center mb-3" style="font-size: 1rem; color: #333;">
               {{ programme.depart }} <i class="pi pi-arrow-right mx-2"></i> {{ programme.destination }}
             </h5>
@@ -101,16 +97,12 @@
           </div>
           <!-- Boutons de contact -->
           <div class="card-footer bg-light d-flex justify-content-center gap-2">
-            <button pButton class="btn btn-success btn-sm" (click)="openWhatsApp(programme.agentGp.telephone)">
-              <i class="pi pi-whatsapp"></i>
-            </button>
-            <button class="btn btn-info btn-sm" (click)="makePhoneCall(programme.agentGp.telephone)">
-              <i class="pi pi-phone"></i>
-            </button>
-            <button class="btn btn-warning btn-sm" (click)="sendSms(programme.agentGp.telephone)">
-              <i class="pi pi-comment"></i>
-            </button>
-            <p-button icon="pi pi-info-circle" label="Détails" class="p-button-secondary p-button-sm" (click)="showDetails(programme)"></p-button>
+            <p-button icon="pi pi-whatsapp" [rounded]="true" severity="success" [outlined]="true" (click)="openWhatsApp(programme.agentGp.telephone)"/>
+            <p-button icon="pi pi-phone" [rounded]="true" severity="info" [outlined]="true" (click)="makePhoneCall(programme.agentGp.telephone)"/>
+            <p-button icon="pi pi-comment" [rounded]="true" severity="warning" [outlined]="true" (click)="sendSms(programme.agentGp.telephone)"/>
+            <div>
+              <p-button icon="pi pi-map-marker" [rounded]="true" [text]="true" [raised]="true"></p-button>
+            </div>
           </div>
         </div>
       </div>
