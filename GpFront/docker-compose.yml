@@ -9,7 +9,3 @@ services:
     ports:
       - "80:80"
     restart: always
-    # Montage de volumes pour faciliter les mises à jour (optionnel)
-    # volumes:
-    #   - ./dist/gp-front/browser:/usr/share/nginx/html
-    #   - ./nginx.conf:/etc/nginx/conf.d/default.conf
