@@ -12,8 +12,8 @@ COPY settings.gradle .
 # Rendre le script gradlew exécutable
 RUN chmod +x ./gradlew
 
-# Télécharger les dépendances
-RUN ./gradlew dependencies
+# Télécharger les dépendances (couche cachée pour optimisation)
+RUN ./gradlew dependencies --no-daemon
 
 # Copier le code source
 COPY src src
@@ -21,22 +21,20 @@ COPY src src
 # Construire l'application
 RUN ./gradlew bootJar --no-daemon
 
-# Phase de runtime
+# Phase de runtime avec une image plus légère
 FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-# Copier le JAR généré
-COPY --from=build /app/build/libs/*.jar app.jar
+# Créer un répertoire pour les logs
+RUN mkdir -p /app/logs && \
+    chmod -R 777 /app/logs
+
+# Copier le JAR depuis l'étape de build
+COPY --from=build /app/build/libs/BackGp-0.0.1-SNAPSHOT.jar app.jar
 
 # Exposer le port
 EXPOSE 8080
 
-# Variables d'environnement pour la base de données
-ENV SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/gpmonde_db
-ENV SPRING_DATASOURCE_USERNAME=root
-ENV SPRING_DATASOURCE_PASSWORD=password
-ENV SPRING_PROFILES_ACTIVE=prod
-
 # Démarrer l'application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT exec java ${JAVA_OPTS:--Xms256m -Xmx512m} -jar app.jar
