@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  angular-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gp-front
+    ports:
+      - "80:80"
+    restart: always
