@@ -1,10 +1,42 @@
-FROM gradle:7.6-jdk17 AS build
-WORKDIR /app
-COPY . .
-RUN gradle build --no-daemon -x test
+FROM eclipse-temurin:17-jdk as build
 
-FROM openjdk:17-slim
 WORKDIR /app
+
+# Copier les fichiers de build et wrapper gradle
+COPY gradle gradle
+COPY gradlew .
+COPY gradlew.bat .
+COPY build.gradle .
+COPY settings.gradle .
+
+# Rendre le script gradlew exécutable
+RUN chmod +x ./gradlew
+
+# Télécharger les dépendances
+RUN ./gradlew dependencies
+
+# Copier le code source
+COPY src src
+
+# Construire l'application
+RUN ./gradlew bootJar --no-daemon
+
+# Phase de runtime
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+# Copier le JAR généré
 COPY --from=build /app/build/libs/*.jar app.jar
+
+# Exposer le port
 EXPOSE 8080
-ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
+
+# Variables d'environnement pour la base de données
+ENV SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/gpmonde_db
+ENV SPRING_DATASOURCE_USERNAME=root
+ENV SPRING_DATASOURCE_PASSWORD=password
+ENV SPRING_PROFILES_ACTIVE=prod
+
+# Démarrer l'application
+ENTRYPOINT ["java", "-jar", "app.jar"]

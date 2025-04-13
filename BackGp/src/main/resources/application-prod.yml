@@ -1,12 +1,39 @@
 spring:
+  application:
+    name: BackGp
   datasource:
-    url: jdbc:mysql://db:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/gpmonde_db}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "gpmonde22@gmail.com"
+    password: "chst eqjv vjgc dxst"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: "*"
+
+jwt:
+  secret: "${JWT_SECRET:ojJMx7uTkjO3Ov5BOjUimTFkk5Nb+zXvW+6wSRQUqSZeR9OjhseXki3vSA055PApH5ApNPXngdkkFfwOtax4eg==}"
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    com.gpmonde: INFO
