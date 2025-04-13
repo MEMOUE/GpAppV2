@@ -18,13 +18,17 @@ RUN npm run build
 # Étape 2: Servir l'application avec Nginx
 FROM nginx:alpine
 
-# Copier les fichiers de build de l'application
-COPY --from=build /app/dist/gp-front/browser /usr/share/nginx/html
+# Supprimer les fichiers par défaut de Nginx
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copier les fichiers du build Angular
+COPY ./dist/gp-front/browser/ /usr/share/nginx/html/
 
 # Configurer Nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
 EXPOSE 80
 
+# Démarrer Nginx
 CMD ["nginx", "-g", "daemon off;"]
