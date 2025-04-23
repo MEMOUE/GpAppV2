@@ -1,7 +1,7 @@
 <app-menu></app-menu>
 
 <div class="container">
-  <h2>Génération de la Facture</h2>
+  <h2>Génération de Facture</h2>
 
   <form [formGroup]="factureForm" (ngSubmit)="generateInvoice()">
     <!-- Sélection du programme -->
@@ -15,82 +15,214 @@
         placeholder="Sélectionnez un programme"
         (onChange)="onProgrammeChange()"
       ></p-dropdown>
+      <small *ngIf="factureForm.get('programme')?.invalid && factureForm.get('programme')?.touched" class="text-danger">
+        Ce champ est requis
+      </small>
     </div>
 
     <!-- Détails du programme sélectionné -->
     <div *ngIf="selectedProgramme" class="programme-details">
       <h3>Détails du Programme</h3>
-      <p><strong>Départ :</strong> {{ selectedProgramme.depart }}</p>
-      <p><strong>Destination :</strong> {{ selectedProgramme.destination }}</p>
-      <p><strong>Prix par KG :</strong> {{ selectedProgramme.prix }} €</p>
-      <p><strong>Garantie :</strong> {{ selectedProgramme.garantie }} €</p>
-      <p><strong>Agence :</strong> {{ selectedProgramme.agentGp.nomagence }}</p>
-      <p><strong>Adresse :</strong> {{ selectedProgramme.agentGp.adresse }}</p>
-      <p><strong>Téléphone :</strong> {{ selectedProgramme.agentGp.telephone }}</p>
+
+      <div class="detail-grid">
+        <div class="detail-row">
+          <div class="detail-item">
+            <span class="label">Départ :</span>
+            <span class="value">{{ selectedProgramme.depart }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Destination :</span>
+            <span class="value">{{ selectedProgramme.destination }}</span>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-item">
+            <span class="label">Prix par KG :</span>
+            <span class="value">{{ selectedProgramme.prix }} €</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Garantie :</span>
+            <span class="value">{{ selectedProgramme.garantie }}%</span>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-item">
+            <span class="label">Agence :</span>
+            <span class="value">{{ selectedProgramme.agentGp.nomagence }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Téléphone :</span>
+            <span class="value">{{ selectedProgramme.agentGp.telephone }}</span>
+          </div>
+        </div>
+
+        <div class="detail-item full-width">
+          <span class="label">Adresse :</span>
+          <span class="value">{{ selectedProgramme.agentGp.adresse }}</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Nom du client -->
-    <div class="field">
-      <label for="nomClient">Nom Client</label>
-      <input id="nomClient" type="text" pInputText formControlName="nomClient" />
-    </div>
+    <div class="form-section">
+      <h3>Informations Client</h3>
 
-    <!-- Adresse du client -->
-    <div class="field">
-      <label for="adresseClient">Adresse Client</label>
-      <input id="adresseClient" type="text" pInputText formControlName="adresseClient" />
-    </div>
+      <!-- Disposition en deux colonnes pour les informations client -->
+      <div class="form-row">
+        <!-- Nom du client -->
+        <div class="field">
+          <label for="nomClient">Nom du Client</label>
+          <input id="nomClient" type="text" pInputText formControlName="nomClient" />
+          <small *ngIf="factureForm.get('nomClient')?.invalid && factureForm.get('nomClient')?.touched" class="text-danger">
+            Ce champ est requis
+          </small>
+        </div>
 
-    <!-- Laveur de bagage -->
-    <div class="field">
-      <label for="laveurBagage">Laveur du Bagage</label>
-      <input id="laveurBagage" type="text" pInputText formControlName="laveurBagage" />
-    </div>
+        <!-- Adresse du client -->
+        <div class="field">
+          <label for="adresseClient">Adresse du Client</label>
+          <input id="adresseClient" type="text" pInputText formControlName="adresseClient" />
+          <small *ngIf="factureForm.get('adresseClient')?.invalid && factureForm.get('adresseClient')?.touched" class="text-danger">
+            Ce champ est requis
+          </small>
+        </div>
+      </div>
 
-    <!-- Nombre de KG -->
-    <div class="field">
-      <label for="nombreKg">Nombre de KG</label>
-      <input
-        id="nombreKg"
-        type="number"
-        pInputNumber
-        formControlName="nombreKg"
-        (input)="calculerPrixTransport()"
-      />
-    </div>
+      <div class="form-row">
+        <!-- Laveur de bagage -->
+        <div class="field">
+          <label for="laveurBagage">Laveur du Bagage</label>
+          <input id="laveurBagage" type="text" pInputText formControlName="laveurBagage" />
+          <small *ngIf="factureForm.get('laveurBagage')?.invalid && factureForm.get('laveurBagage')?.touched" class="text-danger">
+            Ce champ est requis
+          </small>
+        </div>
 
-    <!-- Prix du transport -->
-    <div class="field">
-      <label for="prixTransport">Prix Transport</label>
-      <input id="prixTransport" type="number" pInputNumber formControlName="prixTransport" />
+        <!-- Nombre de KG -->
+        <div class="field">
+          <label for="nombreKg">Nombre de KG</label>
+          <p-inputNumber
+            id="nombreKg"
+            formControlName="nombreKg"
+            [showButtons]="true"
+            buttonLayout="horizontal"
+            spinnerMode="horizontal"
+            decrementButtonClass="p-button-danger"
+            incrementButtonClass="p-button-success"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus"
+            [min]="1"
+            (onInput)="calculerPrixTransport()"
+          ></p-inputNumber>
+          <small *ngIf="factureForm.get('nombreKg')?.invalid && factureForm.get('nombreKg')?.touched" class="text-danger">
+            Veuillez entrer un nombre valide (minimum 1)
+          </small>
+        </div>
+      </div>
+
+      <!-- Prix du transport -->
+      <div class="field">
+        <label for="prixTransport">Prix Total du Transport</label>
+        <p-inputNumber
+          id="prixTransport"
+          formControlName="prixTransport"
+          [readonly]="true"
+          suffix=" €"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+        ></p-inputNumber>
+      </div>
     </div>
 
     <!-- Zone de signature -->
-    <div class="field">
-      <label>Signature de l'Agence GP</label>
-      <canvas #signatureCanvas width="400" height="200" style="border: 1px solid #000;"></canvas>
-      <button type="button" pButton icon="pi pi-times" [rounded]="true" severity="danger" [outlined]="true" label="Effacer" (click)="clearSignature()"></button>
+    <div class="signature-section">
+      <h3>Signature de l'Agence GP</h3>
+      <div class="signature-container">
+        <canvas #signatureCanvas width="400" height="200"></canvas>
+        <button
+          type="button"
+          pButton
+          icon="pi pi-times"
+          [rounded]="true"
+          severity="danger"
+          [outlined]="true"
+          label="Effacer la signature"
+          (click)="clearSignature()"
+        ></button>
+        <small *ngIf="!signatureData && factureForm.touched" class="signature-hint">
+          Veuillez signer dans la zone ci-dessus
+        </small>
+      </div>
     </div>
 
     <!-- Bouton de génération de la facture -->
-    <button type="submit" pButton icon="pi pi-check" [rounded]="true" [outlined]="true" severity="info" label="Générer la Facture" [disabled]="!factureForm.valid || !signatureData"></button>
+    <div class="form-actions">
+      <button
+        type="submit"
+        pButton
+        icon="pi pi-check"
+        [rounded]="true"
+        [outlined]="false"
+        severity="info"
+        label="Générer la Facture"
+        [disabled]="!factureForm.valid || !signatureData"
+      ></button>
+    </div>
   </form>
 
   <!-- Boutons de téléchargement et de partage -->
   <div *ngIf="factureGeneree" class="invoice-actions">
+    <h3>Actions sur la Facture</h3>
+
     <!-- Bouton de téléchargement du PDF -->
-    <button pButton icon="pi pi-download" [rounded]="true" [outlined]="true" severity="success" label="Télécharger la Facture (PDF)" (click)="downloadPDF()"></button>
+    <button
+      pButton
+      icon="pi pi-download"
+      [rounded]="true"
+      [outlined]="false"
+      severity="success"
+      label="Télécharger la Facture (PDF)"
+      (click)="downloadPDF()"
+    ></button>
 
     <!-- Bouton de partage -->
-    <button pButton icon="pi pi-share-alt" [rounded]="true" [outlined]="true" severity="help" label="Partager" (click)="toggleShareOptions()"></button>
+    <button
+      pButton
+      icon="pi pi-share-alt"
+      [rounded]="true"
+      [outlined]="true"
+      severity="help"
+      label="Partager"
+      (click)="toggleShareOptions()"
+    ></button>
 
     <!-- Options de partage (WhatsApp et e-mail) -->
     <div *ngIf="showShareOptions" class="share-options">
-      <!-- Bouton WhatsApp -->
-      <button pButton [rounded]="true" [outlined]="true" severity="success" icon="pi pi-whatsapp" (click)="shareViaWhatsApp()"></button>
+      <div class="share-title">Partager via:</div>
+      <div class="share-buttons">
+        <!-- Bouton WhatsApp -->
+        <button
+          pButton
+          [rounded]="true"
+          [outlined]="false"
+          severity="success"
+          icon="pi pi-whatsapp"
+          label="WhatsApp"
+          (click)="shareViaWhatsApp()"
+        ></button>
 
-      <!-- Bouton e-mail -->
-      <button pButton [rounded]="true" [outlined]="true" severity="success" icon="pi pi-envelope" (click)="shareViaEmail()"></button>
+        <!-- Bouton e-mail -->
+        <button
+          pButton
+          [rounded]="true"
+          [outlined]="false"
+          severity="info"
+          icon="pi pi-envelope"
+          label="Email"
+          (click)="shareViaEmail()"
+        ></button>
+      </div>
     </div>
   </div>
 </div>

@@ -65,15 +65,11 @@
             </p>
           </div>
           <!-- Boutons de contact -->
-          <div class="card-footer bg-light d-flex justify-content-center gap-2">
-            <p-button icon="pi pi-whatsapp" [rounded]="true" severity="success" [outlined]="true" (click)="openWhatsApp(programme.agentGp.telephone)"/>
-            <p-button icon="pi pi-phone" [rounded]="true" severity="info" [outlined]="true" (click)="makePhoneCall(programme.agentGp.telephone)"/>
-            <p-button icon="pi pi-comment" [rounded]="true" severity="warning" [outlined]="true" (click)="sendSms(programme.agentGp.telephone)"/>
-<!--            <div> fixme activer la localisation du lieu de depot des colis -->
-<!--              <p-button icon="pi pi-map-marker" [rounded]="true" [text]="true" [raised]="true"></p-button>-->
-<!--            </div>-->
-          </div>
-
+<!--          <div class="card-footer bg-light d-flex justify-content-center gap-2">-->
+<!--            <p-button *ngIf="programme?.agentGp?.telephone" icon="pi pi-whatsapp" [rounded]="true" severity="success" [outlined]="true" (click)="openWhatsAppWithNumber(programme)"/>-->
+<!--            <p-button *ngIf="programme?.agentGp?.telephone" icon="pi pi-phone" [rounded]="true" severity="info" [outlined]="true" (click)="makePhoneCallWithNumber(programme)"/>-->
+<!--            <p-button *ngIf="programme?.agentGp?.telephone" icon="pi pi-comment" [rounded]="true" severity="warning" [outlined]="true" (click)="sendSmsWithNumber(programme)"/>-->
+<!--          </div>-->
         </div>
         <!-- Dupliquer les programmes pour créer une boucle -->
         <div *ngFor="let programme of programmegps" class="programme-card">
@@ -96,14 +92,11 @@
             </p>
           </div>
           <!-- Boutons de contact -->
-          <div class="card-footer bg-light d-flex justify-content-center gap-2">
-            <p-button icon="pi pi-whatsapp" [rounded]="true" severity="success" [outlined]="true" (click)="openWhatsApp(programme.agentGp.telephone)"/>
-            <p-button icon="pi pi-phone" [rounded]="true" severity="info" [outlined]="true" (click)="makePhoneCall(programme.agentGp.telephone)"/>
-            <p-button icon="pi pi-comment" [rounded]="true" severity="warning" [outlined]="true" (click)="sendSms(programme.agentGp.telephone)"/>
-<!--            <div> fixme activer la localisation du lieu de depot des colis-->
-<!--              <p-button icon="pi pi-map-marker" [rounded]="true" [text]="true" [raised]="true"></p-button>-->
-<!--            </div>-->
-          </div>
+<!--          <div class="card-footer bg-light d-flex justify-content-center gap-2">-->
+<!--            <p-button *ngIf="programme?.agentGp?.telephone" icon="pi pi-whatsapp" [rounded]="true" severity="success" [outlined]="true" (click)="openWhatsAppWithNumber(programme)"/>-->
+<!--            <p-button *ngIf="programme?.agentGp?.telephone" icon="pi pi-phone" [rounded]="true" severity="info" [outlined]="true" (click)="makePhoneCallWithNumber(programme)"/>-->
+<!--            <p-button *ngIf="programme?.agentGp?.telephone" icon="pi pi-comment" [rounded]="true" severity="warning" [outlined]="true" (click)="sendSmsWithNumber(programme)"/>-->
+<!--          </div>-->
         </div>
       </div>
 
@@ -184,6 +177,7 @@
   </section>
 
   <!-- Fenêtre modale pour les détails -->
+  <!-- Remplacer le p-dialog -->
   <p-dialog header="Détails du Programme" [(visible)]="displayDetails" [modal]="true" [style]="{width: '50vw'}">
     <div *ngIf="selectedProgramme">
       <p><strong>Description:</strong> {{ selectedProgramme.description || 'Non spécifié' }}</p>
@@ -192,6 +186,15 @@
       <p><strong>Prix/Kg:</strong> {{ selectedProgramme.prix | currency }}</p>
       <p><strong>Date limite:</strong> {{ selectedProgramme.dateline }}</p>
       <p><strong>Garantie:</strong> {{ selectedProgramme.garantie }}% de la valeur du colis</p>
+      <!-- Corrigé pour éviter l'avertissement - suppression du ?. sur agentGp.telephone -->
+      <p *ngIf="selectedProgramme.agentGp && selectedProgramme.agentGp.telephone"><strong>Tel:</strong> {{ selectedProgramme.agentGp.telephone }}</p>
+      <p *ngIf="!selectedProgramme.agentGp || !selectedProgramme.agentGp.telephone"><strong>Tel:</strong> Non disponible</p>
+
+      <div *ngIf="selectedProgramme.agentGp && selectedProgramme.agentGp.telephone" class="d-flex justify-content-center gap-2 mt-3">
+        <p-button icon="pi pi-whatsapp" [rounded]="true" severity="success" [outlined]="true" (click)="openWhatsApp()"/>
+        <p-button icon="pi pi-phone" [rounded]="true" severity="info" [outlined]="true" (click)="makePhoneCall()"/>
+        <p-button icon="pi pi-comment" [rounded]="true" severity="warning" [outlined]="true" (click)="sendSms()"/>
+      </div>
     </div>
   </p-dialog>
 

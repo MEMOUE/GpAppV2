@@ -115,20 +115,40 @@ export class AccueilComponent implements OnInit {
 
   scrollLeft(): void {
     const wrapper = document.querySelector('.programmes-wrapper') as HTMLElement;
-    wrapper.style.animationPlayState = 'paused'; // Pause l'animation automatique
-    wrapper.scrollBy({ left: -300, behavior: 'smooth' });
-    setTimeout(() => {
-      wrapper.style.animationPlayState = 'running'; // Reprend l'animation après 1 seconde
-    }, 1000);
+    const programmeCard = document.querySelector('.programme-card') as HTMLElement;
+
+    if (wrapper && programmeCard) {
+      // Calculer la largeur de trois cartes de programme
+      const cardWidth = programmeCard.offsetWidth;
+      const margin = 10; // marge approximative entre les cartes
+      const scrollDistance = (cardWidth + margin) * 3; // Défilement pour 3 programmes
+
+      wrapper.style.animationPlayState = 'paused'; // Pause l'animation automatique
+      wrapper.scrollBy({ left: -scrollDistance, behavior: 'smooth' });
+
+      setTimeout(() => {
+        wrapper.style.animationPlayState = 'running'; // Reprend l'animation après 1 seconde
+      }, 1000);
+    }
   }
 
   scrollRight(): void {
     const wrapper = document.querySelector('.programmes-wrapper') as HTMLElement;
-    wrapper.style.animationPlayState = 'paused'; // Pause l'animation automatique
-    wrapper.scrollBy({ left: 300, behavior: 'smooth' });
-    setTimeout(() => {
-      wrapper.style.animationPlayState = 'running'; // Reprend l'animation après 1 seconde
-    }, 1000);
+    const programmeCard = document.querySelector('.programme-card') as HTMLElement;
+
+    if (wrapper && programmeCard) {
+      // Calculer la largeur de trois cartes de programme
+      const cardWidth = programmeCard.offsetWidth;
+      const margin = 10; // marge approximative entre les cartes
+      const scrollDistance = (cardWidth + margin) * 3; // Défilement pour 3 programmes
+
+      wrapper.style.animationPlayState = 'paused'; // Pause l'animation automatique
+      wrapper.scrollBy({ left: scrollDistance, behavior: 'smooth' });
+
+      setTimeout(() => {
+        wrapper.style.animationPlayState = 'running'; // Reprend l'animation après 1 seconde
+      }, 1000);
+    }
   }
 
   pauseScroll(): void {
@@ -141,25 +161,24 @@ export class AccueilComponent implements OnInit {
     wrapper.style.animationPlayState = 'running'; // Reprend l'animation après le survol
   }
 
-
-  // Méthode pour ouvrir WhatsApp
-  openWhatsApp(phoneNumber: string): void {
-    // @ts-ignore
-    window.open(`https://wa.me/${phoneNumber}`, '_blank');
+// Pour le dialog (sans paramètre, utilise selectedProgramme)
+  openWhatsApp(): void {
+    if (this.selectedProgramme?.agentGp?.telephone) {
+      window.open(`https://wa.me/${this.selectedProgramme.agentGp.telephone}`, '_blank');
+    }
   }
 
-  // Méthode pour passer un appel téléphonique
-  makePhoneCall(phoneNumber: string): void {
-    // @ts-ignore
-    window.location.href = `tel:+${phoneNumber}`;
+  makePhoneCall(): void {
+    if (this.selectedProgramme?.agentGp?.telephone) {
+      window.location.href = `tel:+${this.selectedProgramme.agentGp.telephone}`;
+    }
   }
 
-  // Méthode pour envoyer un SMS
-  sendSms(phoneNumber: string): void {
-    // @ts-ignore
-    window.open(`sms:+${phoneNumber}`, '_blank');
+  sendSms(): void {
+    if (this.selectedProgramme?.agentGp?.telephone) {
+      window.open(`sms:+${this.selectedProgramme.agentGp.telephone}`, '_blank');
+    }
   }
-
 
   // Méthode pour afficher les détails
   showDetails(programme: Programmegp): void {

@@ -3,13 +3,14 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Programmegp} from '../model/Programmegp';
 import {Besoin} from '../model/Besoin';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GpService {
 
-  private apiURL: string = 'http://localhost:8080/api/';
+  private apiURL: string = `${environment.apiUrl}`;
   private gpEndpoint: string = `${this.apiURL}programmegp`;
   private gpEndpoint_searsh: string = `${this.apiURL}programmegp/searsh`;
 

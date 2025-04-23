@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {firstValueFrom} from 'rxjs';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrackingService {
-  private trackingUrl = 'http://localhost:8080/api/tracking'; // URL du backend
+  private trackingUrl = `${environment.apiUrl}tracking`; // URL du backend
 
   constructor(private http: HttpClient) {}
 
