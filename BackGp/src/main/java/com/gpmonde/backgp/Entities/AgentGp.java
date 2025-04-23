@@ -31,7 +31,7 @@ public class AgentGp extends Utilisateur {
 	private String telephone;
 
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "agent_destinations", joinColumns = @JoinColumn(name = "agent_id"))
 	@Column(name = "destination")
 	private Set<String> destinations = new HashSet<>();
