@@ -1,7 +1,8 @@
-<button (click)="toggleMenu()" class="menu-toggle-btn">
-  <i class="pi pi-bars"></i>
+<button (click)="toggleMenu()" class="menu-toggle-btn" [class.menu-visible]="isMenuVisible" [class.menu-hidden]="!isMenuVisible">
+  <i class="pi" [ngClass]="isMenuVisible ? 'pi-chevron-left' : 'pi-chevron-right'"></i>
 </button>
-<div class="sidebar-menu" [class.open]="isMenuOpen">
+
+<div class="sidebar-menu" [class.open]="isMenuOpen" [class.closed]="!isMenuVisible">
   <ul>
     <li>
       <a href="/accueilgp">
@@ -27,12 +28,6 @@
         <span *ngIf="isMenuOpen">{{ 'sidebar.needGP' | translate }}</span>
       </a>
     </li>
-<!--    <li>-->
-<!--      <a href="/listgp">-->
-<!--        <i class="pi pi-tags"></i>-->
-<!--        <span *ngIf="isMenuOpen">{{ 'sidebar.offersGP' | translate }}</span>-->
-<!--      </a>-->
-<!--    </li>-->
     <li>
       <a href="/publicite">
         <i class="pi pi-cart-plus"></i>
@@ -45,12 +40,6 @@
         <span *ngIf="isMenuOpen">{{ 'sidebar.partnership' | translate }}</span>
       </a>
     </li>
-<!--    <li>-->
-<!--      <a href="/avis">-->
-<!--        <i class="pi pi-comments"></i>-->
-<!--        <span *ngIf="isMenuOpen">{{ 'sidebar.message' | translate }}</span>-->
-<!--      </a>-->
-<!--    </li>-->
     <li>
       <a href="/historique">
         <i class="pi pi-clock"></i>
@@ -58,7 +47,4 @@
       </a>
     </li>
   </ul>
-  <button (click)="toggleMenu()" class="menu-toggle-btn-arrow">
-    <i class="pi" [ngClass]="isMenuOpen ? 'pi-chevron-left' : 'pi-chevron-right'"></i>
-  </button>
 </div>

@@ -137,3 +137,155 @@ canvas {
 :host ::ng-deep .p-dropdown:focus {
   box-shadow: 0 0 0 2px var(--accent-color);
 }
+/* Styles supplémentaires pour le nouveau template */
+
+/* Style pour les sections du formulaire */
+.form-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: var(--gray-light);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--primary-color);
+}
+
+/* Style pour les détails du programme */
+.detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.detail-item {
+  flex: 1;
+  min-width: 200px;
+}
+
+.detail-item.full-width {
+  flex-basis: 100%;
+}
+
+.detail-item .label {
+  font-weight: 600;
+  color: var(--secondary-color);
+  display: inline-block;
+  min-width: 100px;
+}
+
+.detail-item .value {
+  font-weight: 500;
+}
+
+/* Style pour la zone de signature */
+.signature-section {
+  margin-bottom: 30px;
+}
+
+.signature-container {
+  background-color: var(--gray-light);
+  padding: 15px;
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signature-container canvas {
+  background-color: white;
+  margin-bottom: 15px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.signature-hint {
+  color: var(--danger-color);
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* Style pour les boutons d'action */
+.form-actions {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+}
+
+.form-actions .p-button {
+  min-width: 200px;
+}
+
+/* Style pour les options de partage */
+.share-options {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: var(--accent-color);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.share-title {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--secondary-color);
+}
+
+.share-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Style pour les messages d'erreur */
+.text-danger {
+  color: var(--danger-color);
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Amélioration des champs de saisie */
+:host ::ng-deep .p-inputnumber {
+  width: 100%;
+}
+
+:host ::ng-deep .p-inputtext:enabled:focus {
+  box-shadow: 0 0 0 2px var(--accent-color);
+  border-color: var(--primary-color);
+}
+
+/* Animation pour les sections au chargement */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.programme-details,
+.form-section,
+.signature-section,
+.invoice-actions {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Responsive design pour mobile */
+@media (max-width: 576px) {
+  .container {
+    padding: 15px;
+    margin: 10px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-actions .p-button {
+    width: 100%;
+  }
+}
