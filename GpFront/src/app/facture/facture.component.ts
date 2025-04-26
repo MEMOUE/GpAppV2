@@ -78,7 +78,7 @@ export class FactureComponent implements OnInit, AfterViewInit {
   }
 
   fetchProgrammes() {
-    this.http.get<Programmegp[]>('http://147.79.101.109:8080/api/programmegp/mylist').subscribe(
+    this.http.get<Programmegp[]>('http://localhost:8080/api/programmegp/mylist').subscribe(
       (data) => (this.programmes = data),
       (error) => console.error('Erreur de récupération des programmes:', error)
     );

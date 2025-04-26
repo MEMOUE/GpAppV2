@@ -12,13 +12,8 @@ public class UserActivity {
 	private Long id;
 
 	private String ip;
-	private Double latitude;
-	private Double longitude;
 	private String page;
 	private LocalDateTime timestamp;
-
 	private String country;
 	private String city;
 }
-
-

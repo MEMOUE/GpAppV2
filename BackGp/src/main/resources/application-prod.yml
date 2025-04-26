@@ -51,10 +51,18 @@ jwt:
 
 server:
   port: 8080
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: GpMonde@2022
+    key-store-type: PKCS12
+    key-alias: ton_key_alias
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
     min-response-size: 1024
+
+
 
 logging:
   level:

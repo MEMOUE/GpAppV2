@@ -42,6 +42,7 @@ public class SecurityConfig {
 								"api/programmegp/**",
 								"api/programmegp/searsh/**",
 								"/api/tracking",
+								"/favicon.ico",
 								//Base H2
 								"/h2-console/**",
 								//OpenApi
@@ -73,7 +74,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://147.79.101.109:8080","http://gpmonde.com","http://www.gpmonde.com"));
+		configuration.setAllowedOrigins(List.of("http://localhost:4200","http://gpmonde.com","http://www.gpmonde.com"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 		configuration.setAllowCredentials(true);
