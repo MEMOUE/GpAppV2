@@ -17,7 +17,7 @@ public class RoleService {
 
 	@PostConstruct
 	public void initRoles() {
-		String[] defaultRoles = {"ROLE_USER", "ROLE_ADMINGP"};
+		String[] defaultRoles = {"ROLE_USER", "ROLE_AGENTGP"};
 
 		for (String roleName : defaultRoles) {
 			if (roleRepository.findByName(roleName).isEmpty()) {

@@ -26,7 +26,7 @@ public class AgentGpService {
 	private final UtilisateurRepository utilisateurRepository;
 	private final VerificationServiceRegister verificationServiceRegister;
 
-	private static final String DEFAULT_ROLE = "ROLE_ADMINGP";
+	private static final String DEFAULT_ROLE = "ROLE_AGENTGP";
 
 	/**
 	 * Crée un nouvel agent GP avec le rôle par défaut.
