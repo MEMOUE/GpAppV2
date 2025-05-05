@@ -42,7 +42,7 @@ export class AppComponent {
   }
 
   isAdmin(): boolean {
-    return this.authService.hasRole('ROLE_ADMINGP');
+    return this.authService.hasRole('ROLE_AGENTGP');
   }
 
   logout(): void {

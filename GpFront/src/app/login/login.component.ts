@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
 
           const roles = this.authService.getUserRoles();
 
-          if (roles.includes('ROLE_ADMINGP')) {
+          if (roles.includes('ROLE_AGENTGP')) {
             this.router.navigate(['/accueilgp']);
           } else {
             this.router.navigate(['/']);

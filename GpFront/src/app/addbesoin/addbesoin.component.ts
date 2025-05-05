@@ -108,7 +108,7 @@ export class AddbesoinComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.authService.hasRole('ROLE_ADMINGP');
+    return this.authService.hasRole('ROLE_AGENTGP');
   }
 
 }
