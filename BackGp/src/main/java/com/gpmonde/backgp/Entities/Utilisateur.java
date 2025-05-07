@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.minidev.json.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +35,6 @@ public class Utilisateur {
 	@Column(name = "reset_token")
 	private String resetToken;
 
-
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "utilisateur_roles",
@@ -43,4 +42,13 @@ public class Utilisateur {
 			inverseJoinColumns = @JoinColumn(name = "role_id")
 	)
 	private Set<Role> roles = new HashSet<>();
+
+	@ManyToMany
+	@JoinTable(
+			name = "utilisateur_suivi_agentgp",
+			joinColumns = @JoinColumn(name = "utilisateur_id"),
+			inverseJoinColumns = @JoinColumn(name = "agentgp_id")
+	)
+	@JsonIgnore  // Fonctionne maintenant correctement
+	private Set<AgentGp> agentsSuivis = new HashSet<>();
 }

@@ -43,6 +43,7 @@ public class SecurityConfig {
 								"api/programmegp/searsh/**",
 								"/api/tracking",
 								"/favicon.ico",
+								"/api/suivi/**",
 								//Base H2
 								"/h2-console/**",
 								//OpenApi
