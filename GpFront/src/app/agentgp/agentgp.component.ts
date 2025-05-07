@@ -30,6 +30,8 @@ export class AgentgpComponent implements OnInit {
   agences: AgentGp[] = [];
   selectedAgence: AgentGp | null = null;
   displayDialog: boolean = false;
+  suivis: { [key: number]: boolean } = {};
+  utilisateurId!: number;
 
   constructor(
     private agenceService: AgenceService,
@@ -40,17 +42,34 @@ export class AgentgpComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.utilisateurId = Number(sessionStorage.getItem('iduser'));
+
     this.route.queryParams.subscribe(params => {
       this.depart = params['depart'];
       this.destination = params['destination'];
+
       if (this.depart && this.destination) {
         this.agenceService.getAgences(this.depart, this.destination).subscribe(data => {
           this.agences = data;
+
+          // Initialiser suivis à false
+          this.agences.forEach(agence => {
+            this.suivis[agence.id] = false;
+          });
+
+          // Récupérer les agents déjà suivis
+          this.agenceService.getAgentsSuivis(this.utilisateurId).subscribe(suivis => {
+            suivis.forEach(agent => {
+              this.suivis[agent.id] = true;
+            });
+          });
         });
       }
     });
-    this.trackingService.trackUserAction('Recherche AgenceGp ');
+
+    this.trackingService.trackUserAction('Recherche AgenceGp');
   }
+
 
   openDetailDialog(agence: AgentGp): void {
     this.selectedAgence = agence;
@@ -69,4 +88,17 @@ export class AgentgpComponent implements OnInit {
   goToPublication(): void {
     this.router.navigate(['/publication']);
   }
+
+  toggleSuivi(agence: AgentGp): void {
+    if (this.suivis[agence.id]) {
+      this.agenceService.arreterSuivreAgent(this.utilisateurId, agence.id).subscribe(() => {
+        this.suivis[agence.id] = false;
+      });
+    } else {
+      this.agenceService.suivreAgent(this.utilisateurId, agence.id).subscribe(() => {
+        this.suivis[agence.id] = true;
+      });
+    }
+  }
+
 }

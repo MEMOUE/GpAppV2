@@ -14,23 +14,31 @@
       </div>
 
       <!-- Image -->
-      <img src="images/agencegp.jpg" class="card-img-top img-fluid" alt="Programme image" style="max-height: 200px; object-fit: contain;">
+      <img src="images/agencegp.jpg" (click)="openDetailDialog(agence)" class="card-img-top img-fluid" alt="Programme image" style="max-height: 200px; object-fit: contain;">
 
-      <div class="card-body">
+      <div class="card-body" (click)="openDetailDialog(agence)">
         <h5 class="card-title">
           <i class="pi pi-building"></i> {{ agence.nomagence }}
         </h5>
         <p><i class="pi pi-map-marker"></i> {{ agence.adresse }}</p>
         <p><i class="pi pi-phone"></i> {{ agence.telephone }}</p>
       </div>
-
-
       <!-- Footer avec boutons d'action -->
       <div class="card-footer d-flex justify-content-between">
         <button pButton icon="pi pi-whatsapp" class="p-button-success p-button-rounded" (click)="contactAgent(agence.telephone)"></button>
         <button pButton icon="pi pi-phone" class="p-button-info p-button-rounded" (click)="callAgent(agence.telephone)"></button>
-        <button pButton label="Détails" icon="pi pi-info-circle" class="p-button-primary p-button-sm" (click)="openDetailDialog(agence)"></button>
+        <button
+          pButton
+          [label]="suivis[agence.id] ? 'Suivi' : 'Suivre'"
+          [icon]="suivis[agence.id] ? 'pi pi-user-check' : 'pi pi-user-plus'"
+          [class.p-button-warning]="!suivis[agence.id]"
+          [class.p-button-success]="suivis[agence.id]"
+          class="p-button-sm"
+          (click)="toggleSuivi(agence)">
+        </button>
       </div>
+
+
     </div>
   </div>
 </div>
@@ -46,6 +54,15 @@
     <ul>
       <li *ngFor="let destination of selectedAgence.destinations">{{ destination }}</li>
     </ul>
+    <div class="mt-3 d-flex gap-3">
+      <a [href]="'tel:' + selectedAgence.telephone" target="_blank">
+        <button pButton type="button" icon="pi pi-phone" label="Appeler" class="p-button-info"></button>
+      </a>
+      <a [href]="'https://wa.me/' + selectedAgence.telephone" target="_blank">
+        <button pButton type="button" icon="pi pi-whatsapp" label="WhatsApp" class="p-button-success"></button>
+      </a>
+    </div>
+
   </div>
 </p-dialog>
 

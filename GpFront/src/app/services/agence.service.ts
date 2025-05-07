@@ -11,9 +11,21 @@ export class AgenceService {
 
   constructor(private http: HttpClient) {}
 
-  /////////////         OffreGP               /////////////////////////////
 
   getAgences(depart: string, destination: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}?depart=${depart}&destination=${destination}`);
   }
+
+  suivreAgent(utilisateurId: number, agentId: number): Observable<any> {
+    return this.http.post(`${environment.apiUrl}suivi/suivre/${utilisateurId}/${agentId}`, {});
+  }
+
+  arreterSuivreAgent(utilisateurId: number, agentId: number): Observable<any> {
+    return this.http.post(`${environment.apiUrl}suivi/arreter/${utilisateurId}/${agentId}`, {});
+  }
+
+  getAgentsSuivis(utilisateurId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}suivi/agents-suivis/${utilisateurId}`);
+  }
+
 }
