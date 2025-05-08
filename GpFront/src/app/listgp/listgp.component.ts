@@ -10,13 +10,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import {AuthService} from '../services/auth.service';
 import { DialogModule } from 'primeng/dialog';
 import {TrackingService} from '../services/tracking-service.service';
+import {FooterComponent} from '../footer/footer.component';
 
 
 
 @Component({
   selector: 'app-listgp',
   standalone: true,
-  imports: [ CardModule, Button, CurrencyPipe, NgForOf, TableModule, InputTextModule, NgIf, DialogModule],
+  imports: [CardModule, Button, CurrencyPipe, NgForOf, TableModule, InputTextModule, NgIf, DialogModule, FooterComponent],
   templateUrl: './listgp.component.html',
   styleUrl: './listgp.component.css'
 })
@@ -27,6 +28,8 @@ export class ListgpComponent implements OnInit {
   offres: Programmegp[] = [];
   selectedProgramme: Programmegp | null = null;
   displayDetails: boolean = false;
+  errorMessage: string | null = null;
+
 
 
   constructor(
@@ -42,19 +45,31 @@ export class ListgpComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.depart = params['depart'];
       this.destination = params['destination'];
+
       if (this.depart && this.destination) {
-        this.gpService.getOffres(this.depart, this.destination).subscribe(data => {
-          this.offres = data;
+        this.gpService.getOffres(this.depart, this.destination).subscribe({
+          next: data => {
+            if (Array.isArray(data)) {
+              this.offres = data;
+              this.errorMessage = data.length === 0 ? 'Aucun programme disponible pour le moment.' : null;
+            } else {
+              this.offres = [];
+              this.errorMessage = 'Aucun programme disponible pour le moment.';
+            }
+          },
+          error: error => {
+            this.offres = [];
+            this.errorMessage = 'Une erreur s\'est produite lors du chargement des programmes.';
+            console.error(error);
+          }
         });
       }
     });
-
-    this.trackingService.trackUserAction('Recherche Gp page ');
   }
 
 
 
-  // Méthode pour alterner l'état d'expansion de la carte
+    // Méthode pour alterner l'état d'expansion de la carte
   onCardClick(programme: Programmegp): void {
     programme.isExpanded = !programme.isExpanded;
   }

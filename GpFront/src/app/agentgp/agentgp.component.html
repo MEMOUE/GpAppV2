@@ -1,12 +1,14 @@
 <div class="row row-cols-1 row-cols-md-3 g-4 mt-5 mb-5 flex justify-content-center flex-wrap">
   <!-- Message si aucune offre n'est disponible -->
-  <div *ngIf="agences.length === 0" class="  text-center mt-4">
-    <p class="text-muted">Aucun programme disponible pour le moment.</p>
+  <div *ngIf="errorMessage" class="text-center mt-4">
+    <p class="text-muted">{{ errorMessage }}</p>
     <p-button label="Publier un besoin" icon="pi pi-plus-circle" (onClick)="goToPublication()" class="p-button-primary"></p-button>
   </div>
+
+
+  <!-- Si des agences sont disponibles, afficher la liste -->
   <div class="col" *ngFor="let agence of agences">
     <div class="card h-100" style="max-width: 320px; margin: 0 auto;">
-
       <!-- Nom de l'agence avec l'icône -->
       <div class="card-header bg-info d-flex align-items-center">
         <i class="pi pi-user me-2"></i>
@@ -37,8 +39,6 @@
           (click)="toggleSuivi(agence)">
         </button>
       </div>
-
-
     </div>
   </div>
 </div>
@@ -62,8 +62,16 @@
         <button pButton type="button" icon="pi pi-whatsapp" label="WhatsApp" class="p-button-success"></button>
       </a>
     </div>
-
   </div>
+</p-dialog>
+
+<!-- Dialog de connexion -->
+<p-dialog header="Veuillez vous connecter" [(visible)]="displayLoginDialog" [modal]="true" [closable]="true">
+  <p>Vous devez être connecté pour suivre une agence.</p>
+  <p-footer>
+    <button pButton label="Se connecter" icon="pi pi-sign-in" (click)="goToLogin()"></button>
+    <button pButton label="Annuler" icon="pi pi-times" (click)="displayLoginDialog = false"></button>
+  </p-footer>
 </p-dialog>
 
 <app-footer></app-footer>

@@ -13,11 +13,12 @@ import {FooterComponent} from '../footer/footer.component';
 import {Router} from '@angular/router';
 import {AuthService} from '../services/auth.service';
 import {TrackingService} from '../services/tracking-service.service';
+import {DialogModule} from 'primeng/dialog';
 
 @Component({
   selector: 'app-addbesoin',
   standalone: true,
-  imports: [MenuComponent, ReactiveFormsModule, CommonModule, InputTextModule, ButtonModule, CalendarModule, InputNumberModule, MessageModule, FooterComponent],
+  imports: [MenuComponent, ReactiveFormsModule, CommonModule, InputTextModule, ButtonModule, CalendarModule, InputNumberModule, MessageModule, FooterComponent, DialogModule],
   templateUrl: './addbesoin.component.html',
   styleUrl: './addbesoin.component.css'
 })
@@ -28,6 +29,7 @@ export class AddbesoinComponent implements OnInit {
   messageType: 'success' | 'error' = 'success';
   besoins: Besoin[] = [];
   showForm: boolean = false;
+  showLoginDialog: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -49,6 +51,10 @@ export class AddbesoinComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.showLoginDialog = true;
+      return;
+    }
     if (this.addBesoinForm.invalid) {
       this.responseMessage = "Veuillez remplir tous les champs correctement.";
       this.messageType = 'error';
@@ -111,4 +117,8 @@ export class AddbesoinComponent implements OnInit {
     return this.authService.hasRole('ROLE_AGENTGP');
   }
 
+  redirectToLogin(): void {
+    this.showLoginDialog = false;
+    this.router.navigate(['/login']); // adapte le chemin si besoin
+  }
 }

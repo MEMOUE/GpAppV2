@@ -4,15 +4,13 @@ import { FooterComponent } from '../footer/footer.component';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GpService } from '../services/gp.service';
-import { AgenceService } from '../services/agence.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
 import { InputTextModule } from 'primeng/inputtext';
-import { Programmegp } from '../model/Programmegp';
 import {DialogModule} from 'primeng/dialog';
-import {AdsenseComponent} from '../adsense/adsense.component';
 import {TrackingService} from '../services/tracking-service.service';
+import {Programmegp} from '../model/Programmegp';
 
 @Component({
   selector: 'app-accueil',
@@ -26,7 +24,6 @@ import {TrackingService} from '../services/tracking-service.service';
     CarouselModule,
     InputTextModule,
     DialogModule,
-    AdsenseComponent,
   ],
   templateUrl: './accueil.component.html',
   styleUrls: ['./accueil.component.css'],

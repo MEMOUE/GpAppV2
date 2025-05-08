@@ -9,6 +9,7 @@ import { MenuModule } from 'primeng/menu';
 import {AuthService} from './services/auth.service';
 import {Observable} from 'rxjs';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {NotificationDTO, NotificationService} from './services/notification.service';
 
 
 
@@ -22,6 +23,8 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 export class AppComponent {
   title = 'GpMonde';
   isAuthenticated$: Observable<boolean>;
+  notifications: NotificationDTO[] = [];
+  unreadCount = 0;
   // Dropdown items
   items: MenuItem[] = [
     { label: 'Connexion', icon: 'pi pi-sign-in', routerLink: '/login' },
@@ -30,11 +33,19 @@ export class AppComponent {
     { label: 'Deconnexion', icon: 'pi pi-sign-out' }
   ];
 
-  constructor(private authService: AuthService, private router: Router, private translate: TranslateService) {
+  constructor(private authService: AuthService,
+              private router: Router,
+              private translate: TranslateService,
+              public notifService: NotificationService) {
     this.isAuthenticated$ = this.authService.isAuthenticated$;
 
     translate.setDefaultLang('fr');
     translate.use('fr');
+
+    this.notifService.notifications$.subscribe((list) => {
+      this.notifications = list;
+      this.unreadCount = list.filter(n => !n.lu).length;
+    });
   }
 
   changeLanguage(lang: string) {
@@ -54,6 +65,11 @@ export class AppComponent {
         console.error('Échec de la déconnexion :', err);
       }
     });
+  }
+
+  openNotification(notif: NotificationDTO) {
+    this.notifService.selectNotification(notif);
+    this.router.navigate(['/notification']);
   }
 
 }

@@ -19,6 +19,7 @@ import {AdminGuard} from './guards/admin.guard';
 import {ResetPasswordComponent} from './reset-password/reset-password.component';
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 import {VerifyComponent} from './verify/verify.component';
+import {NotificationComponent} from './notification/notification.component';
 
 export const routes: Routes = [
 
@@ -40,5 +41,6 @@ export const routes: Routes = [
   { path: 'edit/:id', component: AddgpComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'verify', component: VerifyComponent }
+  { path: 'verify', component: VerifyComponent },
+  {path: 'notification', component: NotificationComponent}
 ];

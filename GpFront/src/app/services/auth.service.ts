@@ -129,4 +129,8 @@ export class AuthService {
     this.verificationStatusSubject.next(status);
   }
 
+  isLoggedIn(): boolean {
+    return !!sessionStorage.getItem('iduser');
+  }
+
 }

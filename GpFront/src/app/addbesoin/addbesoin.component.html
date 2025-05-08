@@ -80,6 +80,14 @@
     </div>
   </div>
 
+  <p-dialog header="Connexion requise" [(visible)]="showLoginDialog" [modal]="true" [closable]="false" [dismissableMask]="true">
+    <p>Vous devez être connecté pour publier un besoin.</p>
+    <div class="p-d-flex p-jc-end mt-3">
+      <p-button  label="Se connecter" icon="pi pi-sign-in" class="p-button-primary" (click)="redirectToLogin()"/>
+    </div>
+  </p-dialog>
+
+
   <!-- Liste des besoins -->
   <div class="row mt-4">
     <div class="col-md-4 col-12 mb-4" *ngFor="let besoin of besoins">

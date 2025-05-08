@@ -46,11 +46,18 @@
                   <i class="pi pi-home"></i> {{ 'home' | translate }} <!-- Texte traduit -->
                 </a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="besoingp">
-                  <i class="pi pi-bell"></i> {{ 'notify' | translate }} <!-- Texte traduit -->
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+                  <i class="pi pi-bell"></i> {{ 'notify' | translate }}
+                  <span *ngIf="unreadCount > 0" class="badge bg-danger">{{ unreadCount }}</span>
                 </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li *ngFor="let notif of notifications" (click)="openNotification(notif)" class="dropdown-item">
+                    {{ notif.message }}
+                  </li>
+                </ul>
               </li>
+
               <li class="nav-item">
                 <a *ngIf="isAdmin()" class="nav-link" href="/accueilgp">
                   <i class="pi pi-chart-line"></i> {{ 'dashboard' | translate }} <!-- Texte traduit -->
