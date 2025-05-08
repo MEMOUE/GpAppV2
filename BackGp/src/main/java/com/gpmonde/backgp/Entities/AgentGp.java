@@ -35,6 +35,6 @@ public class AgentGp extends Utilisateur {
 	private Set<String> destinations = new HashSet<>();
 
 	@ManyToMany(mappedBy = "agentsSuivis")
-	@JsonIgnore  // Fonctionne maintenant correctement
+	@JsonIgnore
 	private Set<Utilisateur> suiveurs = new HashSet<>();
 }

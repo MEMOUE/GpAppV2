@@ -11,6 +11,7 @@ import com.gpmonde.backgp.Repositorys.UtilisateurRepository;
 import com.gpmonde.backgp.Repositorys.VerificationTokenRepositoryRegister;
 import com.gpmonde.backgp.Services.AuthService;
 import com.gpmonde.backgp.Services.UtilisateurService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import java.util.Map;
 //@CrossOrigin("*")
 @RequestMapping("/api/auth")
 @RestController
+@Tag(name = "Authentification")
 public class AuthController {
 
 	private final AuthService authService;

@@ -2,6 +2,7 @@ package com.gpmonde.backgp.Controllers;
 
 import com.gpmonde.backgp.Entities.AgentGp;
 import com.gpmonde.backgp.Services.AgentGpService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/agentgp")
-//@CrossOrigin("*")
+@Tag(name = "AgentGp")
 public class AgentGpController {
 
 	private final AgentGpService agentGpService;

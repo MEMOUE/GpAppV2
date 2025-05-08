@@ -1,11 +1,14 @@
 package com.gpmonde.backgp.Services;
 
+import com.gpmonde.backgp.DTO.NotificationDTO;
 import com.gpmonde.backgp.Entities.AgentGp;
 import com.gpmonde.backgp.Entities.ProgrammeGp;
+import com.gpmonde.backgp.Entities.Utilisateur;
 import com.gpmonde.backgp.Exceptions.AgenceOrProgrammeGpNotFoundException;
 import com.gpmonde.backgp.Repositorys.ProgrammeGpRepository;
 import com.gpmonde.backgp.Repositorys.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -18,9 +21,24 @@ public class ProgrammeGpService {
 
 	private final UtilisateurRepository utilisateurRepository;
 	private final ProgrammeGpRepository programmeGpRepository;
+	private final NotificationService notificationService;
 
 	public ProgrammeGp addProgramme(ProgrammeGp programmeGp) {
-		return programmeGpRepository.save(programmeGp);
+		// Sauvegarder le programme
+		ProgrammeGp savedProgramme = programmeGpRepository.save(programmeGp);
+
+		// Récupérer l'agent concerné
+		AgentGp agent = programmeGp.getAgentGp();
+
+		// Construire le message de notification
+		String message = "Nouvelle publication par l'agence " + agent.getNomagence();
+
+		// Notifier tous les suiveurs de l'agent
+		for (Utilisateur suiveur : agent.getSuiveurs()) {
+			notificationService.sendNotification(suiveur, message, agent.getNomagence());
+		}
+
+		return savedProgramme;
 	}
 
 	public List<ProgrammeGp> getAllProgrammes() {

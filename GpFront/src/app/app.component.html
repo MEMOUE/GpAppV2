@@ -1,23 +1,6 @@
 <div class="hero_area">
   <!-- Header Section Start -->
   <header class="header_section">
-<!--    <div class="header_top bg-info">-->
-<!--      <div class="container-fluid">-->
-<!--        <div class="contact_nav d-flex justify-content-between">-->
-<!--          <a href="tel:+221784886752" style="color: black;">-->
-<!--            <i class="pi pi-phone"></i>-->
-<!--          </a>-->
-<!--          <a href="mailto:gpmonde22@gmail.com" style="color: black;">-->
-<!--            <i class="pi pi-envelope"></i>-->
-<!--          </a>-->
-<!--          <a href="#" style="color: black;">-->
-<!--            <i class="pi pi-map-marker"></i>-->
-<!--            <span>Siège</span>-->
-<!--          </a>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-
     <div class="header_bottom bg-body-secondary">
       <div class="container-fluid">
         <nav class="navbar navbar-expand-lg custom_nav-container d-flex justify-content-between align-items-center">
@@ -39,7 +22,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
 
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto">
               <li class="nav-item">
                 <a class="nav-link" routerLink="/">
@@ -47,16 +30,18 @@
                 </a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
-                  <i class="pi pi-bell"></i> {{ 'notify' | translate }}
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  <i class="pi pi-bell"></i> Notifications
                   <span *ngIf="unreadCount > 0" class="badge bg-danger">{{ unreadCount }}</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li *ngFor="let notif of notifications" (click)="openNotification(notif)" class="dropdown-item">
                     {{ notif.message }}
                   </li>
+                  <li *ngIf="notifications.length === 0" class="dropdown-item text-muted">Aucune notification</li>
                 </ul>
               </li>
+
 
               <li class="nav-item">
                 <a *ngIf="isAdmin()" class="nav-link" href="/accueilgp">

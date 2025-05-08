@@ -2,6 +2,7 @@ package com.gpmonde.backgp.Controllers;
 
 import com.gpmonde.backgp.Entities.ProgrammeGp;
 import com.gpmonde.backgp.Services.ProgrammeGpService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-//@CrossOrigin("*")
+@Tag(name = "ProgrammeGp")
 @RequestMapping("/api/programmegp")
 public class ProgrammeGpController {
 

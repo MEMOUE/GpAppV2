@@ -4,6 +4,7 @@ import com.gpmonde.backgp.Entities.AgentGp;
 import com.gpmonde.backgp.Entities.Utilisateur;
 import com.gpmonde.backgp.Repositorys.AgentGPRepository;
 import com.gpmonde.backgp.Repositorys.UtilisateurRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/suivi")
+@Tag(name = "Suivi")
 @RequiredArgsConstructor
 public class SuiviController {
 

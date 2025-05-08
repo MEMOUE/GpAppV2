@@ -2,6 +2,7 @@ package com.gpmonde.backgp.Controllers;
 import com.gpmonde.backgp.DTO.LoginRequest;
 import com.gpmonde.backgp.Entities.Utilisateur;
 import com.gpmonde.backgp.Services.UtilisateurService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-//@CrossOrigin("*")
+@Tag(name = "Utilisateur")
 public class UtilisateurController {
 
 	private final UtilisateurService utilisateurService;

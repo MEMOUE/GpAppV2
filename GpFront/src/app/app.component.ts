@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {Router, RouterModule} from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -9,7 +9,8 @@ import { MenuModule } from 'primeng/menu';
 import {AuthService} from './services/auth.service';
 import {Observable} from 'rxjs';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {NotificationDTO, NotificationService} from './services/notification.service';
+import {NotificationDTO} from './model/NotificationDTO';
+import {NotificationService} from './services/notification.service';
 
 
 
@@ -20,7 +21,7 @@ import {NotificationDTO, NotificationService} from './services/notification.serv
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   title = 'GpMonde';
   isAuthenticated$: Observable<boolean>;
   notifications: NotificationDTO[] = [];
@@ -45,6 +46,18 @@ export class AppComponent {
     this.notifService.notifications$.subscribe((list) => {
       this.notifications = list;
       this.unreadCount = list.filter(n => !n.lu).length;
+    });
+  }
+
+  ngOnInit(): void {
+// Charger les anciennes notifications depuis le backend
+    const userId =  this.authService.getUserId();
+    this.notifService.loadNotifications(userId);
+
+    // S'abonner aux notifications en temps réel (WebSocket)
+    this.notifService.notifications$.subscribe(notifs => {
+      this.notifications = notifs;
+      this.unreadCount = notifs.filter(n => !n.lu).length;
     });
   }
 

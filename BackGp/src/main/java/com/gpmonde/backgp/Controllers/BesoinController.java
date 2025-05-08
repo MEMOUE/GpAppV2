@@ -2,6 +2,7 @@ package com.gpmonde.backgp.Controllers;
 
 import com.gpmonde.backgp.Entities.Besoin;
 import com.gpmonde.backgp.Services.BesoinService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-//@CrossOrigin("*")
+@Tag(name = "Besoins")
 @RequestMapping("/api/besoins")
 public class BesoinController {
 

@@ -16,3 +16,24 @@
   width: 20px;
   height: 15px;
 }
+
+@media (max-width: 991px) {
+  .navbar-collapse {
+    text-align: right;
+  }
+
+  .navbar-nav {
+    margin-left: auto;
+  }
+
+  .navbar-nav .nav-item {
+    margin-right: 0;
+    margin-left: 15px; /* Pour l'espacement à gauche */
+  }
+
+  .navbar-nav .nav-item:last-child {
+    margin-left: 0;
+  }
+}
+
+

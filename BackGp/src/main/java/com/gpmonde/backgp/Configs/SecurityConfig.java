@@ -34,28 +34,29 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable())
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(
-								"/api/user/**",
-								"/api/agentgp/**",
-								"/api/auth/login/**",
-								"/api/auth/logout/**",
-								"api/programmegp/**",
-								"api/programmegp/searsh/**",
-								"/api/tracking",
-								"/favicon.ico",
-								"/api/suivi/**",
-								//Base H2
-								"/h2-console/**",
-								//OpenApi
-								"/swagger-ui/**",
-								"/swagger-resources/**",
-								"swagger-ui.html/**",
-								"/api/programmegp/mylist/**",
-								"/api/auth/verify/**",
-								"/api/besoins/**",
-								"/api/auth/forgot-password/**",
-								"/api/auth/reset-password/**",
-								"/v3/api-docs/**").permitAll()
+								.requestMatchers(
+										"/api/user/**",
+										"/api/agentgp/**",
+										"/api/auth/login/**",
+										"/api/auth/logout/**",
+										"/api/programmegp/**",
+										"/api/programmegp/searsh/**",
+										"/api/tracking",
+										"/favicon.ico",
+										"/api/suivi/**",
+										"/ws/**",
+										"/api/notifications/user/**",
+										"/h2-console/**",
+										"/swagger-ui/**",
+										"/swagger-resources/**",
+										"/swagger-ui.html/**",
+										"/api/programmegp/mylist/**",
+										"/api/auth/verify/**",
+										"/api/besoins/**",
+										"/api/auth/forgot-password/**",
+										"/api/auth/reset-password/**",
+										"/v3/api-docs/**"
+								).permitAll()
 //						.requestMatchers(
 //								"").authenticated()
 
