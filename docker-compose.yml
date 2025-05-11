@@ -1,76 +1,87 @@
 version: '3.8'
 
 services:
-  # Application Frontend Angular
-  frontend:
-    build:
-      context: ./GpFront
-      dockerfile: Dockerfile
-    container_name: gp-front
+  # Reverse Proxy Traefik
+  traefik:
+    image: traefik:v2.10
+    container_name: gp-traefik
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      - --certificatesresolvers.le.acme.email=memko021@gmail.com
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - backend
-    restart: always
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - gp-network
-    volumes:
-      - ./nginx/ssl:/etc/nginx/ssl:ro
 
-  # Application Backend Spring Boot
+  # Backend Spring Boot
   backend:
     build:
       context: ./BackGp
       dockerfile: Dockerfile
     container_name: gp-backend
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mysql
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/gpmonde_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_PROFILES_ACTIVE=prod
-      - JWT_SECRET=ojJMx7uTkjO3Ov5BOjUimTFkk5Nb+zXvW+6wSRQUqSZeR9OjhseXki3vSA055PApH5ApNPXngdkkFfwOtax4eg==
-    restart: always
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/gpmonde_db
+      - SPRING_DATASOURCE_USERNAME=user_gpmonde
+      - SPRING_DATASOURCE_PASSWORD=GpMonde@2022
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./backend/keystore.p12:/app/keystore.p12
+      - app-logs:/app/logs
     networks:
       - gp-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.votre-domaine.com`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=le"
+      - "traefik.http.services.backend.loadbalancer.server.port=8080"
 
-  # Base de données MySQL
+  # Frontend Angular
+  frontend:
+    build:
+      context: ./GpFront
+      dockerfile: Dockerfile
+    container_name: gp-front
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl:/etc/nginx/ssl
+    networks:
+      - gp-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`votre-domaine.com`) || Host(`www.votre-domaine.com`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=le"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+
+  # MySQL Database
   mysql:
     image: mysql:8.0
     container_name: gp-mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=gpmonde_db
-    ports:
-      - "3306:3306"
+      MYSQL_DATABASE: gpmonde_db
+      MYSQL_USER: user_gpmonde
+      MYSQL_PASSWORD: GpMonde@2022
+      MYSQL_ROOT_PASSWORD: Memko@2022
     volumes:
       - mysql-data:/var/lib/mysql
-    restart: always
-    networks:
-      - gp-network
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-
-  # Optionnel : PHPMyAdmin pour administrer la base de données
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: gp-phpmyadmin
-    environment:
-      - PMA_HOST=mysql
-      - PMA_PORT=3306
-    ports:
-      - "8081:80"
-    depends_on:
-      - mysql
-    restart: always
     networks:
       - gp-network
 
 volumes:
   mysql-data:
+  app-logs:
+  letsencrypt:
 
 networks:
   gp-network:
