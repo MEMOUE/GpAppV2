@@ -10,22 +10,13 @@ spring:
       connection-timeout: 30000
       maximum-pool-size: 10
       minimum-idle: 3
-      idle-timeout: 600000
-      max-lifetime: 1800000
+
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: false
-        jdbc.batch_size: 30
-        order_inserts: true
-        order_updates: true
     show-sql: false
     open-in-view: false
 
-  # Configuration email préservée
   mail:
     host: smtp.gmail.com
     port: 587
@@ -37,44 +28,19 @@ spring:
           auth: true
           starttls:
             enable: true
-            required: true
-          ssl:
-            trust: "*"
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
-
-# Configuration JWT préservée
-jwt:
-  secret: "${JWT_SECRET:ojJMx7uTkjO3Ov5BOjUimTFkk5Nb+zXvW+6wSRQUqSZeR9OjhseXki3vSA055PApH5ApNPXngdkkFfwOtax4eg==}"
-  expiration: ${JWT_EXPIRATION:86400000}
 
 server:
   port: 8080
-  ssl:
-    enabled: true
-    key-store: classpath:keystore.p12
-    key-store-password: GpMonde@2022
-    key-store-type: PKCS12
-    key-alias: ton_key_alias
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
     min-response-size: 1024
-
-
+  forward-headers-strategy: framework
 
 logging:
   level:
     root: INFO
     org.springframework.web: INFO
-    com.gpmonde: INFO
-    org.hibernate: WARN
-    com.zaxxer.hikari: WARN
   file:
     name: /app/logs/backgp.log
     max-size: 10MB
-    max-history: 7
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

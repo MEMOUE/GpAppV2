@@ -96,7 +96,7 @@ public class UtilisateurService {
 		user.setResetToken(token);
 		utilisateurRepository.save(user);
 
-		String resetLink = "http://localhost:4200/reset-password?token=" + token;
+		String resetLink = "https://http://147.79.101.109:80/reset-password?token=" + token;
 		emailService.sendEmail(email, "Réinitialisation de mot de passe", "Cliquez ici pour réinitialiser votre mot de passe : " + resetLink);
 	}
 	public void resetPassword(String token, String newPassword) {
