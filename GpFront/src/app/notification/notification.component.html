@@ -1,0 +1,14 @@
+<div *ngIf="selected">
+  <h4>Détails de la notification</h4>
+  <ul class="list-group">
+    <li class="list-group-item"><strong>Message :</strong> {{ selected.message }}</li>
+    <li class="list-group-item"><strong>Agence :</strong> {{ selected.agence }}</li>
+    <li class="list-group-item"><strong>Identifiant Agent :</strong> {{ selected.agentId }}</li>
+    <li class="list-group-item" *ngIf="selected.date"><strong>Date :</strong> {{ selected.date | date:'medium' }}</li>
+    <li class="list-group-item"><strong>Statut :</strong> {{ selected.lu ? 'Lu' : 'Non lue' }}</li>
+  </ul>
+</div>
+
+<div *ngIf="!selected">
+  <p class="text-muted">Aucune notification sélectionnée.</p>
+</div>
