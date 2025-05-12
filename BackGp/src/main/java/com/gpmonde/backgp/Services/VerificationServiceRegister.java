@@ -29,7 +29,7 @@ public class VerificationServiceRegister {
 	}
 
 	public void sendVerificationEmail(Utilisateur user, String token) {
-		String url = "https://147.79.101.109:80/verify?token=" + token; // URL du frontend Angular
+		String url = "https://gpmonde.com/fr/verify?token=" + token; // URL du frontend Angular
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(user.getEmail());
 		message.setSubject("Vérification de votre compte");

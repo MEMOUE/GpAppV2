@@ -13,7 +13,6 @@ services:
       - --certificatesresolvers.le.acme.tlschallenge=true
       - --certificatesresolvers.le.acme.email=memko021@gmail.com
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.le.acme.tlschallenge.entrypoint=web
     ports:
       - "80:80"
       - "443:443"
@@ -40,10 +39,23 @@ services:
       - gp-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`147.79.101.109.nip.io`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.rule=Host(`api.gpmonde.com`) && PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=le"
       - "traefik.http.services.backend.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
+
+          # Route WebSocket
+#      - "traefik.http.routers.backend-ws.rule=Host(`api.gpmonde.com`) && PathPrefix(`/ws`)"
+#      - "traefik.http.routers.backend-ws.entrypoints=websecure"
+#      - "traefik.http.routers.backend-ws.tls.certresolver=le"
+#      - "traefik.http.services.backend-ws.loadbalancer.server.port=8080"
+
+  # Middleware pour WebSocket
+ #     - "traefik.http.middlewares.websocket.headers.customrequestheaders.Connection=Upgrade"
+ #     - "traefik.http.middlewares.websocket.headers.customrequestheaders.Upgrade=websocket"
+ #     - "traefik.http.routers.backend-ws.middlewares=websocket"
+
 
   frontend:
     build:
@@ -54,10 +66,27 @@ services:
       - gp-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`147.79.101.109.nip.io`)"
+      - "traefik.http.routers.frontend.rule=Host(`gpmonde.com`, `www.gpmonde.com`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=le"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: gp-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: Memko@2022
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.gpmonde.com`)"
+      - "traefik.http.routers.phpmyadmin.entrypoints=websecure"
+      - "traefik.http.routers.phpmyadmin.tls.certresolver=le"
+      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+    networks:
+      - gp-network
 
   mysql:
     image: mysql:8.0

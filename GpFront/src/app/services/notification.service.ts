@@ -4,7 +4,7 @@ import SockJS from 'sockjs-client';
 import { BehaviorSubject } from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {NotificationDTO} from '../model/NotificationDTO';
-
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class NotificationService {
 
   constructor(private http: HttpClient) {
     this.stompClient = new Client({
-      webSocketFactory: () => new SockJS('http://147.79.101.109:8080/ws'),
+      webSocketFactory: () => new SockJS('https://api.gpmonde.com/api/ws'),
       debug: (str) => console.log(str),
       reconnectDelay: 5000,
     });
@@ -57,7 +57,7 @@ export class NotificationService {
   }
 
   loadNotifications(userId: number | null) {
-    return this.http.get<NotificationDTO[]>(`http://147.79.101.109:8080/api/notifications/user/${userId}`)
+    return this.http.get<NotificationDTO[]>(`${environment.apiUrl}notifications/user/${userId}`)
       .subscribe(data => {
         this._notifications.next(data.reverse()); // ou data selon l'ordre souhaité
       });

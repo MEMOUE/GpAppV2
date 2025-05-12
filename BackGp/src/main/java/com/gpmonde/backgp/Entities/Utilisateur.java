@@ -24,7 +24,7 @@ public class Utilisateur {
 	private String username;
 
 	@Column(nullable = false)
-	@JsonIgnore
+//	@JsonIgnore
 	private String password;
 
 	@Column(nullable = false, unique = true)
