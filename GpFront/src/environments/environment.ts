@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://147.79.101.109.nip.io/api/'
+  apiUrl: 'https://api.gpmonde.com/api/'
 };
