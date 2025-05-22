@@ -60,16 +60,26 @@
           <div class="col-md-6">
             <div class="form-group">
               <label for="prix" class="form-label">Prix (par kg)</label>
-              <p-inputNumber
-                id="prix"
-                formControlName="prix"
-                [min]="0"
-                [mode]="'currency'"
-                currency="EUR"
-                locale="fr-FR"
-                placeholder="Prix par kilogramme"
-                class="w-100"
-              ></p-inputNumber>
+              <div class="d-flex gap-2">
+                <p-dropdown
+                  formControlName="devise"
+                  [options]="deviseOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Devise"
+                  class="flex-shrink-0"
+                  [style]="{'min-width': '120px'}"
+                ></p-dropdown>
+                <p-inputNumber
+                  id="prix"
+                  formControlName="prix"
+                  [min]="0"
+                  [mode]="'decimal'"
+                  [minFractionDigits]="2"
+                  placeholder="Prix par kilogramme"
+                  class="flex-grow-1"
+                ></p-inputNumber>
+              </div>
               <div *ngIf="gpForm.get('prix')?.invalid && gpForm.get('prix')?.touched" class="text-danger small mt-1">
                 Le prix est requis et doit être supérieur à 0.
               </div>

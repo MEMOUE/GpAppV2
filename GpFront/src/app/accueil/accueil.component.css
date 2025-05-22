@@ -42,7 +42,7 @@
   font-size: 1em;
   font-weight: bold;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 25px; /* Arrondi */
   z-index: 2; /* Au-dessus de l'overlay */
 }
 
@@ -68,7 +68,7 @@
   gap: 12px;
   padding: 15px;
   /*background: rgba(255, 255, 255, 0.9);  Fond semi-transparent pour le formulaire */
-  border-radius: 10px;
+  border-radius: 25px; /* Arrondi pour le conteneur */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   max-width: 700px;
   margin: auto;
@@ -77,12 +77,12 @@
 
 /* Styles dynamiques selon le bouton sélectionné */
 .search-container.offreGp-style {
-  border: 3px solid #ffa96b;
+  border: 3px solid #ff7043; /* Couleur orange plus moderne */
   /*background: rgba(255, 169, 107, 0.9);  Fond semi-transparent */
 }
 
 .search-container.agenceGp-style {
-  border: 3px solid #4caf50;
+  border: 3px solid #26a69a; /* Couleur verte plus moderne */
   /*background: rgba(76, 175, 80, 0.9); Fond semi-transparent */
 }
 
@@ -97,18 +97,18 @@
   width: 100%;
   padding: 12px;
   border: 2px solid transparent;
-  border-radius: 5px;
+  border-radius: 20px; /* Arrondi pour les inputs */
   font-size: 16px;
   transition: 0.3s;
   outline: none;
 }
 
 .search-container.offreGp-style input {
-  border-color: #FFA96BFF;
+  border-color: #ff7043; /* Couleur orange plus moderne */
 }
 
 .search-container.agenceGp-style input {
-  border-color: #4caf50;
+  border-color: #26a69a; /* Couleur verte plus moderne */
 }
 
 .search-container input:focus {
@@ -120,7 +120,7 @@
   padding: 12px 20px;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 25px; /* Arrondi pour le bouton de recherche */
   font-size: 16px;
   font-weight: bold;
   display: flex;
@@ -131,16 +131,17 @@
 }
 
 .search-container.offreGp-style button {
-  background-color: #FFA96BFF;
+  background: linear-gradient(135deg, #ff7043, #ff5722); /* Dégradé orange */
 }
 
 .search-container.agenceGp-style button {
-  background-color: #4caf50;
+  background: linear-gradient(135deg, #26a69a, #00695c); /* Dégradé vert */
 }
 
 .search-container button:hover {
   opacity: 0.9;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px); /* Effet de soulèvement au hover */
 }
 
 .header-content {
@@ -199,7 +200,7 @@
 
 .stat-item i {
   font-size: 3em;
-  color: #007bff;
+  color: #26a69a; /* Couleur moderne cohérente */
   margin-bottom: 10px;
   animation: bounce 2s infinite;
 }
@@ -235,11 +236,19 @@
 .assistant-button {
   display: flex;
   align-items: center;
-  background-color: #007bff;
+  background: linear-gradient(135deg, #2196f3, #1976d2); /* Dégradé bleu */
   color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 50px;
+  padding: 12px 24px;
+  border-radius: 30px; /* Plus arrondi */
   cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+  transition: all 0.3s ease;
+}
+
+.assistant-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
 }
 
 .assistant-button i {
@@ -252,16 +261,24 @@
   right: 20px;
   background-color: #ffffff;
   border: 1px solid #e9ecef;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  border-radius: 15px; /* Arrondi */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 15px;
 }
 
 .contact-options a {
   display: block;
-  color: #007bff;
+  color: #26a69a; /* Couleur cohérente */
   text-decoration: none;
-  margin: 5px 0;
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 10px; /* Arrondi pour les liens */
+  transition: all 0.3s ease;
+}
+
+.contact-options a:hover {
+  background-color: #f5f5f5;
+  transform: translateX(5px);
 }
 
 .contact-options a i {
@@ -278,14 +295,21 @@
 .gp-link {
   display: flex;
   align-items: center;
-  background-color: #e3eaf1;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Dégradé bleu clair */
   color: #0f0f0f;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px; /* Arrondi */
   cursor: pointer;
   font-size: 1.2em;
   text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.gp-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .gp-link img {
@@ -314,14 +338,21 @@
 .testimonial-item {
   background-color: #ffffff;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 15px; /* Arrondi */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   text-align: center;
+  transition: all 0.3s ease;
+}
+
+.testimonial-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .testimonial-item i {
   font-size: 2em;
   margin-bottom: 10px;
+  color: #26a69a; /* Couleur cohérente */
 }
 
 .testimonial-item p {
@@ -345,35 +376,35 @@
 }
 
 .search-buttons button {
-  padding: 12px 20px;
+  padding: 14px 28px;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 25px; /* Très arrondi */
   font-size: 16px;
   font-weight: bold;
   transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 .search-buttons button:first-child {
-  background-color: #FFA96BFF;
+  background: linear-gradient(135deg, #ff7043, #ff5722); /* Dégradé orange */
   color: white;
 }
 
 .search-buttons button:last-child {
-  background-color: #4caf50;
+  background: linear-gradient(135deg, #26a69a, #00695c); /* Dégradé vert */
   color: white;
 }
 
 .search-buttons button.active {
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-  transform: scale(1.05);
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.4);
+  transform: scale(1.05) translateY(-2px);
 }
 
-
-
-
-
-
+.search-buttons button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
+}
 
 /* Styles pour la section des programmes GP */
 .programmes-gp {
@@ -417,21 +448,23 @@
   flex: 0 0 auto;
   width: 250px;
   background-color: #fff;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 20px; /* Plus arrondi */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .programme-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
 }
 
 .programme-card .card-header {
   font-size: 1rem;
   font-weight: bold;
-  padding: 10px;
+  padding: 15px;
+  background: linear-gradient(135deg, #2196f3, #1976d2); /* Dégradé bleu */
+  border-radius: 20px 20px 0 0; /* Arrondi uniquement en haut */
 }
 
 .programme-card .card-body {
@@ -450,9 +483,10 @@
 }
 
 .programme-card .card-footer {
-  padding: 10px;
+  padding: 15px;
   background-color: #f8f9fa;
   border-top: 1px solid #eee;
+  border-radius: 0 0 20px 20px; /* Arrondi uniquement en bas */
 }
 
 /* Flèches de navigation */
@@ -460,17 +494,18 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.8);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  background: linear-gradient(135deg, #ffffff, #f5f5f5); /* Dégradé blanc */
+  border: 2px solid #26a69a; /* Bordure colorée */
+  border-radius: 50%; /* Parfaitement rond */
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 10;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
+  transition: all 0.3s ease;
 }
 
 .scroll-button.left {
@@ -482,5 +517,902 @@
 }
 
 .scroll-button:hover {
-  background-color: rgba(255, 255, 255, 1);
+  background: linear-gradient(135deg, #26a69a, #00695c);
+  color: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 20px rgba(38, 166, 154, 0.4);
+}
+
+.scroll-button i {
+  font-size: 1.2em;
+  color: #26a69a;
+  transition: color 0.3s ease;
+}
+
+.scroll-button:hover i {
+  color: white;
+}
+/* Styles pour les inputs avec icônes */
+.input-with-icon {
+  position: relative;
+  flex: 1;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  z-index: 1;
+  font-size: 1.1em;
+}
+
+.input-with-icon input {
+  padding-left: 40px !important;
+}
+
+/* Amélioration du bouton de recherche */
+.search-submit-btn {
+  min-width: 120px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Header des sections avec icônes */
+.programmes-header,
+.stats-header,
+.testimonials-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.header-icon,
+.stats-icon,
+.testimonials-icon {
+  font-size: 2.5em;
+  color: #26a69a;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Styles pour les cartes de programme améliorées */
+.card-image-container {
+  position: relative;
+  overflow: hidden;
+  height: 130px;
+}
+
+.card-img-top {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.image-overlay-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(38, 166, 154, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+  font-weight: bold;
+}
+
+.programme-card:hover .image-overlay-card {
+  opacity: 1;
+}
+
+.programme-card:hover .card-img-top {
+  transform: scale(1.1);
+}
+
+.view-details-icon {
+  font-size: 2em;
+  margin-bottom: 8px;
+}
+
+/* Header de carte amélioré */
+.card-header {
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  color: white;
+  padding: 15px;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-building-icon {
+  font-size: 1.2em;
+}
+
+/* Titre de route amélioré */
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+}
+
+.route-icon {
+  color: #ff7043;
+}
+
+.route-arrow {
+  color: #26a69a;
+  font-size: 1.2em;
+}
+
+/* Grille d'informations dans les cartes */
+.card-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: background-color 0.3s ease;
+}
+
+.info-item:hover {
+  background: #e9ecef;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.info-label {
+  font-size: 0.85em;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.info-value {
+  font-weight: bold;
+  color: #333;
+}
+
+.garantie-value {
+  color: #28a745;
+  font-weight: bold;
+}
+
+/* Icônes colorées */
+.price-icon { color: #ff7043; }
+.date-icon { color: #2196f3; }
+.garantie-icon { color: #28a745; }
+
+/* Footer de carte avec bouton */
+.card-footer {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 0 0 20px 20px;
+  border-top: 1px solid #eee;
+}
+
+.details-button {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #26a69a, #00695c);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.details-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(38, 166, 154, 0.3);
+}
+
+/* États de chargement et d'erreur améliorés */
+.loading-container {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+}
+
+.loading-spinner {
+  font-size: 3rem;
+  color: #26a69a;
+  margin-bottom: 15px;
+}
+
+.error-container {
+  background: #fff5f5;
+  border: 2px solid #feb2b2;
+  border-radius: 15px;
+  color: #c53030;
+  margin: 20px;
+}
+
+.error-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.retry-button {
+  margin-top: 15px;
+  background: #c53030;
+  border-color: #c53030;
+}
+
+/* Styles pour la modal simplifiée */
+.programme-details-dialog .p-dialog-header {
+  background: linear-gradient(135deg, #26a69a, #00695c);
+  color: white;
+  border-radius: 15px 15px 0 0;
+}
+
+.programme-details-content {
+  padding: 20px;
+}
+
+.programme-details-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.route-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border-radius: 15px;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.departure-icon { color: #ff7043; }
+.arrival-icon { color: #26a69a; }
+.route-separator { color: #666; font-size: 1.5em; }
+
+.route-text {
+  color: #333;
+  padding: 8px 15px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Informations du programme */
+.programme-info {
+  margin-bottom: 25px;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row i {
+  font-size: 1.2em;
+  color: #26a69a;
+  margin-top: 2px;
+  min-width: 20px;
+}
+
+.info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-content strong {
+  color: #333;
+  font-size: 0.9em;
+}
+
+.info-content span,
+.info-content time {
+  color: #666;
+  font-size: 1em;
+}
+
+.price-highlight {
+  color: #ff7043 !important;
+  font-weight: bold !important;
+  font-size: 1.1em !important;
+}
+
+.garantie-highlight {
+  color: #28a745 !important;
+  font-weight: bold !important;
+}
+
+/* Section de contact - Disposition responsive */
+.contact-section {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.contact-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.1em;
+}
+
+.contact-title i {
+  color: #26a69a;
+}
+
+/* Grille responsive pour les boutons de contact */
+.contact-buttons,
+.contact-methods-grid {
+  display: grid;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+/* Desktop (écrans larges - 1200px+) */
+@media (min-width: 1200px) {
+  .contact-buttons,
+  .contact-methods-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 600px;
+    margin: 15px auto 0;
+  }
+
+  .contact-method-button {
+    min-width: 160px;
+    padding: 15px 25px;
+    font-size: 1em;
+  }
+}
+
+/* Desktop standard (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .contact-buttons,
+  .contact-methods-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 540px;
+    margin: 15px auto 0;
+  }
+
+  .contact-method-button {
+    min-width: 140px;
+    padding: 14px 20px;
+    font-size: 0.95em;
+  }
+}
+
+/* Tablette (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .contact-buttons,
+  .contact-methods-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 480px;
+    margin: 15px auto 0;
+    gap: 12px;
+  }
+
+  .contact-method-button {
+    min-width: 120px;
+    padding: 12px 18px;
+    font-size: 0.9em;
+  }
+
+  .contact-method-button i {
+    font-size: 1.1em;
+  }
+}
+
+/* Petit tablette (576px - 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .contact-buttons,
+  .contact-methods-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 400px;
+    margin: 15px auto 0;
+    gap: 12px;
+  }
+
+  .contact-method-button {
+    min-width: 140px;
+    padding: 12px 16px;
+    font-size: 0.9em;
+  }
+
+  /* Le 3ème bouton (SMS) prend toute la largeur */
+  .contact-method-button:nth-child(3) {
+    grid-column: 1 / -1;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+}
+
+/* Mobile (moins de 576px) */
+@media (max-width: 575px) {
+  .contact-section {
+    padding: 15px;
+  }
+
+  .contact-buttons,
+  .contact-methods-grid {
+    grid-template-columns: 1fr;
+    max-width: 280px;
+    margin: 15px auto 0;
+    gap: 10px;
+  }
+
+  .contact-method-button {
+    width: 100%;
+    min-width: unset;
+    padding: 14px 20px;
+    font-size: 0.95em;
+    border-radius: 10px;
+  }
+
+  .contact-method-button i {
+    font-size: 1.2em;
+  }
+}
+
+/* Très petit mobile (moins de 400px) */
+@media (max-width: 399px) {
+  .contact-section {
+    padding: 12px;
+  }
+
+  .contact-buttons,
+  .contact-methods-grid {
+    max-width: 240px;
+    gap: 8px;
+  }
+
+  .contact-method-button {
+    padding: 12px 16px;
+    font-size: 0.85em;
+  }
+
+  .contact-title {
+    font-size: 1em;
+    margin-bottom: 15px;
+  }
+}
+
+/* Disposition spéciale pour modal sur mobile */
+@media (max-width: 767px) {
+  .programme-details-dialog .contact-buttons,
+  .programme-details-dialog .contact-methods-grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .programme-details-dialog .contact-method-button {
+    width: 100%;
+    justify-self: center;
+  }
+}
+
+/* Orientation paysage sur mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+  .contact-buttons,
+  .contact-methods-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 500px;
+  }
+
+  .contact-method-button {
+    min-width: 120px;
+    padding: 10px 14px;
+    font-size: 0.85em;
+  }
+}
+
+/* Styles pour améliorer l'espacement vertical */
+.contact-method-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Animation d'apparition progressive */
+.contact-method-button:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.contact-method-button:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.contact-method-button:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contact-method-button {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+/* Centrage parfait pour tous les écrans */
+.contact-section .contact-buttons,
+.contact-section .contact-methods-grid {
+  justify-items: center;
+  align-items: center;
+}
+
+/* Assurer que les boutons gardent leurs proportions */
+.contact-method-button {
+  box-sizing: border-box;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contact-method-button {
+  min-width: 120px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Bouton WhatsApp */
+.whatsapp-button {
+  background: linear-gradient(135deg, #25D366, #128C7E) !important;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-button:hover {
+  background: linear-gradient(135deg, #128C7E, #075E54) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.whatsapp-button:active {
+  transform: translateY(0);
+}
+
+/* Bouton Téléphone */
+.phone-button {
+  background: linear-gradient(135deg, #2196F3, #1976D2) !important;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+.phone-button:hover {
+  background: linear-gradient(135deg, #1976D2, #1565C0) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+}
+
+.phone-button:active {
+  transform: translateY(0);
+}
+
+/* Bouton SMS */
+.sms-button {
+  background: linear-gradient(135deg, #FF9800, #F57C00) !important;
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+}
+
+.sms-button:hover {
+  background: linear-gradient(135deg, #F57C00, #E65100) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+}
+
+.sms-button:active {
+  transform: translateY(0);
+}
+
+/* Effet de pulsation pour WhatsApp */
+.whatsapp-button {
+  animation: whatsapp-pulse 2s infinite;
+}
+
+@keyframes whatsapp-pulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
+  }
+}
+
+/* Icônes spécifiques */
+.whatsapp-button i {
+  color: white;
+  font-size: 1.2em;
+}
+
+.phone-button i {
+  color: white;
+  font-size: 1.1em;
+}
+
+.sms-button i {
+  color: white;
+  font-size: 1.1em;
+}
+
+/* Boutons de contact dans les cartes (si applicable) */
+.programme-card .whatsapp-button {
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  font-size: 0.85em;
+  padding: 8px 12px;
+}
+
+.programme-card .phone-button {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  font-size: 0.85em;
+  padding: 8px 12px;
+}
+
+.programme-card .sms-button {
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  font-size: 0.85em;
+  padding: 8px 12px;
+}
+
+/* Boutons d'action rapide dans le header de carte */
+.card-header .quick-contact {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.card-header .quick-contact button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.card-header .quick-contact .mini-whatsapp {
+  background: #25D366;
+  color: white;
+}
+
+.card-header .quick-contact .mini-phone {
+  background: #2196F3;
+  color: white;
+}
+
+.card-header .quick-contact .mini-sms {
+  background: #FF9800;
+  color: white;
+}
+
+.card-header .quick-contact button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* États d'interaction avancés */
+.contact-method-button:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.whatsapp-button:focus {
+  outline-color: rgba(37, 211, 102, 0.5);
+}
+
+.phone-button:focus {
+  outline-color: rgba(33, 150, 243, 0.5);
+}
+
+.sms-button:focus {
+  outline-color: rgba(255, 152, 0, 0.5);
+}
+
+/* Animation de clic */
+.contact-method-button:active {
+  transform: scale(0.95);
+}
+
+/* Effet de brillance au hover */
+.contact-method-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.contact-method-button:hover::before {
+  left: 100%;
+}
+
+/* Positionnement relatif pour l'effet de brillance */
+.contact-method-button {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Icônes colorées pour les détails */
+.description-icon { color: #6c757d; }
+.departure-detail-icon { color: #ff7043; }
+.destination-detail-icon { color: #26a69a; }
+.price-detail-icon { color: #ff7043; }
+.date-detail-icon { color: #2196f3; }
+.garantie-detail-icon { color: #28a745; }
+.phone-icon, .call-icon { color: #2196f3; }
+.agency-icon { color: #9c27b0; }
+
+/* Header principal avec icône */
+.header-content {
+  position: relative;
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+}
+
+.header-icon-container {
+  margin-bottom: 20px;
+}
+
+.header-main-icon {
+  font-size: 4em;
+  color: #26a69a;
+  animation: bounce 2s infinite;
+}
+
+/* Témoignages avec icônes de citation */
+.testimonial-item {
+  position: relative;
+}
+
+.testimonial-avatar {
+  font-size: 3em;
+  color: #26a69a;
+  margin-bottom: 15px;
+}
+
+.quote-icon {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  font-size: 2em;
+  color: #26a69a;
+  opacity: 0.3;
+}
+
+.testimonial-item blockquote {
+  position: relative;
+  padding-left: 40px;
+}
+
+/* Responsive Design général */
+@media (max-width: 768px) {
+  .route-display {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card-info-grid {
+    gap: 8px;
+  }
+
+  .info-item {
+    padding: 6px;
+  }
+
+  /* Modal responsive */
+  .programme-details-dialog .p-dialog {
+    width: 95vw !important;
+    max-width: 500px !important;
+  }
+
+  .programme-details-content {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-inputs {
+    flex-direction: column;
+  }
+
+  .input-with-icon {
+    width: 100%;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .info-row i {
+    align-self: flex-start;
+  }
+
+  /* Ajustements pour la modal sur très petit écran */
+  .programme-details-dialog .p-dialog {
+    width: 98vw !important;
+    margin: 1vh auto;
+  }
+
+  .route-display {
+    padding: 15px;
+    font-size: 1em;
+  }
+
+  .route-text {
+    padding: 6px 12px;
+    font-size: 0.9em;
+  }
 }

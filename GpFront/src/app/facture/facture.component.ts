@@ -12,6 +12,7 @@ import { MenuComponent } from '../menu/menu.component';
 import { Programmegp } from '../model/Programmegp';
 import jsPDF from 'jspdf';
 import {TrackingService} from '../services/tracking-service.service';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-facture',
@@ -41,6 +42,7 @@ export class FactureComponent implements OnInit, AfterViewInit {
   factureData: any = null;
   pdfBlobUrl: string | null = null;
   showShareOptions: boolean = false;
+  private apiURL: string = `${environment.apiUrl}`;
 
   @ViewChild('signatureCanvas') signatureCanvas!: ElementRef;
 
@@ -78,7 +80,7 @@ export class FactureComponent implements OnInit, AfterViewInit {
   }
 
   fetchProgrammes() {
-    this.http.get<Programmegp[]>('http://localhost:8080/api/programmegp/mylist').subscribe(
+    this.http.get<Programmegp[]>(`${this.apiURL}programmegp/mylist`).subscribe(
       (data) => (this.programmes = data),
       (error) => console.error('Erreur de récupération des programmes:', error)
     );
@@ -93,7 +95,7 @@ export class FactureComponent implements OnInit, AfterViewInit {
   calculerPrixTransport() {
     const kg = this.factureForm.get('nombreKg')?.value;
     if (this.selectedProgramme && kg > 0) {
-      const prixTotal = this.selectedProgramme.prix * kg;
+      const prixTotal = this.selectedProgramme.prix ;
       this.factureForm.patchValue({ prixTransport: prixTotal });
     }
   }

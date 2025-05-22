@@ -24,7 +24,7 @@ public class ProgrammeGp {
 	@Column(name = "destination")
 	private String destination;
 
-	private Double prix;
+	private String prix;
 	private Double garantie;
 
 	@Temporal(TemporalType.DATE)
