@@ -32,7 +32,12 @@ interface ContactMethod {
 }
 
 type SearchType = 'offreGp' | 'agenceGp';
-type CurrencyType = 'EUR' | 'USD' | 'GBP' | 'CHF' | 'CAD' | 'XOF' | 'MAD' | '€' | '$' | '£';
+type CurrencyType =
+  | 'EUR' | 'USD' | 'GBP' | 'JPY' | 'AUD' | 'CAD' | 'CHF' | 'CNY'
+  | 'XOF' | 'MAD' | 'DZD' | 'EGP' | 'NGN' | 'ZAR' | 'TND'
+  | 'BRL' | 'RUB' | 'INR' | 'KRW' | 'MXN' | 'SGD' | 'NZD'
+  | 'SEK' | 'NOK' | 'DKK' | 'TRY' | 'PLN' | 'THB' | 'HKD' | 'ILS'
+  | '€' | '$' | '£' | '¥' | '₽' | '₹' | '₩' | '₺' | 'zł' | '฿' | '₪';
 
 @Component({
   selector: 'app-accueil',
@@ -129,16 +134,52 @@ export class AccueilComponent implements OnInit, OnDestroy {
 
   // Currency mapping for price formatting
   private readonly currencyMapping: Record<CurrencyType, { symbol: string; decimals: number }> = {
+    // Devises principales
     'EUR': { symbol: '€', decimals: 2 },
     '€': { symbol: '€', decimals: 2 },
     'USD': { symbol: '$', decimals: 2 },
     '$': { symbol: '$', decimals: 2 },
     'GBP': { symbol: '£', decimals: 2 },
     '£': { symbol: '£', decimals: 2 },
+    'JPY': { symbol: '¥', decimals: 0 },
+    '¥': { symbol: '¥', decimals: 0 },
+    'AUD': { symbol: 'A$', decimals: 2 },
+    'CAD': { symbol: 'CA$', decimals: 2 },
+    'CHF': { symbol: 'CHF', decimals: 2 },
+    'CNY': { symbol: 'CN¥', decimals: 2 },
+
+    // Devises africaines
     'XOF': { symbol: 'FCFA', decimals: 0 },
     'MAD': { symbol: 'MAD', decimals: 2 },
-    'CHF': { symbol: 'CHF', decimals: 2 },
-    'CAD': { symbol: 'CAD', decimals: 2 },
+    'DZD': { symbol: 'DZD', decimals: 2 },
+    'EGP': { symbol: 'EG£', decimals: 2 },
+    'NGN': { symbol: '₦', decimals: 2 },
+    'ZAR': { symbol: 'R', decimals: 2 },
+    'TND': { symbol: 'DT', decimals: 3 },
+
+    // Autres devises importantes
+    'BRL': { symbol: 'R$', decimals: 2 },
+    'RUB': { symbol: '₽', decimals: 2 },
+    '₽': { symbol: '₽', decimals: 2 },
+    'INR': { symbol: '₹', decimals: 2 },
+    '₹': { symbol: '₹', decimals: 2 },
+    'KRW': { symbol: '₩', decimals: 0 },
+    '₩': { symbol: '₩', decimals: 0 },
+    'MXN': { symbol: 'MX$', decimals: 2 },
+    'SGD': { symbol: 'S$', decimals: 2 },
+    'NZD': { symbol: 'NZ$', decimals: 2 },
+    'SEK': { symbol: 'kr', decimals: 2 },
+    'NOK': { symbol: 'kr', decimals: 2 },
+    'DKK': { symbol: 'kr', decimals: 2 },
+    'TRY': { symbol: '₺', decimals: 2 },
+    '₺': { symbol: '₺', decimals: 2 },
+    'PLN': { symbol: 'zł', decimals: 2 },
+    'zł': { symbol: 'zł', decimals: 2 },
+    'THB': { symbol: '฿', decimals: 2 },
+    '฿': { symbol: '฿', decimals: 2 },
+    'HKD': { symbol: 'HK$', decimals: 2 },
+    'ILS': { symbol: '₪', decimals: 2 },
+    '₪': { symbol: '₪', decimals: 2 }
   };
 
   ngOnInit(): void {
