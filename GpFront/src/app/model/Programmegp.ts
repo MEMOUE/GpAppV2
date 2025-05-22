@@ -5,7 +5,7 @@ export interface Programmegp {
   description: string;
   depart: string;
   destination: string;
-  prix: number;
+  prix: string;
   garantie: number;
   dateline: string;
   agentGp: AgentGp;

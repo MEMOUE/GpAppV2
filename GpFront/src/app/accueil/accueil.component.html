@@ -1,193 +1,615 @@
-<div class="homepage">
-  <!-- Image Slider -->
-  <div class="image-slider">
-    <div *ngFor="let image of images; let index = index" class="image-slide" [class.active]="activeImageIndex === index">
-      <img [src]="image" alt="Slider Image">
-      <!-- Calque semi-transparent -->
-      <div class="image-overlay"></div>
+<div class="homepage" role="main">
+  <!-- Image Slider with improved accessibility -->
+  <section class="image-slider" role="img" [attr.aria-label]="currentPhrase()">
+    <div
+      *ngFor="let image of images; let index = index; trackBy: trackByIndex"
+      class="image-slide"
+      [class.active]="activeImageIndex() === index"
+      [attr.aria-hidden]="activeImageIndex() !== index"
+    >
+      <img
+        [src]="image"
+        [alt]="'Image de présentation ' + (index + 1)"
+        loading="lazy"
+        decoding="async"
+      >
+      <!-- Overlay semi-transparent -->
+      <div class="image-overlay" aria-hidden="true"></div>
     </div>
 
     <!-- Conteneur pour les boutons et le formulaire -->
     <div class="overlay-container">
       <!-- Boutons OffreGp et AgenceGp -->
-      <div class="search-buttons">
-        <button pButton type="button" (click)="showSearchForm('offreGp')" [ngClass]="{'p-button-success active': activeSearch === 'offreGp'}">
-          <i class="pi pi-briefcase"></i> {{ 'OFFRE_GP' | translate }}
+      <div class="search-buttons" role="tablist" aria-label="Types de recherche">
+        <button
+          pButton
+          type="button"
+          role="tab"
+          [attr.aria-selected]="activeSearch() === 'offreGp'"
+          [attr.aria-controls]="'search-form-' + activeSearch()"
+          (click)="showSearchForm('offreGp')"
+          [ngClass]="{'p-button-success active': activeSearch() === 'offreGp'}"
+          [attr.aria-label]="'Rechercher des offres GP'"
+        >
+          <i class="pi pi-briefcase" aria-hidden="true"></i>
+          {{ 'OFFRE_GP' | translate }}
         </button>
-        <button pButton type="button" (click)="showSearchForm('agenceGp')" [ngClass]="{'p-button-primary active': activeSearch === 'agenceGp'}">
-          <i class="pi pi-building"></i> {{ 'AGENCE_GP' | translate }}
+        <button
+          pButton
+          type="button"
+          role="tab"
+          [attr.aria-selected]="activeSearch() === 'agenceGp'"
+          [attr.aria-controls]="'search-form-' + activeSearch()"
+          (click)="showSearchForm('agenceGp')"
+          [ngClass]="{'p-button-primary active': activeSearch() === 'agenceGp'}"
+          [attr.aria-label]="'Rechercher des agences GP'"
+        >
+          <i class="pi pi-building" aria-hidden="true"></i>
+          {{ 'AGENCE_GP' | translate }}
         </button>
       </div>
 
-      <!-- Formulaire de recherche dynamique -->
-      <div class="search-container" [ngClass]="{'offreGp-style': activeSearch === 'offreGp', 'agenceGp-style': activeSearch === 'agenceGp'}">
+      <!-- Formulaire de recherche dynamique avec amélioration de l'accessibilité -->
+      <form
+        class="search-container"
+        [id]="'search-form-' + activeSearch()"
+        role="tabpanel"
+        [attr.aria-labelledby]="'tab-' + activeSearch()"
+        [ngClass]="{
+          'offreGp-style': activeSearch() === 'offreGp',
+          'agenceGp-style': activeSearch() === 'agenceGp'
+        }"
+        (ngSubmit)="searchResults()"
+        novalidate
+      >
         <div class="search-inputs">
-          <input pInputText *ngIf="activeSearch === 'offreGp'" type="text" [placeholder]="'DEPART_PLACEHOLDER' | translate" [(ngModel)]="search.depart">
-          <input pInputText *ngIf="activeSearch === 'offreGp'" type="text" [placeholder]="'DESTINATION_PLACEHOLDER' | translate" [(ngModel)]="search.destination">
-          <input pInputText *ngIf="activeSearch === 'agenceGp'" type="text" [placeholder]="'COUNTRY_CITY_PLACEHOLDER' | translate" [(ngModel)]="search.depart">
-          <input pInputText *ngIf="activeSearch === 'agenceGp'" type="text" [placeholder]="'DESTINATION_PLACEHOLDER' | translate" [(ngModel)]="search.destination">
+          <!-- Champs pour OffreGp -->
+          <ng-container *ngIf="activeSearch() === 'offreGp'">
+            <div class="input-with-icon">
+              <i class="pi pi-map-marker input-icon" aria-hidden="true"></i>
+              <input
+                pInputText
+                type="text"
+                id="depart-offre"
+                name="depart"
+                [placeholder]="'DEPART_PLACEHOLDER' | translate"
+                [value]="search().depart"
+                (input)="updateSearch('depart', $any($event.target).value)"
+                [attr.aria-label]="'DEPART_PLACEHOLDER' | translate"
+                autocomplete="off"
+                required
+              >
+            </div>
+            <div class="input-with-icon">
+              <i class="pi pi-flag input-icon" aria-hidden="true"></i>
+              <input
+                pInputText
+                type="text"
+                id="destination-offre"
+                name="destination"
+                [placeholder]="'DESTINATION_PLACEHOLDER' | translate"
+                [value]="search().destination"
+                (input)="updateSearch('destination', $any($event.target).value)"
+                [attr.aria-label]="'DESTINATION_PLACEHOLDER' | translate"
+                autocomplete="off"
+                required
+              >
+            </div>
+          </ng-container>
+
+          <!-- Champs pour AgenceGp -->
+          <ng-container *ngIf="activeSearch() === 'agenceGp'">
+            <div class="input-with-icon">
+              <i class="pi pi-globe input-icon" aria-hidden="true"></i>
+              <input
+                pInputText
+                type="text"
+                id="depart-agence"
+                name="depart"
+                [placeholder]="'COUNTRY_CITY_PLACEHOLDER' | translate"
+                [value]="search().depart"
+                (input)="updateSearch('depart', $any($event.target).value)"
+                [attr.aria-label]="'COUNTRY_CITY_PLACEHOLDER' | translate"
+                autocomplete="off"
+                required
+              >
+            </div>
+            <div class="input-with-icon">
+              <i class="pi pi-flag input-icon" aria-hidden="true"></i>
+              <input
+                pInputText
+                type="text"
+                id="destination-agence"
+                name="destination"
+                [placeholder]="'DESTINATION_PLACEHOLDER' | translate"
+                [value]="search().destination"
+                (input)="updateSearch('destination', $any($event.target).value)"
+                [attr.aria-label]="'DESTINATION_PLACEHOLDER' | translate"
+                autocomplete="off"
+                required
+              >
+            </div>
+          </ng-container>
         </div>
-        <button pButton type="button" (click)="searchResults()" class="p-button-rounded p-button-outlined">
-          <i class="pi pi-search"></i> {{ 'SEARCH_BUTTON' | translate }}
+
+        <button
+          pButton
+          type="submit"
+          class="p-button-rounded p-button-outlined search-submit-btn"
+          [disabled]="!hasSearchData()"
+          [attr.aria-label]="getSearchButtonAriaLabel()"
+        >
+          <i class="pi pi-search" aria-hidden="true"></i>
+          {{ 'SEARCH_BUTTON' | translate }}
         </button>
-      </div>
+      </form>
     </div>
-  </div>
-  <!-- Nouvelle section : Programmes GP défilants -->
-  <section *ngIf="programmegps.length > 0" class="programmes-gp">
-    <h4 class="text-center ">{{ 'PROGRAMMES_GP' | translate }}</h4>
-    <div class="programmes-container">
+  </section>
+
+  <!-- Section Programmes GP avec améliorations de performance -->
+  <section
+    *ngIf="programmegps().length > 0"
+    class="programmes-gp"
+    aria-labelledby="programmes-title"
+  >
+    <div class="programmes-header">
+      <i class="pi pi-truck header-icon" aria-hidden="true"></i>
+      <h4 id="programmes-title" class="text-center">
+        {{ 'PROGRAMMES_GP' | translate }}
+      </h4>
+    </div>
+
+    <!-- Indicateur de chargement -->
+    <div *ngIf="isLoading()" class="text-center p-4 loading-container" role="status" aria-live="polite">
+      <i class="pi pi-spin pi-spinner loading-spinner" aria-hidden="true"></i>
+      <p>Chargement des programmes...</p>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="error()" class="text-center p-4 error-container" role="alert">
+      <i class="pi pi-exclamation-triangle error-icon" aria-hidden="true"></i>
+      <p>{{ error() }}</p>
+      <button pButton (click)="loadProgrammes()" class="p-button-sm retry-button">
+        <i class="pi pi-refresh" aria-hidden="true"></i>
+        Réessayer
+      </button>
+    </div>
+
+    <!-- Conteneur des programmes -->
+    <div *ngIf="!isLoading() && !error()" class="programmes-container">
       <!-- Flèche gauche -->
-      <button pButton class="scroll-button left" (click)="scrollLeft()">
-        <i class="pi pi-angle-left"></i>
+      <button
+        pButton
+        class="scroll-button left"
+        (click)="scrollLeft()"
+        aria-label="Faire défiler vers la gauche"
+        type="button"
+      >
+        <i class="pi pi-angle-left" aria-hidden="true"></i>
       </button>
 
-      <!-- Conteneur des programmes -->
-      <div class="programmes-wrapper" (mouseenter)="pauseScroll()" (mouseleave)="resumeScroll()">
-        <!-- Afficher les programmes deux fois pour créer une boucle -->
-        <div *ngFor="let programme of programmegps" class="programme-card" >
-          <div class="card-header bg-info text-white d-flex align-items-center">
-            <i class="pi pi-user me-2"></i>
-            <strong>{{ programme.agentGp.nomagence }}</strong>
+      <!-- Conteneur des programmes avec gestion d'accessibilité -->
+      <div
+        class="programmes-wrapper"
+        (mouseenter)="pauseScroll()"
+        (mouseleave)="resumeScroll()"
+        (focus)="pauseScroll()"
+        (blur)="resumeScroll()"
+        role="region"
+        aria-label="Liste des programmes GP"
+        tabindex="0"
+      >
+        <!-- Afficher les programmes avec trackBy pour optimiser les performances -->
+        <article
+          *ngFor="let programme of programmegps(); trackBy: trackByProgrammeId"
+          class="programme-card"
+          [attr.aria-label]="getProgrammeAriaLabel(programme)"
+          tabindex="0"
+          (click)="showDetails(programme)"
+          (keydown.enter)="showDetails(programme)"
+          (keydown.space)="showDetails(programme); $event.preventDefault()"
+        >
+          <header class="card-header">
+            <i class="pi pi-building header-building-icon" aria-hidden="true"></i>
+            <strong>{{ programme.agentGp?.nomagence || 'Agence non spécifiée' }}</strong>
+          </header>
+
+          <div class="card-image-container">
+            <img
+              src="icons/bag1.png"
+              class="card-img-top"
+              alt="Icône de programme de transport"
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="image-overlay-card">
+              <i class="pi pi-eye view-details-icon" aria-hidden="true"></i>
+              <span>Voir détails</span>
+            </div>
           </div>
-          <img src="icons/bag1.png" class="card-img-top img-fluid" alt="Programme image" style="height: 110px; object-fit: cover;" (click)="showDetails(programme)">
-          <div class="card-body" (click)="showDetails(programme)">
-            <h5 class="card-title text-center mb-3" style="font-size: 1rem; color: #333;">
-              {{ programme.depart }} <i class="pi pi-arrow-right mx-2"></i> {{ programme.destination }}
+
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="pi pi-map-marker route-icon" aria-hidden="true"></i>
+              {{ programme.depart }}
+              <i class="pi pi-arrow-right route-arrow" aria-hidden="true"></i>
+              {{ programme.destination }}
             </h5>
-            <p class="card-text">
-              <i class="pi pi-tag me-2"></i>
-              <strong>Prix/Kg:</strong> {{ programme.prix | currency }}
-            </p>
-            <p class="card-text">
-              <i class="pi pi-calendar me-2"></i>
-              <strong>Date limite:</strong> {{ programme.dateline }}
-            </p>
+
+            <div class="card-info-grid">
+              <div class="info-item">
+                <i class="pi pi-tag price-icon" aria-hidden="true"></i>
+                <div class="info-content">
+                  <span class="info-label">Prix/Kg:</span>
+                  <span class="info-value" [attr.aria-label]="'Prix par kilogramme: ' + formatPrice(programme.prix)">
+                    {{ formatPrice(programme.prix) }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <i class="pi pi-calendar date-icon" aria-hidden="true"></i>
+                <div class="info-content">
+                  <span class="info-label">Date limite:</span>
+                  <time class="info-value" [dateTime]="programme.dateline">{{ programme.dateline }}</time>
+                </div>
+              </div>
+
+              <div class="info-item" *ngIf="programme.garantie">
+                <i class="pi pi-shield garantie-icon" aria-hidden="true"></i>
+                <div class="info-content">
+                  <span class="info-label">Garantie:</span>
+                  <span class="info-value garantie-value">{{ programme.garantie }}%</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <!-- Boutons de contact -->
-<!--          <div class="card-footer bg-light d-flex justify-content-center gap-2">-->
-<!--            <p-button *ngIf="programme?.agentGp?.telephone" icon="pi pi-whatsapp" [rounded]="true" severity="success" [outlined]="true" (click)="openWhatsAppWithNumber(programme)"/>-->
-<!--            <p-button *ngIf="programme?.agentGp?.telephone" icon="pi pi-phone" [rounded]="true" severity="info" [outlined]="true" (click)="makePhoneCallWithNumber(programme)"/>-->
-<!--            <p-button *ngIf="programme?.agentGp?.telephone" icon="pi pi-comment" [rounded]="true" severity="warning" [outlined]="true" (click)="sendSmsWithNumber(programme)"/>-->
-<!--          </div>-->
-        </div>
-        <!-- Dupliquer les programmes pour créer une boucle -->
-        <div *ngFor="let programme of programmegps" class="programme-card">
-          <div class="card-header bg-info text-white d-flex align-items-center">
-            <i class="pi pi-user me-2"></i>
-            <strong>{{ programme.agentGp.nomagence }}</strong>
+
+          <div class="card-footer">
+            <button class="details-button" (click)="showDetails(programme); $event.stopPropagation()">
+              <i class="pi pi-info-circle" aria-hidden="true"></i>
+              Plus de détails
+            </button>
           </div>
-          <img src="icons/bag1.png" class="card-img-top img-fluid" alt="Programme image" style="height: 120px; object-fit: cover;" (click)="showDetails(programme)">
-          <div class="card-body" (click)="showDetails(programme)">
-            <h5 class="card-title text-center mb-3" style="font-size: 1rem; color: #333;">
-              {{ programme.depart }} <i class="pi pi-arrow-right mx-2"></i> {{ programme.destination }}
+        </article>
+
+        <!-- Dupliquer les programmes pour créer une boucle infinie -->
+        <article
+          *ngFor="let programme of programmegps(); trackBy: trackByProgrammeId"
+          class="programme-card"
+          [attr.aria-label]="getProgrammeAriaLabel(programme) + ' (copie)'"
+          tabindex="0"
+          (click)="showDetails(programme)"
+          (keydown.enter)="showDetails(programme)"
+          (keydown.space)="showDetails(programme); $event.preventDefault()"
+          aria-hidden="true"
+        >
+          <header class="card-header">
+            <i class="pi pi-building header-building-icon" aria-hidden="true"></i>
+            <strong>{{ programme.agentGp?.nomagence || 'Agence non spécifiée' }}</strong>
+          </header>
+
+          <div class="card-image-container">
+            <img
+              src="icons/bag1.png"
+              class="card-img-top"
+              alt="Icône de programme de transport"
+              loading="lazy"
+              decoding="async"
+            >
+            <div class="image-overlay-card">
+              <i class="pi pi-eye view-details-icon" aria-hidden="true"></i>
+              <span>Voir détails</span>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="pi pi-map-marker route-icon" aria-hidden="true"></i>
+              {{ programme.depart }}
+              <i class="pi pi-arrow-right route-arrow" aria-hidden="true"></i>
+              {{ programme.destination }}
             </h5>
-            <p class="card-text">
-              <i class="pi pi-tag me-2"></i>
-              <strong>Prix/Kg:</strong> {{ programme.prix | currency }}
-            </p>
-            <p class="card-text">
-              <i class="pi pi-calendar me-2"></i>
-              <strong>Date limite:</strong> {{ programme.dateline }}
-            </p>
+
+            <div class="card-info-grid">
+              <div class="info-item">
+                <i class="pi pi-tag price-icon" aria-hidden="true"></i>
+                <div class="info-content">
+                  <span class="info-label">Prix/Kg:</span>
+                  <span class="info-value">{{ formatPrice(programme.prix) }}</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <i class="pi pi-calendar date-icon" aria-hidden="true"></i>
+                <div class="info-content">
+                  <span class="info-label">Date limite:</span>
+                  <time class="info-value" [dateTime]="programme.dateline">{{ programme.dateline }}</time>
+                </div>
+              </div>
+
+              <div class="info-item" *ngIf="programme.garantie">
+                <i class="pi pi-shield garantie-icon" aria-hidden="true"></i>
+                <div class="info-content">
+                  <span class="info-label">Garantie:</span>
+                  <span class="info-value garantie-value">{{ programme.garantie }}%</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+
+          <div class="card-footer">
+            <button class="details-button" (click)="showDetails(programme); $event.stopPropagation()">
+              <i class="pi pi-info-circle" aria-hidden="true"></i>
+              Plus de détails
+            </button>
+          </div>
+        </article>
       </div>
 
       <!-- Flèche droite -->
-      <button class="scroll-button right" (click)="scrollRight()">
-        <i class="pi pi-angle-right"></i>
+      <button
+        pButton
+        class="scroll-button right"
+        (click)="scrollRight()"
+        aria-label="Faire défiler vers la droite"
+        type="button"
+      >
+        <i class="pi pi-angle-right" aria-hidden="true"></i>
       </button>
     </div>
   </section>
 
   <!-- Section d'en-tête -->
-  <div class="header-content">
+  <header class="header-content">
+    <div class="header-icon-container">
+      <i class="pi pi-users header-main-icon" aria-hidden="true"></i>
+    </div>
     <h1>{{ 'WHO_WE_ARE' | translate }}</h1>
     <p>{{ 'MISSION' | translate }}</p>
-  </div>
+  </header>
 
   <!-- Section Statistiques -->
-  <section class="statistics">
-    <h2 class="text-center">{{ 'STATISTICS' | translate }}</h2>
-    <div class="stats-list">
-      <div class="stat-item">
-        <i class="pi pi-users"></i>
+  <section class="statistics" aria-labelledby="stats-title">
+    <div class="stats-header">
+      <i class="pi pi-chart-bar stats-icon" aria-hidden="true"></i>
+      <h2 id="stats-title" class="text-center">{{ 'STATISTICS' | translate }}</h2>
+    </div>
+    <div class="stats-list" role="list">
+      <div class="stat-item" role="listitem">
+        <i class="pi pi-users" aria-hidden="true"></i>
         <p>{{ 'SATISFIED_CLIENTS' | translate }}</p>
-        <h4>+60,000</h4>
+        <h4 aria-label="Plus de soixante mille clients satisfaits">+60,000</h4>
       </div>
-      <div class="stat-item">
-        <i class="pi pi-truck"></i>
+      <div class="stat-item" role="listitem">
+        <i class="pi pi-truck" aria-hidden="true"></i>
         <p>{{ 'SUCCESSFUL_DELIVERIES' | translate }}</p>
-        <h4>+80,000</h4>
+        <h4 aria-label="Plus de quatre-vingt mille livraisons réussies">+80,000</h4>
       </div>
-      <div class="stat-item">
-        <i class="pi pi-globe"></i>
+      <div class="stat-item" role="listitem">
+        <i class="pi pi-globe" aria-hidden="true"></i>
         <p>{{ 'COVERED_DESTINATIONS' | translate }}</p>
-        <h4>+300</h4>
+        <h4 aria-label="Plus de trois cents destinations couvertes">+300</h4>
       </div>
-      <div class="stat-item">
-        <i class="pi pi-building"></i>
+      <div class="stat-item" role="listitem">
+        <i class="pi pi-building" aria-hidden="true"></i>
         <p>{{ 'GP_AGENCIES' | translate }}</p>
-        <h4>+200</h4>
+        <h4 aria-label="Plus de deux cents agences GP">+200</h4>
       </div>
     </div>
   </section>
 
-  <!-- Section Assistant -->
+  <!-- Section Assistant avec améliorations -->
   <div class="fixed-buttons">
-    <div class="assistant-button" (click)="toggleContactOptions()">
-      <i class="pi pi-headphones"></i>
+    <button
+      class="assistant-button"
+      (click)="toggleContactOptions()"
+      [attr.aria-expanded]="showContactOptions()"
+      aria-controls="contact-options"
+      aria-label="Ouvrir les options de contact"
+      type="button"
+    >
+      <i class="pi pi-headphones" aria-hidden="true"></i>
       <span>{{ 'ASSISTANT' | translate }}</span>
-    </div>
+    </button>
   </div>
 
-  <div *ngIf="showContactOptions" class="contact-options">
-<!--    <a [href]="whatsappLink" target="_blank"><i class="pi pi-whatsapp"></i> WhatsApp</a>-->
-<!--    <a href="tel:+221761517642"><i class="pi pi-phone"></i> {{ 'PHONE' | translate }}</a>-->
-    <a href="mailto:gpmonde22@gmail.com"><i class="pi pi-envelope"></i> {{ 'EMAIL' | translate }}</a>
+  <div
+    *ngIf="showContactOptions()"
+    id="contact-options"
+    class="contact-options"
+    role="menu"
+    aria-label="Options de contact"
+  >
+    <a
+      href="mailto:gpmonde22@gmail.com"
+      role="menuitem"
+      aria-label="Contacter par email"
+    >
+      <i class="pi pi-envelope" aria-hidden="true"></i>
+      {{ 'EMAIL' | translate }}
+    </a>
   </div>
 
   <!-- Section Témoignages -->
-  <section class="testimonials">
-    <h2 class="text-center">{{ 'TESTIMONIALS' | translate }}</h2>
-    <div class="testimonial-list">
-      <div class="testimonial-item">
-        <i class="pi pi-user"></i>
-        <p>{{ 'TESTIMONIAL_1' | translate }}</p>
-        <h4>Jean Dupont</h4>
-      </div>
-      <div class="testimonial-item">
-        <i class="pi pi-user"></i>
-        <p>{{ 'TESTIMONIAL_2' | translate }}</p>
-        <h4>Marie Claire</h4>
-      </div>
-      <div class="testimonial-item">
-        <i class="pi pi-user"></i>
-        <p>{{ 'TESTIMONIAL_3' | translate }}</p>
-        <h4>Ahmed Diallo</h4>
-      </div>
+  <section class="testimonials" aria-labelledby="testimonials-title">
+    <div class="testimonials-header">
+      <i class="pi pi-comments testimonials-icon" aria-hidden="true"></i>
+      <h2 id="testimonials-title" class="text-center">{{ 'TESTIMONIALS' | translate }}</h2>
+    </div>
+    <div class="testimonial-list" role="list">
+      <article class="testimonial-item" role="listitem">
+        <i class="pi pi-user testimonial-avatar" aria-hidden="true"></i>
+        <blockquote>
+          <i class="pi pi-quote-left quote-icon" aria-hidden="true"></i>
+          <p>{{ 'TESTIMONIAL_1' | translate }}</p>
+          <footer>
+            <cite>Jean Dupont</cite>
+          </footer>
+        </blockquote>
+      </article>
+      <article class="testimonial-item" role="listitem">
+        <i class="pi pi-user testimonial-avatar" aria-hidden="true"></i>
+        <blockquote>
+          <i class="pi pi-quote-left quote-icon" aria-hidden="true"></i>
+          <p>{{ 'TESTIMONIAL_2' | translate }}</p>
+          <footer>
+            <cite>Marie Claire</cite>
+          </footer>
+        </blockquote>
+      </article>
+      <article class="testimonial-item" role="listitem">
+        <i class="pi pi-user testimonial-avatar" aria-hidden="true"></i>
+        <blockquote>
+          <i class="pi pi-quote-left quote-icon" aria-hidden="true"></i>
+          <p>{{ 'TESTIMONIAL_3' | translate }}</p>
+          <footer>
+            <cite>Ahmed Diallo</cite>
+          </footer>
+        </blockquote>
+      </article>
     </div>
   </section>
 
-  <!-- Fenêtre modale pour les détails -->
-  <!-- Remplacer le p-dialog -->
-  <p-dialog header="Détails du Programme" [(visible)]="displayDetails" [modal]="true" [style]="{width: '50vw'}">
-    <div *ngIf="selectedProgramme">
-      <p><strong>Description:</strong> {{ selectedProgramme.description || 'Non spécifié' }}</p>
-      <p><strong>Départ:</strong> {{ selectedProgramme.depart || 'Non spécifié' }}</p>
-      <p><strong>Destination:</strong> {{ selectedProgramme.destination || 'Non spécifié' }}</p>
-      <p><strong>Prix/Kg:</strong> {{ selectedProgramme.prix | currency }}</p>
-      <p><strong>Date limite:</strong> {{ selectedProgramme.dateline }}</p>
-      <p><strong>Garantie:</strong> {{ selectedProgramme.garantie }}% de la valeur du colis</p>
-      <!-- Corrigé pour éviter l'avertissement - suppression du ?. sur agentGp.telephone -->
-      <p *ngIf="selectedProgramme.agentGp && selectedProgramme.agentGp.telephone"><strong>Tel:</strong> {{ selectedProgramme.agentGp.telephone }}</p>
-      <p *ngIf="!selectedProgramme.agentGp || !selectedProgramme.agentGp.telephone"><strong>Tel:</strong> Non disponible</p>
+  <!-- Modal améliorée pour les détails avec icônes -->
+  <p-dialog
+    [header]="'Détails du Programme'"
+    [(visible)]="displayDetails"
+    [modal]="true"
+    [style]="{width: '60vw', 'max-width': '800px'}"
+    [closable]="true"
+    [closeOnEscape]="true"
+    (onHide)="closeDetails()"
+    role="dialog"
+    aria-labelledby="programme-details-title"
+    aria-modal="true"
+    styleClass="programme-details-dialog"
+  >
+    <div *ngIf="selectedProgramme() as programme" role="document" class="programme-details-content">
+      <h3 id="programme-details-title" class="sr-only">
+        Détails du programme {{ programme.depart }} vers {{ programme.destination }}
+      </h3>
 
-      <div *ngIf="selectedProgramme.agentGp && selectedProgramme.agentGp.telephone" class="d-flex justify-content-center gap-2 mt-3">
-        <p-button icon="pi pi-whatsapp" [rounded]="true" severity="success" [outlined]="true" (click)="openWhatsApp()"/>
-        <p-button icon="pi pi-phone" [rounded]="true" severity="info" [outlined]="true" (click)="makePhoneCall()"/>
-        <p-button icon="pi pi-comment" [rounded]="true" severity="warning" [outlined]="true" (click)="sendSms()"/>
+      <!-- Header du programme -->
+      <div class="programme-details-header">
+        <div class="route-display">
+          <i class="pi pi-map-marker departure-icon" aria-hidden="true"></i>
+          <span class="route-text">{{ programme.depart }}</span>
+          <i class="pi pi-arrow-right route-separator" aria-hidden="true"></i>
+          <span class="route-text">{{ programme.destination }}</span>
+          <i class="pi pi-flag arrival-icon" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <!-- Grille des informations -->
+      <div class="details-grid">
+        <div class="detail-card">
+          <div class="detail-header">
+            <i class="pi pi-file-edit description-icon" aria-hidden="true"></i>
+            <h4>Description</h4>
+          </div>
+          <p>{{ programme.description || 'Non spécifié' }}</p>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-header">
+            <i class="pi pi-map-marker departure-detail-icon" aria-hidden="true"></i>
+            <h4>Départ</h4>
+          </div>
+          <p>{{ programme.depart || 'Non spécifié' }}</p>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-header">
+            <i class="pi pi-flag destination-detail-icon" aria-hidden="true"></i>
+            <h4>Destination</h4>
+          </div>
+          <p>{{ programme.destination || 'Non spécifié' }}</p>
+        </div>
+
+        <div class="detail-card price-card">
+          <div class="detail-header">
+            <i class="pi pi-tag price-detail-icon" aria-hidden="true"></i>
+            <h4>Prix/Kg</h4>
+          </div>
+          <p class="price-value">{{ formatPrice(programme.prix) }}</p>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-header">
+            <i class="pi pi-calendar date-detail-icon" aria-hidden="true"></i>
+            <h4>Date limite</h4>
+          </div>
+          <p>
+            <time [dateTime]="programme.dateline">{{ programme.dateline }}</time>
+          </p>
+        </div>
+
+        <div class="detail-card garantie-card" *ngIf="programme.garantie">
+          <div class="detail-header">
+            <i class="pi pi-shield garantie-detail-icon" aria-hidden="true"></i>
+            <h4>Garantie</h4>
+          </div>
+          <p class="garantie-value">{{ programme.garantie }}% de la valeur du colis</p>
+        </div>
+
+        <div class="detail-card contact-card">
+          <div class="detail-header">
+            <i class="pi pi-phone phone-icon" aria-hidden="true"></i>
+            <h4>Contact</h4>
+          </div>
+          <div *ngIf="programme.agentGp?.telephone; else noTelephone">
+            <p class="phone-number">
+              <a [href]="'tel:+' + programme.agentGp.telephone">
+                <i class="pi pi-phone call-icon" aria-hidden="true"></i>
+                {{ programme.agentGp.telephone }}
+              </a>
+            </p>
+          </div>
+          <ng-template #noTelephone>
+            <p class="no-contact">
+              <i class="pi pi-exclamation-triangle warning-icon" aria-hidden="true"></i>
+              Non disponible
+            </p>
+          </ng-template>
+        </div>
+
+        <div class="detail-card agency-card">
+          <div class="detail-header">
+            <i class="pi pi-building agency-icon" aria-hidden="true"></i>
+            <h4>Agence</h4>
+          </div>
+          <p>{{ programme.agentGp?.nomagence || 'Agence non spécifiée' }}</p>
+        </div>
+      </div>
+
+      <!-- Boutons de contact améliorés -->
+      <div
+        *ngIf="contactMethods().length > 0"
+        class="contact-methods-section"
+        role="group"
+        aria-label="Méthodes de contact"
+      >
+        <h4 class="contact-methods-title">
+          <i class="pi pi-send contact-title-icon" aria-hidden="true"></i>
+          Contacter directement
+        </h4>
+        <div class="contact-methods-grid">
+          <ng-container *ngFor="let method of contactMethods()">
+            <button
+              pButton
+              [icon]="method.icon"
+              [label]="method.label"
+              [ngClass]="{
+                'whatsapp-button': method.label === 'WhatsApp',
+                'phone-button': method.label === 'Téléphone',
+                'sms-button': method.label === 'SMS'
+              }"
+              class="contact-method-button"
+              [attr.aria-label]="'Contacter via ' + method.label"
+              (click)="method.action()"></button>
+          </ng-container>
+        </div>
       </div>
     </div>
   </p-dialog>
