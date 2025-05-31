@@ -20,6 +20,7 @@ import {ResetPasswordComponent} from './reset-password/reset-password.component'
 import {ForgotPasswordComponent} from './forgot-password/forgot-password.component';
 import {VerifyComponent} from './verify/verify.component';
 import {NotificationComponent} from './notification/notification.component';
+import {FactureListComponent} from './facture-list/facture-list.component';
 
 export const routes: Routes = [
 
@@ -42,5 +43,6 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'verify', component: VerifyComponent },
-  {path: 'notification', component: NotificationComponent}
+  {path: 'notification', component: NotificationComponent},
+  {path: 'list-facture', component: FactureListComponent}
 ];

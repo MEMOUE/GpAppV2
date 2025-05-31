@@ -10,9 +10,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { MenuComponent } from '../menu/menu.component';
 import { Programmegp } from '../model/Programmegp';
-import jsPDF from 'jspdf';
-import {TrackingService} from '../services/tracking-service.service';
-import {environment} from '../../environments/environment';
+import { TrackingService } from '../services/tracking-service.service';
+import { environment } from '../../environments/environment';
+import { FactureService, FactureCreateRequest, FactureResponse } from '../services/facture.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-facture',
@@ -27,8 +30,10 @@ import {environment} from '../../environments/environment';
     InputTextModule,
     InputNumberModule,
     ButtonModule,
-    MenuComponent,
+    ToastModule,
+    ProgressSpinnerModule
   ],
+  providers: [MessageService],
   templateUrl: './facture.component.html',
   styleUrls: ['./facture.component.css'],
 })
@@ -39,20 +44,21 @@ export class FactureComponent implements OnInit, AfterViewInit {
   signaturePad!: SignaturePad;
   signatureData: string = '';
   factureGeneree: boolean = false;
-  factureData: any = null;
-  pdfBlobUrl: string | null = null;
+  factureCreee: FactureResponse | null = null;
   showShareOptions: boolean = false;
+  isLoading: boolean = false;
   private apiURL: string = `${environment.apiUrl}`;
 
   @ViewChild('signatureCanvas') signatureCanvas!: ElementRef;
 
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
+  private factureService = inject(FactureService);
+  private messageService = inject(MessageService);
 
   constructor(
     private trackingService: TrackingService,
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.factureForm = this.fb.group({
@@ -62,11 +68,12 @@ export class FactureComponent implements OnInit, AfterViewInit {
       laveurBagage: ['', Validators.required],
       nombreKg: [null, [Validators.required, Validators.min(1)]],
       prixTransport: [{ value: null, disabled: true }, [Validators.required, Validators.min(0)]],
+      notes: [''],
       signature: ['', Validators.required],
     });
 
     this.fetchProgrammes();
-    this.trackingService.trackUserAction('Facture Page ');
+    this.trackingService.trackUserAction('Facture Page');
   }
 
   ngAfterViewInit() {
@@ -80,10 +87,19 @@ export class FactureComponent implements OnInit, AfterViewInit {
   }
 
   fetchProgrammes() {
-    this.http.get<Programmegp[]>(`${this.apiURL}programmegp/mylist`).subscribe(
-      (data) => (this.programmes = data),
-      (error) => console.error('Erreur de récupération des programmes:', error)
-    );
+    this.http.get<Programmegp[]>(`${this.apiURL}programmegp/mylist`).subscribe({
+      next: (data) => {
+        this.programmes = data;
+      },
+      error: (error) => {
+        console.error('Erreur de récupération des programmes:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Impossible de charger les programmes'
+        });
+      }
+    });
   }
 
   onProgrammeChange() {
@@ -95,7 +111,7 @@ export class FactureComponent implements OnInit, AfterViewInit {
   calculerPrixTransport() {
     const kg = this.factureForm.get('nombreKg')?.value;
     if (this.selectedProgramme && kg > 0) {
-      const prixTotal = this.selectedProgramme.prix ;
+      const prixTotal = parseFloat(this.selectedProgramme.prix) * kg;
       this.factureForm.patchValue({ prixTransport: prixTotal });
     }
   }
@@ -108,131 +124,211 @@ export class FactureComponent implements OnInit, AfterViewInit {
 
   generateInvoice() {
     if (this.factureForm.valid && this.signatureData) {
-      this.factureData = { ...this.factureForm.value, signature: this.signatureData };
-      console.log('Facture générée:', this.factureData);
-      this.factureGeneree = true;
-      this.generatePDF();
-      alert('Facture générée avec succès!');
+      this.isLoading = true;
+
+      const factureRequest: FactureCreateRequest = {
+        programmeId: this.factureForm.get('programme')?.value,
+        nomClient: this.factureForm.get('nomClient')?.value,
+        adresseClient: this.factureForm.get('adresseClient')?.value,
+        laveurBagage: this.factureForm.get('laveurBagage')?.value,
+        nombreKg: this.factureForm.get('nombreKg')?.value,
+        prixTransport: this.factureForm.get('prixTransport')?.value,
+        signatureBase64: this.signatureData,
+        notes: this.factureForm.get('notes')?.value
+      };
+
+      this.factureService.creerFacture(factureRequest).subscribe({
+        next: (facture) => {
+          this.factureCreee = facture;
+          this.factureGeneree = true;
+          this.isLoading = false;
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: `Facture ${facture.numeroFacture} créée avec succès!`
+          });
+
+          // Réinitialiser le formulaire
+          this.resetForm();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Erreur lors de la création de la facture:', error);
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Erreur lors de la création de la facture'
+          });
+        }
+      });
     } else {
-      alert('Veuillez remplir tous les champs et signer.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Attention',
+        detail: 'Veuillez remplir tous les champs et signer'
+      });
     }
   }
-
-  generatePDF() {
-    const doc = new jsPDF();
-
-    // const logoUrl = '/logo.png';
-
-    // doc.addImage(logoUrl, 'PNG', 10, 10, 50, 20);
-    const logo = '/logo.png';
-
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Facture', 80, 20);
-
-    const programme = this.factureData.programme;
-    if (programme && programme.agentGp) {
-      const agence = programme.agentGp;
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Agence: ${agence.nomagence}`, 10, 40);
-      doc.text(`Adresse: ${agence.adresse}`, 10, 50);
-      doc.text(`Téléphone: ${agence.telephone}`, 10, 60);
-      doc.text(`Email: ${agence.email}`, 10, 70);
-    }
-
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.5);
-    doc.line(10, 75, 200, 75);
-
-    if (programme) {
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Détails du Programme', 10, 85);
-
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Programme: ${programme.description}`, 10, 95);
-      doc.text(`Départ: ${programme.depart}`, 10, 105);
-      doc.text(`Destination: ${programme.destination}`, 10, 115);
-      doc.text(`Prix par KG: ${programme.prix} €`, 10, 125);
-      doc.text(`Garantie: ${programme.garantie} %`, 10, 135);
-      doc.text(`Date limite: ${programme.dateline}`, 10, 145);
-    }
-
-    // Ligne séparatrice
-    doc.line(10, 150, 200, 150);
-
-    // Détails du client
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Détails du Client', 10, 160);
-
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Nom du client: ${this.factureData.nomClient}`, 10, 170);
-    doc.text(`Adresse du client: ${this.factureData.adresseClient}`, 10, 180);
-    doc.text(`Laveur de bagage: ${this.factureData.laveurBagage}`, 10, 190);
-    doc.text(`Nombre de KG: ${this.factureData.nombreKg}`, 10, 200);
-    doc.text(`Prix du transport: ${this.factureData.prixTransport} €`, 10, 210);
-
-    doc.line(10, 215, 200, 215);
-
-    if (this.signatureData) {
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Signature de l\'Agence', 10, 225);
-
-      const imgData = this.signatureData;
-      doc.addImage(imgData, 'PNG', 10, 230, 50, 20);
-    }
-
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'italic');
-
-    doc.text('Merci de faire confiance à GPMonde pour vos transports internationaux.', 10, 260);
-    doc.text('Visitez notre site web: www.gpmonde.com', 10, 265);
-
-    const text = 'Visitez notre site web: www.gpmonde.com';
-    const textWidth = doc.getTextWidth(text);
-    const logoX = 10 + textWidth + 2;
-    const logoY = 265 - 5;
-
-    doc.addImage(logo, 'PNG', logoX, logoY, 30, 20);
-
-
-    const pdfBlob = doc.output('blob');
-    this.pdfBlobUrl = URL.createObjectURL(pdfBlob);
-  }
-
 
   downloadPDF() {
-    if (this.pdfBlobUrl) {
-      const a = document.createElement('a');
-      a.href = this.pdfBlobUrl;
-      a.download = 'facture.pdf';
-      a.click();
+    if (this.factureCreee) {
+      this.isLoading = true;
+
+      this.factureService.downloadPDF(this.factureCreee.id).subscribe({
+        next: (pdfBlob) => {
+          this.factureService.saveFacturePDF(this.factureCreee!, pdfBlob);
+          this.isLoading = false;
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: 'Facture téléchargée avec succès'
+          });
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Erreur lors du téléchargement:', error);
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Erreur lors du téléchargement du PDF'
+          });
+        }
+      });
+    }
+  }
+
+  printInvoice() {
+    if (this.factureCreee) {
+      this.factureService.imprimerFacture(this.factureCreee.id);
     }
   }
 
   shareViaWhatsApp() {
-    if (this.pdfBlobUrl) {
-      const message = `Voici votre facture: ${this.factureData.nomClient}`;
-      const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+    if (this.factureCreee) {
+      this.factureService.partagerWhatsApp(this.factureCreee);
     }
   }
 
   shareViaEmail() {
-    if (this.pdfBlobUrl) {
-      const subject = 'Votre facture';
-      const body = `Bonjour, voici votre facture en pièce jointe.`;
-      const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      window.open(mailtoUrl, '_blank');
+    if (this.factureCreee) {
+      this.factureService.partagerEmail(this.factureCreee);
+    }
+  }
+
+  previewPDF() {
+    if (this.factureCreee) {
+      this.factureService.previewPDF(this.factureCreee.id).subscribe({
+        next: (pdfBlob) => {
+          const pdfUrl = URL.createObjectURL(pdfBlob);
+          window.open(pdfUrl, '_blank');
+        },
+        error: (error) => {
+          console.error('Erreur lors de la prévisualisation:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Erreur lors de la prévisualisation du PDF'
+          });
+        }
+      });
     }
   }
 
   toggleShareOptions() {
     this.showShareOptions = !this.showShareOptions;
+  }
+
+  resetForm() {
+    this.factureForm.reset();
+    this.selectedProgramme = null;
+    this.clearSignature();
+
+    // Réinitialiser les valeurs par défaut
+    this.factureForm.patchValue({
+      programme: null,
+      nombreKg: null,
+      prixTransport: null
+    });
+  }
+
+  createNewInvoice() {
+    this.factureGeneree = false;
+    this.factureCreee = null;
+    this.showShareOptions = false;
+    this.resetForm();
+  }
+
+  // Méthodes pour la gestion du statut
+  marquerEnvoyee() {
+    if (this.factureCreee) {
+      this.factureService.envoyerFacture(this.factureCreee.id).subscribe({
+        next: (facture) => {
+          this.factureCreee = facture;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: 'Facture marquée comme envoyée'
+          });
+        },
+        error: (error) => {
+          console.error('Erreur:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Erreur lors de la mise à jour du statut'
+          });
+        }
+      });
+    }
+  }
+
+  marquerPayee() {
+    if (this.factureCreee) {
+      this.factureService.payerFacture(this.factureCreee.id).subscribe({
+        next: (facture) => {
+          this.factureCreee = facture;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: 'Facture marquée comme payée'
+          });
+        },
+        error: (error) => {
+          console.error('Erreur:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Erreur lors de la mise à jour du statut'
+          });
+        }
+      });
+    }
+  }
+
+  // Helpers pour l'affichage
+  getStatutColor(): string {
+    if (!this.factureCreee) return '';
+
+    switch (this.factureCreee.statut) {
+
+      case 'PAYEE': return 'success';
+      case 'ANNULEE': return 'danger';
+      default: return 'secondary';
+    }
+  }
+
+  getStatutLabel(): string {
+    if (!this.factureCreee) return '';
+
+    switch (this.factureCreee.statut) {
+
+      case 'PAYEE': return 'Payée';
+      case 'ANNULEE': return 'Annulée';
+      default: return this.factureCreee.statut;
+    }
   }
 }

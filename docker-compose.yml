@@ -45,16 +45,6 @@ services:
       - "traefik.http.services.backend.loadbalancer.server.port=8080"
       - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
 
-          # Route WebSocket
-#      - "traefik.http.routers.backend-ws.rule=Host(`api.gpmonde.com`) && PathPrefix(`/ws`)"
-#      - "traefik.http.routers.backend-ws.entrypoints=websecure"
-#      - "traefik.http.routers.backend-ws.tls.certresolver=le"
-#      - "traefik.http.services.backend-ws.loadbalancer.server.port=8080"
-
-  # Middleware pour WebSocket
- #     - "traefik.http.middlewares.websocket.headers.customrequestheaders.Connection=Upgrade"
- #     - "traefik.http.middlewares.websocket.headers.customrequestheaders.Upgrade=websocket"
- #     - "traefik.http.routers.backend-ws.middlewares=websocket"
 
 
   frontend:
