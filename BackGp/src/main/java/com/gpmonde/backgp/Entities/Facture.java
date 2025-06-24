@@ -47,9 +47,10 @@ public class Facture {
 	@Column(nullable = false)
 	private LocalDateTime dateCreation;
 
+	// États simplifiés : seulement PAYEE ou NON_PAYEE
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private StatutFacture statut = StatutFacture.BROUILLON;
+	private StatutFacture statut = StatutFacture.NON_PAYEE;
 
 	// Relations
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -61,9 +62,6 @@ public class Facture {
 	private ProgrammeGp programmeGp;
 
 	// Informations de traçabilité
-	@Column
-	private LocalDateTime dateEnvoi;
-
 	@Column
 	private LocalDateTime datePayement;
 
@@ -87,11 +85,19 @@ public class Facture {
 		this.numeroFacture = "GP-" + date + "-" + random;
 	}
 
+	// États simplifiés : seulement deux états
 	public enum StatutFacture {
-		BROUILLON,
-		FINALISEE,
-		ENVOYEE,
-		PAYEE,
-		ANNULEE
+		NON_PAYEE("Non payée"),
+		PAYEE("Payée");
+
+		private final String displayName;
+
+		StatutFacture(String displayName) {
+			this.displayName = displayName;
+		}
+
+		public String getDisplayName() {
+			return displayName;
+		}
 	}
 }

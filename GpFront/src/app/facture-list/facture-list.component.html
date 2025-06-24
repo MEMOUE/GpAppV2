@@ -1,0 +1,579 @@
+<app-menu></app-menu>
+
+<!-- Toast notifications -->
+<p-toast position="top-right"></p-toast>
+
+<!-- Confirmation dialog -->
+<p-confirmDialog></p-confirmDialog>
+
+<div class="facture-list-container">
+  <!-- Header avec statistiques -->
+  <div class="header-section">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">
+          <i class="pi pi-file-text"></i>
+          Mes Factures
+        </h1>
+        <p class="page-subtitle">Gérez et suivez toutes vos factures</p>
+      </div>
+
+      <div class="header-actions">
+        <p-button
+          icon="pi pi-refresh"
+          [outlined]="true"
+          [rounded]="true"
+          severity="info"
+          (onClick)="refreshData()"
+          pTooltip="Actualiser les données"
+          tooltipPosition="bottom">
+        </p-button>
+
+        <p-button
+          icon="pi pi-plus"
+          label="Nouvelle Facture"
+          [rounded]="true"
+          severity="success"
+          (onClick)="creerNouvelleFacture()">
+        </p-button>
+      </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="statistics-section" *ngIf="statistiques">
+      <div class="stats-grid">
+        <div class="stat-card total">
+          <div class="stat-icon">
+            <i class="pi pi-file-text"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ statistiques.nombreFactures }}</div>
+            <div class="stat-label">Total Factures</div>
+          </div>
+        </div>
+
+        <div class="stat-card paid">
+          <div class="stat-icon">
+            <i class="pi pi-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ statistiques.nombreFacturesPayees }}</div>
+            <div class="stat-label">Payées</div>
+            <div class="stat-percentage">{{ statistiques.pourcentagePayees }}%</div>
+          </div>
+        </div>
+
+        <div class="stat-card unpaid">
+          <div class="stat-icon">
+            <i class="pi pi-clock"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ statistiques.nombreFactures - statistiques.nombreFacturesPayees }}</div>
+            <div class="stat-label">En attente</div>
+            <div class="stat-percentage">{{ 100 - statistiques.pourcentagePayees }}%</div>
+          </div>
+        </div>
+
+        <div class="stat-card revenue">
+          <div class="stat-icon">
+            <i class="pi pi-euro"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ formatCurrency(statistiques.totalFactures) }}</div>
+            <div class="stat-label">Chiffre d'affaires</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barre d'outils et filtres -->
+  <div class="content-section">
+    <p-card>
+      <!-- Toolbar -->
+      <p-toolbar>
+        <div class="p-toolbar-group-start">
+          <!-- Recherche globale -->
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              placeholder="Recherche globale..."
+              (input)="applyGlobalFilter($event)"
+              class="global-search">
+          </span>
+
+          <!-- Bouton filtres avancés -->
+          <p-button
+          icon="pi pi-filter"
+          [outlined]="true"
+          [rounded]="true"
+          severity="secondary"
+          (onClick)="toggleAdvancedFilters()"
+          [badge]="hasActiveFilters ? '●' : undefined"
+          badgeClass="filter-badge"
+          pTooltip="Filtres avancés"
+          tooltipPosition="bottom">
+          </p-button>
+
+          <!-- Clear filters -->
+          <p-button
+            icon="pi pi-filter-slash"
+            [outlined]="true"
+            [rounded]="true"
+            severity="danger"
+            (onClick)="clearFilters()"
+            [disabled]="!hasActiveFilters"
+            pTooltip="Effacer les filtres"
+            tooltipPosition="bottom">
+          </p-button>
+        </div>
+
+        <div class="p-toolbar-group-center">
+          <!-- Sélection groupée -->
+          <div class="bulk-actions" *ngIf="selectedFactures.length > 0">
+            <p-chip [label]="selectedFactures.length + ' sélectionnée(s)'"></p-chip>
+            <p-splitButton
+              icon="pi pi-cog"
+              label="Actions"
+              [model]="bulkActions"
+              severity="info"
+              [rounded]="true">
+            </p-splitButton>
+          </div>
+        </div>
+
+        <div class="p-toolbar-group-end">
+          <!-- Options d'affichage -->
+          <div class="view-controls">
+            <!-- Vue table/card -->
+            <p-button
+              [icon]="viewMode === 'table' ? 'pi pi-th-large' : 'pi pi-list'"
+              [outlined]="true"
+              [rounded]="true"
+              severity="secondary"
+              (onClick)="toggleViewMode()"
+              [pTooltip]="viewMode === 'table' ? 'Vue en cartes' : 'Vue en tableau'"
+              tooltipPosition="bottom">
+            </p-button>
+
+            <!-- Choix des colonnes -->
+            <p-button
+              icon="pi pi-columns"
+              [outlined]="true"
+              [rounded]="true"
+              severity="secondary"
+              (onClick)="filterPanel.toggle($event)"
+              pTooltip="Choisir les colonnes"
+              tooltipPosition="bottom">
+            </p-button>
+
+            <!-- Export -->
+            <p-splitButton
+              icon="pi pi-download"
+              label="Export"
+              [model]="exportActions"
+              severity="help"
+              [rounded]="true">
+            </p-splitButton>
+          </div>
+        </div>
+      </p-toolbar>
+
+      <!-- Filtres avancés -->
+      <div class="advanced-filters" *ngIf="showAdvancedFilters">
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="nomClient">Nom du client</label>
+            <input
+              id="nomClient"
+              pInputText
+              [(ngModel)]="searchTerms.nomClient"
+              (input)="onAdvancedSearchChange()"
+              placeholder="Rechercher par nom..."
+              class="filter-input">
+          </div>
+
+          <div class="filter-group">
+            <label for="numeroFacture">N° Facture</label>
+            <input
+              id="numeroFacture"
+              pInputText
+              [(ngModel)]="searchTerms.numeroFacture"
+              (input)="onAdvancedSearchChange()"
+              placeholder="Ex: FAC-2024-001"
+              class="filter-input">
+          </div>
+
+          <div class="filter-group">
+            <label for="statut">Statut</label>
+            <p-dropdown
+              id="statut"
+              [(ngModel)]="searchTerms.statut"
+              [options]="statutOptions"
+              optionLabel="label"
+              optionValue="value"
+              (onChange)="onAdvancedSearchChange()"
+              placeholder="Tous les statuts"
+              [showClear]="true"
+              class="filter-dropdown">
+            </p-dropdown>
+          </div>
+
+          <div class="filter-group">
+            <label for="dateDebut">Date début</label>
+            <p-calendar
+              id="dateDebut"
+              [(ngModel)]="searchTerms.dateDebut"
+              (onSelect)="onAdvancedSearchChange()"
+              dateFormat="dd/mm/yy"
+              placeholder="Date début"
+              [showIcon]="true"
+              [showButtonBar]="true"
+              class="filter-calendar">
+            </p-calendar>
+          </div>
+
+          <div class="filter-group">
+            <label for="dateFin">Date fin</label>
+            <p-calendar
+              id="dateFin"
+              [(ngModel)]="searchTerms.dateFin"
+              (onSelect)="onAdvancedSearchChange()"
+              dateFormat="dd/mm/yy"
+              placeholder="Date fin"
+              [showIcon]="true"
+              [showButtonBar]="true"
+              class="filter-calendar">
+            </p-calendar>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Skeleton -->
+      <div class="skeleton-container" *ngIf="loading">
+        <div class="skeleton-header">
+          <p-skeleton width="100%" height="2rem"></p-skeleton>
+        </div>
+        <div class="skeleton-rows">
+          <div class="skeleton-row" *ngFor="let item of [1,2,3,4,5]">
+            <p-skeleton width="15%" height="1.5rem"></p-skeleton>
+            <p-skeleton width="25%" height="1.5rem"></p-skeleton>
+            <p-skeleton width="15%" height="1.5rem"></p-skeleton>
+            <p-skeleton width="15%" height="1.5rem"></p-skeleton>
+            <p-skeleton width="10%" height="1.5rem"></p-skeleton>
+            <p-skeleton width="20%" height="1.5rem"></p-skeleton>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vue Tableau -->
+      <div class="table-container" *ngIf="!loading && viewMode === 'table'">
+        <p-table
+          #dt
+          [value]="factures"
+          [columns]="selectedColumns"
+          [paginator]="false"
+          [rows]="rows"
+          [totalRecords]="totalRecords"
+          [loading]="loading"
+          [lazy]="true"
+          (onLazyLoad)="loadFactures()"
+          [sortField]="sortField"
+          [sortOrder]="sortOrder"
+          (onSort)="onSort($event)"
+          selectionMode="multiple"
+          [(selection)]="selectedFactures"
+          dataKey="id"
+          [globalFilterFields]="['numeroFacture','nomClient','depart','destination']"
+          styleClass="p-datatable-striped p-datatable-gridlines"
+          [tableStyle]="{'min-width': '80rem'}"
+          [scrollable]="true"
+          scrollHeight="calc(100vh - 400px)">
+
+          <!-- Header template -->
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th style="width: 4rem">
+                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+              </th>
+              <th
+                *ngFor="let col of columns"
+                [pSortableColumn]="col.sortable ? col.field : undefined"
+                [style.width]="col.width">
+                {{ col.header }}
+                <p-sortIcon [field]="col.field" *ngIf="col.sortable"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+
+          <!-- Body template -->
+          <ng-template pTemplate="body" let-facture let-columns="columns">
+            <tr [pSelectableRow]="facture">
+              <td>
+                <p-tableCheckbox [value]="facture"></p-tableCheckbox>
+              </td>
+              <td *ngFor="let col of columns">
+                <!-- Numero Facture -->
+                <span *ngIf="col.field === 'numeroFacture'" class="facture-number">
+                  <strong>{{ facture.numeroFacture }}</strong>
+                </span>
+
+                <!-- Client -->
+                <span *ngIf="col.field === 'nomClient'" class="client-info">
+                  <div class="client-name">{{ facture.nomClient }}</div>
+                  <div class="client-address">{{ facture.adresseClient }}</div>
+                </span>
+
+                <!-- Montant -->
+                <span *ngIf="col.field === 'prixTransport'" class="amount">
+                  {{ formatCurrency(facture.prixTransport) }}
+                </span>
+
+                <!-- Statut -->
+                <span *ngIf="col.field === 'statut'">
+                  <p-tag
+                    [severity]="getStatutSeverity(facture.statut)"
+                    [value]="getStatutLabel(facture.statut)"
+                    [icon]="getStatutIcon(facture.statut)">
+                  </p-tag>
+                </span>
+
+                <!-- Date -->
+                <span *ngIf="col.field === 'dateCreation'" class="date">
+                  {{ formatDate(facture.dateCreation) }}
+                </span>
+
+                <!-- Actions -->
+                <div *ngIf="col.field === 'actions'" class="action-buttons">
+                  <!-- Bouton statut -->
+                  <p-button
+                    *ngIf="facture.statut === 'NON_PAYEE'"
+                    icon="pi pi-check"
+                    severity="success"
+                    [rounded]="true"
+                    [text]="true"
+                    pTooltip="Marquer comme payée"
+                    (onClick)="marquerPayee(facture)">
+                  </p-button>
+
+                  <p-button
+                    *ngIf="facture.statut === 'PAYEE'"
+                    icon="pi pi-undo"
+                    severity="warning"
+                    [rounded]="true"
+                    [text]="true"
+                    pTooltip="Marquer comme non payée"
+                    (onClick)="marquerNonPayee(facture)">
+                  </p-button>
+
+                  <!-- Boutons d'action -->
+                  <p-button
+                    icon="pi pi-eye"
+                    severity="info"
+                    [rounded]="true"
+                    [text]="true"
+                    pTooltip="Voir détails"
+                    (onClick)="voirDetails(facture)">
+                  </p-button>
+
+                  <p-button
+                    icon="pi pi-download"
+                    severity="help"
+                    [rounded]="true"
+                    [text]="true"
+                    pTooltip="Télécharger PDF"
+                    (onClick)="telechargerPDF(facture)">
+                  </p-button>
+
+                  <p-button
+                    icon="pi pi-ellipsis-v"
+                    severity="secondary"
+                    [rounded]="true"
+                    [text]="true"
+                    (onClick)="openFactureMenu($event, facture, menu)"
+                    pTooltip="Plus d'actions">
+                  </p-button>
+
+                  <p-menu #menu [model]="factureActions" [popup]="true"></p-menu>
+                </div>
+
+                <!-- Autres champs -->
+                <span *ngIf="!['numeroFacture','nomClient','prixTransport','statut','dateCreation','actions'].includes(col.field)">
+                  {{ facture[col.field] }}
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+
+          <!-- Empty state -->
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="selectedColumns.length + 1" class="text-center">
+                <div class="empty-state">
+                  <i class="pi pi-info-circle"></i>
+                  <h3>Aucune facture trouvée</h3>
+                  <p>{{ hasActiveFilters ? 'Aucune facture ne correspond à vos critères de recherche.' : 'Vous n\'avez pas encore créé de factures.' }}</p>
+                  <p-button
+                    *ngIf="!hasActiveFilters"
+                    label="Créer ma première facture"
+                    icon="pi pi-plus"
+                    (onClick)="creerNouvelleFacture()">
+                  </p-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+        <!-- Pagination custom -->
+        <div class="pagination-container">
+          <p-paginator
+            [rows]="rows"
+            [totalRecords]="totalRecords"
+            [first]="first"
+            [rowsPerPageOptions]="rowsPerPageOptions"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures"
+            (onPageChange)="onPageChange($event)">
+          </p-paginator>
+        </div>
+      </div>
+
+      <!-- Vue Cartes -->
+      <div class="cards-container" *ngIf="!loading && viewMode === 'card'">
+        <div class="cards-grid">
+          <div class="facture-card" *ngFor="let facture of factures" [class.selected]="selectedFactures.includes(facture)">
+            <!-- Header de la carte -->
+            <div class="card-header">
+              <div class="card-title">
+                <p-checkbox
+                  [(ngModel)]="selectedFactures"
+                  [value]="facture"
+                  [binary]="false">
+                </p-checkbox>
+                <span class="facture-number">{{ facture.numeroFacture }}</span>
+                <p-tag
+                  [severity]="getStatutSeverity(facture.statut)"
+                  [value]="getStatutLabel(facture.statut)"
+                  [icon]="getStatutIcon(facture.statut)">
+                </p-tag>
+              </div>
+              <div class="card-actions">
+                <p-button
+                  icon="pi pi-ellipsis-v"
+                  [text]="true"
+                  [rounded]="true"
+                  severity="secondary"
+                  (onClick)="openFactureMenu($event, facture, cardMenu)"
+                  size="small">
+                </p-button>
+                <p-menu #cardMenu [model]="factureActions" [popup]="true"></p-menu>
+              </div>
+            </div>
+
+            <!-- Contenu de la carte -->
+            <div class="card-content">
+              <div class="client-section">
+                <h4>{{ facture.nomClient }}</h4>
+                <p class="client-address">{{ facture.adresseClient }}</p>
+              </div>
+
+              <div class="journey-section">
+                <div class="journey">
+                  <span class="departure">{{ facture.depart }}</span>
+                  <i class="pi pi-arrow-right"></i>
+                  <span class="destination">{{ facture.destination }}</span>
+                </div>
+                <div class="weight">{{ facture.nombreKg }} KG</div>
+              </div>
+
+              <div class="amount-section">
+                <div class="amount">{{ formatCurrency(facture.prixTransport) }}</div>
+                <div class="unit-price">{{ formatCurrency(facture.prixUnitaire) }}/KG</div>
+              </div>
+
+              <div class="date-section">
+                <small>{{ formatDate(facture.dateCreation) }}</small>
+              </div>
+            </div>
+
+            <!-- Actions de la carte -->
+            <div class="card-footer">
+              <p-button
+                *ngIf="facture.statut === 'NON_PAYEE'"
+                icon="pi pi-check"
+                label="Marquer payée"
+                severity="success"
+                size="small"
+                [outlined]="true"
+                (onClick)="marquerPayee(facture)">
+              </p-button>
+
+              <p-button
+                *ngIf="facture.statut === 'PAYEE'"
+                icon="pi pi-undo"
+                label="Marquer non payée"
+                severity="warning"
+                size="small"
+                [outlined]="true"
+                (onClick)="marquerNonPayee(facture)">
+              </p-button>
+
+              <p-button
+                icon="pi pi-eye"
+                label="Détails"
+                severity="info"
+                size="small"
+                [outlined]="true"
+                (onClick)="voirDetails(facture)">
+              </p-button>
+
+              <p-button
+                icon="pi pi-download"
+                severity="help"
+                size="small"
+                [text]="true"
+                [rounded]="true"
+                pTooltip="Télécharger PDF"
+                (onClick)="telechargerPDF(facture)">
+              </p-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination pour les cartes -->
+        <div class="pagination-container">
+          <p-paginator
+            [rows]="rows"
+            [totalRecords]="totalRecords"
+            [first]="first"
+            [rowsPerPageOptions]="rowsPerPageOptions"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures"
+            (onPageChange)="onPageChange($event)">
+          </p-paginator>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>
+
+<!-- Panel pour le choix des colonnes -->
+<p-overlayPanel #filterPanel>
+  <div class="column-selector">
+    <h4>Choisir les colonnes à afficher</h4>
+    <div class="column-options">
+      <div class="column-option" *ngFor="let col of columns">
+        <p-checkbox
+          [(ngModel)]="selectedColumns"
+          [value]="col"
+          [binary]="false"
+          (onChange)="onColumnToggle()">
+        </p-checkbox>
+        <label>{{ col.header }}</label>
+      </div>
+    </div>
+  </div>
+</p-overlayPanel>

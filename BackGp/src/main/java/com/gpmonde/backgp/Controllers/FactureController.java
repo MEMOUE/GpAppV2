@@ -139,42 +139,7 @@ public class FactureController {
 		}
 	}
 
-	@PutMapping("/{id}/statut")
-	@Operation(summary = "Changer le statut d'une facture", description = "Met à jour le statut d'une facture")
-	@ApiResponse(responseCode = "200", description = "Statut mis à jour")
-	@ApiResponse(responseCode = "404", description = "Facture non trouvée")
-	public ResponseEntity<FactureResponseDTO> changerStatut(
-			@PathVariable Long id,
-			@RequestBody Map<String, String> request) {
-		try {
-			String statutStr = request.get("statut");
-			Facture.StatutFacture statut = Facture.StatutFacture.valueOf(statutStr);
-
-			FactureResponseDTO facture = factureService.changerStatutFacture(id, statut);
-			return ResponseEntity.ok(facture);
-		} catch (IllegalArgumentException e) {
-			log.error("Statut invalide ou facture non trouvée: {}", e.getMessage());
-			return ResponseEntity.badRequest().build();
-		} catch (Exception e) {
-			log.error("Erreur lors du changement de statut de la facture {}", id, e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	@PostMapping("/{id}/envoyer")
-	@Operation(summary = "Marquer une facture comme envoyée", description = "Change le statut vers ENVOYEE et enregistre la date d'envoi")
-	public ResponseEntity<FactureResponseDTO> envoyerFacture(@PathVariable Long id) {
-		try {
-			FactureResponseDTO facture = factureService.changerStatutFacture(id, Facture.StatutFacture.ENVOYEE);
-			return ResponseEntity.ok(facture);
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.notFound().build();
-		} catch (Exception e) {
-			log.error("Erreur lors de l'envoi de la facture {}", id, e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
+	// Méthode simplifiée pour marquer comme payée
 	@PostMapping("/{id}/payer")
 	@Operation(summary = "Marquer une facture comme payée", description = "Change le statut vers PAYEE et enregistre la date de paiement")
 	public ResponseEntity<FactureResponseDTO> payerFacture(@PathVariable Long id) {
@@ -189,15 +154,41 @@ public class FactureController {
 		}
 	}
 
+	// Méthode pour changer le statut (utilisée pour marquer comme NON_PAYEE si nécessaire)
+	@PutMapping("/{id}/statut")
+	@Operation(summary = "Changer le statut d'une facture", description = "Met à jour le statut d'une facture")
+	@ApiResponse(responseCode = "200", description = "Statut mis à jour")
+	@ApiResponse(responseCode = "404", description = "Facture non trouvée")
+	public ResponseEntity<FactureResponseDTO> changerStatut(
+			@PathVariable Long id,
+			@RequestBody Map<String, String> request) {
+		try {
+			String statutStr = request.get("statut");
+
+			// Validation des statuts autorisés
+			if (!"PAYEE".equals(statutStr) && !"NON_PAYEE".equals(statutStr)) {
+				log.error("Statut invalide: {}. Seuls PAYEE et NON_PAYEE sont autorisés", statutStr);
+				return ResponseEntity.badRequest().build();
+			}
+
+			Facture.StatutFacture statut = Facture.StatutFacture.valueOf(statutStr);
+			FactureResponseDTO facture = factureService.changerStatutFacture(id, statut);
+			return ResponseEntity.ok(facture);
+		} catch (IllegalArgumentException e) {
+			log.error("Statut invalide ou facture non trouvée: {}", e.getMessage());
+			return ResponseEntity.badRequest().build();
+		} catch (Exception e) {
+			log.error("Erreur lors du changement de statut de la facture {}", id, e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 	@GetMapping("/statistiques")
 	@Operation(summary = "Statistiques des factures", description = "Récupère les statistiques des factures de l'agent")
 	public ResponseEntity<Map<String, Object>> getStatistiques() {
 		try {
-			// TODO: Implémenter les statistiques dans le service
-			Map<String, Object> stats = Map.of(
-					"message", "Statistiques à implémenter"
-			);
-			return ResponseEntity.ok(stats);
+			Map<String, Object> statistiques = factureService.getStatistiquesAgent();
+			return ResponseEntity.ok(statistiques);
 		} catch (Exception e) {
 			log.error("Erreur lors de la récupération des statistiques", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
