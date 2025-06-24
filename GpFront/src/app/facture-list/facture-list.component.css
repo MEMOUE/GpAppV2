@@ -1,0 +1,338 @@
+/* Variables CSS */
+:root {
+  --primary-color: #2196F3;
+  --success-color: #4CAF50;
+  --warning-color: #FF9800;
+  --danger-color: #F44336;
+  --info-color: #2196F3;
+  --light-gray: #f8f9fa;
+  --border-color: #e9ecef;
+  --text-muted: #6c757d;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --border-radius: 8px;
+  --transition: all 0.3s ease;
+}
+
+/* Container principal */
+.container-fluid {
+  padding: 20px;
+}
+
+/* Card principale */
+.card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--primary-color), #1976D2);
+  color: white;
+  border: none;
+  padding: 20px;
+}
+
+.card-header h4 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+/* Section des filtres de recherche */
+.search-filters {
+  background: var(--light-gray);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: 25px;
+  border: 1px solid var(--border-color);
+}
+
+.search-filters .form-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Styles pour les inputs de recherche */
+:host ::ng-deep .search-filters .p-inputtext,
+:host ::ng-deep .search-filters .p-dropdown {
+  width: 100%;
+}
+
+:host ::ng-deep .search-filters .p-inputtext {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: var(--transition);
+  font-size: 14px;
+}
+
+:host ::ng-deep .search-filters .p-inputtext:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+:host ::ng-deep .search-filters .p-dropdown {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+:host ::ng-deep .search-filters .p-dropdown:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Tableau personnalisé */
+:host ::ng-deep .p-datatable {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+:host ::ng-deep .p-datatable .p-datatable-header {
+  background: #f8f9fa;
+  border: none;
+  padding: 15px 20px;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  color: #333;
+  font-weight: 600;
+  padding: 15px 12px;
+  border: none;
+  border-bottom: 2px solid var(--primary-color);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 15px 12px;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr {
+  transition: var(--transition);
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: rgba(33, 150, 243, 0.05);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Pagination personnalisée */
+:host ::ng-deep .p-paginator {
+  background: #f8f9fa;
+  border: none;
+  border-top: 1px solid var(--border-color);
+  padding: 15px 20px;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page {
+  min-width: 35px;
+  height: 35px;
+  border-radius: 6px;
+  margin: 0 2px;
+  transition: var(--transition);
+}
+
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Styles pour les badges de statut */
+:host ::ng-deep .p-tag {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Groupes de boutons d'action */
+.btn-group-vertical {
+  gap: 4px;
+}
+
+.btn-group-vertical .p-button {
+  margin: 0;
+  border-radius: 6px !important;
+}
+
+:host ::ng-deep .p-button-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+  min-width: auto;
+}
+
+/* Boutons d'action spécifiques */
+:host ::ng-deep .p-button-success {
+  background: linear-gradient(135deg, var(--success-color), #388E3C);
+  border-color: var(--success-color);
+}
+
+:host ::ng-deep .p-button-warning {
+  background: linear-gradient(135deg, var(--warning-color), #F57C00);
+  border-color: var(--warning-color);
+}
+
+:host ::ng-deep .p-button-info {
+  background: linear-gradient(135deg, var(--info-color), #1976D2);
+  border-color: var(--info-color);
+}
+
+:host ::ng-deep .p-button-secondary {
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+  border-color: #6c757d;
+}
+
+:host ::ng-deep .p-button-help {
+  background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+  border-color: #9c27b0;
+}
+
+/* Effets hover pour les boutons */
+:host ::ng-deep .p-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+:host ::ng-deep .p-button:active {
+  transform: translateY(0);
+}
+
+/* État vide */
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-state i {
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.empty-state h5 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  margin-bottom: 25px;
+  font-size: 16px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 10px;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  .search-filters {
+    padding: 15px;
+  }
+
+  .search-filters .row {
+    margin: 0;
+  }
+
+  .search-filters .col-md-4,
+  .search-filters .col-md-3,
+  .search-filters .col-md-1 {
+    padding: 5px;
+    margin-bottom: 15px;
+  }
+
+  /* Table responsive pour mobile */
+  :host ::ng-deep .p-datatable {
+    font-size: 14px;
+  }
+
+  :host ::ng-deep .p-datatable .p-datatable-thead > tr > th,
+  :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    padding: 10px 8px;
+  }
+
+  /* Actions en mobile */
+  .btn-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  :host ::ng-deep .p-button-sm {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Masquer certaines colonnes sur très petit écran */
+  .p-datatable th:nth-child(3),
+  .p-datatable td:nth-child(3),
+  .p-datatable th:nth-child(6),
+  .p-datatable td:nth-child(6) {
+    display: none;
+  }
+}
+
+/* Loading states */
+:host ::ng-deep .p-datatable .p-datatable-loading-overlay {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+:host ::ng-deep .p-datatable .p-datatable-loading-icon {
+  color: var(--primary-color);
+}
+
+/* Custom scrollbar pour le tableau */
+:host ::ng-deep .p-datatable .p-datatable-scrollable-body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-scrollable-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-scrollable-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-scrollable-body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

@@ -36,6 +36,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -73,7 +74,7 @@ public class FactureService {
 		facture.setNotes(dto.getNotes());
 		facture.setAgentGp(agent);
 		facture.setProgrammeGp(programme);
-		facture.setStatut(Facture.StatutFacture.FINALISEE);
+		facture.setStatut(Facture.StatutFacture.NON_PAYEE);
 
 		// Traiter la signature
 		if (dto.getSignatureBase64() != null && !dto.getSignatureBase64().isEmpty()) {
@@ -144,11 +145,7 @@ public class FactureService {
 
 		facture.setStatut(nouveauStatut);
 
-		if (nouveauStatut == Facture.StatutFacture.ENVOYEE) {
-			facture.setDateEnvoi(LocalDateTime.now());
-		} else if (nouveauStatut == Facture.StatutFacture.PAYEE) {
-			facture.setDatePayement(LocalDateTime.now());
-		}
+
 
 		Facture savedFacture = factureRepository.save(facture);
 		return FactureResponseDTO.fromEntity(savedFacture);
@@ -428,5 +425,25 @@ public class FactureService {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		return agentGPRepository.findByUsername(username)
 				.orElseThrow(() -> new IllegalStateException("Agent non trouvé"));
+	}
+
+	public Map<String, Object> getStatistiquesAgent() {
+		AgentGp agent = getCurrentAgent();
+		List<Facture> factures = factureRepository.findByAgentGpOrderByDateCreationDesc(agent);
+
+		BigDecimal totalFactures = factures.stream()
+				.map(Facture::getPrixTransport)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		long nombreFactures = factures.size();
+		long nombreFacturesPayees = factures.stream()
+				.filter(f -> f.getStatut() == Facture.StatutFacture.PAYEE)
+				.count();
+
+		return Map.of(
+				"totalFactures", totalFactures,
+				"nombreFactures", nombreFactures,
+				"nombreFacturesPayees", nombreFacturesPayees
+		);
 	}
 }

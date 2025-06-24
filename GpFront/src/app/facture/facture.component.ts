@@ -12,10 +12,11 @@ import { MenuComponent } from '../menu/menu.component';
 import { Programmegp } from '../model/Programmegp';
 import { TrackingService } from '../services/tracking-service.service';
 import { environment } from '../../environments/environment';
-import { FactureService, FactureCreateRequest, FactureResponse } from '../services/facture.service';
+import { FactureService, FactureCreateRequest, FactureResponse, StatutFacture } from '../services/facture.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-facture',
@@ -55,6 +56,7 @@ export class FactureComponent implements OnInit, AfterViewInit {
   private http = inject(HttpClient);
   private factureService = inject(FactureService);
   private messageService = inject(MessageService);
+  private router = inject(Router);
 
   constructor(
     private trackingService: TrackingService,
@@ -262,33 +264,10 @@ export class FactureComponent implements OnInit, AfterViewInit {
     this.resetForm();
   }
 
-  // Méthodes pour la gestion du statut
-  marquerEnvoyee() {
-    if (this.factureCreee) {
-      this.factureService.envoyerFacture(this.factureCreee.id).subscribe({
-        next: (facture) => {
-          this.factureCreee = facture;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Succès',
-            detail: 'Facture marquée comme envoyée'
-          });
-        },
-        error: (error) => {
-          console.error('Erreur:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erreur',
-            detail: 'Erreur lors de la mise à jour du statut'
-          });
-        }
-      });
-    }
-  }
-
+  // Action simplifiée - un seul bouton pour marquer comme payée
   marquerPayee() {
-    if (this.factureCreee) {
-      this.factureService.payerFacture(this.factureCreee.id).subscribe({
+    if (this.factureCreee && this.factureCreee.statut === 'NON_PAYEE') {
+      this.factureService.marquerPayee(this.factureCreee.id).subscribe({
         next: (facture) => {
           this.factureCreee = facture;
           this.messageService.add({
@@ -309,26 +288,34 @@ export class FactureComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Helpers pour l'affichage
+  // Aller à la liste des factures
+  goToFactureList() {
+    this.router.navigate(['/list-facture']);
+  }
+
+  // Helpers pour l'affichage avec les nouveaux états
   getStatutColor(): string {
     if (!this.factureCreee) return '';
-
-    switch (this.factureCreee.statut) {
-
-      case 'PAYEE': return 'success';
-      case 'ANNULEE': return 'danger';
-      default: return 'secondary';
-    }
+    return this.factureService.getStatutColor(this.factureCreee.statut);
   }
 
   getStatutLabel(): string {
     if (!this.factureCreee) return '';
+    return this.factureService.getStatutLabel(this.factureCreee.statut);
+  }
 
-    switch (this.factureCreee.statut) {
+  getStatutIcon(): string {
+    if (!this.factureCreee) return '';
+    return this.factureService.getStatutIcon(this.factureCreee.statut);
+  }
 
-      case 'PAYEE': return 'Payée';
-      case 'ANNULEE': return 'Annulée';
-      default: return this.factureCreee.statut;
-    }
+  // Vérifier si la facture est payée
+  isFacturePayee(): boolean {
+    return this.factureCreee?.statut === 'PAYEE';
+  }
+
+  // Vérifier si la facture est non payée
+  isFactureNonPayee(): boolean {
+    return this.factureCreee?.statut === 'NON_PAYEE';
   }
 }
