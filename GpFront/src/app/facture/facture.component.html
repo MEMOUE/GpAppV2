@@ -27,77 +27,99 @@
           placeholder="Sélectionnez un programme"
           (onChange)="onProgrammeChange()"
           [showClear]="true"
+          [filter]="true"
+          filterBy="description,depart,destination"
+          [style]="{'width': '100%'}"
         ></p-dropdown>
-        <small *ngIf="factureForm.get('programme')?.invalid && factureForm.get('programme')?.touched" class="text-danger">
-          Ce champ est requis
+        <small *ngIf="programmeError" class="text-danger">
+          {{ programmeError }}
         </small>
       </div>
 
       <!-- Détails du programme sélectionné -->
       <div *ngIf="selectedProgramme" class="programme-details">
-        <h3>Détails du Programme</h3>
+        <h3>📋 Détails du Programme</h3>
 
         <div class="detail-grid">
           <div class="detail-row">
             <div class="detail-item">
-              <span class="label">Départ :</span>
+              <span class="label">🚩 Départ :</span>
               <span class="value">{{ selectedProgramme.depart }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">Destination :</span>
+              <span class="label">🎯 Destination :</span>
               <span class="value">{{ selectedProgramme.destination }}</span>
             </div>
           </div>
 
           <div class="detail-row">
             <div class="detail-item">
-              <span class="label">Prix par KG :</span>
+              <span class="label">💰 Prix par KG :</span>
               <span class="value">{{ selectedProgramme.prix }} €</span>
             </div>
             <div class="detail-item">
-              <span class="label">Garantie :</span>
+              <span class="label">🛡️ Garantie :</span>
               <span class="value">{{ selectedProgramme.garantie }}%</span>
             </div>
           </div>
 
           <div class="detail-row">
             <div class="detail-item">
-              <span class="label">Agence :</span>
+              <span class="label">🏢 Agence :</span>
               <span class="value">{{ selectedProgramme.agentGp.nomagence }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">Téléphone :</span>
+              <span class="label">📞 Téléphone :</span>
               <span class="value">{{ selectedProgramme.agentGp.telephone }}</span>
             </div>
           </div>
 
           <div class="detail-item full-width">
-            <span class="label">Adresse :</span>
+            <span class="label">📍 Adresse Agence :</span>
             <span class="value">{{ selectedProgramme.agentGp.adresse }}</span>
+          </div>
+
+          <div class="detail-item full-width" *ngIf="selectedProgramme.description">
+            <span class="label">📝 Description :</span>
+            <span class="value">{{ selectedProgramme.description }}</span>
           </div>
         </div>
       </div>
 
       <div class="form-section">
-        <h3>Informations Client</h3>
+        <h3>👤 Informations Client</h3>
 
         <!-- Disposition en deux colonnes pour les informations client -->
         <div class="form-row">
           <!-- Nom du client -->
           <div class="field">
             <label for="nomClient">Nom du Client *</label>
-            <input id="nomClient" type="text" pInputText formControlName="nomClient" />
-            <small *ngIf="factureForm.get('nomClient')?.invalid && factureForm.get('nomClient')?.touched" class="text-danger">
-              Ce champ est requis
+            <input
+              id="nomClient"
+              type="text"
+              pInputText
+              formControlName="nomClient"
+              placeholder="Nom complet du client"
+              [maxlength]="100"
+            />
+            <small *ngIf="nomClientError" class="text-danger">
+              {{ nomClientError }}
             </small>
           </div>
 
           <!-- Adresse du client -->
           <div class="field">
             <label for="adresseClient">Adresse du Client *</label>
-            <input id="adresseClient" type="text" pInputText formControlName="adresseClient" />
-            <small *ngIf="factureForm.get('adresseClient')?.invalid && factureForm.get('adresseClient')?.touched" class="text-danger">
-              Ce champ est requis
+            <input
+              id="adresseClient"
+              type="text"
+              pInputText
+              formControlName="adresseClient"
+              placeholder="Adresse complète du client"
+              [maxlength]="200"
+            />
+            <small *ngIf="adresseClientError" class="text-danger">
+              {{ adresseClientError }}
             </small>
           </div>
         </div>
@@ -106,15 +128,22 @@
           <!-- Laveur de bagage -->
           <div class="field">
             <label for="laveurBagage">Laveur du Bagage *</label>
-            <input id="laveurBagage" type="text" pInputText formControlName="laveurBagage" />
-            <small *ngIf="factureForm.get('laveurBagage')?.invalid && factureForm.get('laveurBagage')?.touched" class="text-danger">
-              Ce champ est requis
+            <input
+              id="laveurBagage"
+              type="text"
+              pInputText
+              formControlName="laveurBagage"
+              placeholder="Nom du laveur"
+              [maxlength]="100"
+            />
+            <small *ngIf="laveurBagageError" class="text-danger">
+              {{ laveurBagageError }}
             </small>
           </div>
 
           <!-- Nombre de KG -->
           <div class="field">
-            <label for="nombreKg">Nombre de KG *</label>
+            <label for="nombreKg">Poids du Bagage (KG) *</label>
             <p-inputNumber
               id="nombreKg"
               formControlName="nombreKg"
@@ -126,17 +155,20 @@
               incrementButtonIcon="pi pi-plus"
               decrementButtonIcon="pi pi-minus"
               [min]="1"
-              (onInput)="calculerPrixTransport()"
+              [max]="1000"
+              [step]="1"
+              placeholder="0"
+              suffix=" KG"
             ></p-inputNumber>
-            <small *ngIf="factureForm.get('nombreKg')?.invalid && factureForm.get('nombreKg')?.touched" class="text-danger">
-              Veuillez entrer un nombre valide (minimum 1)
+            <small *ngIf="nombreKgError" class="text-danger">
+              {{ nombreKgError }}
             </small>
           </div>
         </div>
 
-        <!-- Prix du transport -->
+        <!-- Prix du transport calculé automatiquement -->
         <div class="field">
-          <label for="prixTransport">Prix Total du Transport</label>
+          <label for="prixTransport">💰 Prix Total du Transport</label>
           <p-inputNumber
             id="prixTransport"
             formControlName="prixTransport"
@@ -144,31 +176,92 @@
             suffix=" €"
             [minFractionDigits]="2"
             [maxFractionDigits]="2"
+            [style]="{'width': '100%'}"
+            [inputStyle]="{'font-weight': 'bold', 'font-size': '1.1em', 'color': '#2196F3'}"
           ></p-inputNumber>
+          <small class="text-info">
+            <i class="pi pi-info-circle"></i>
+            Prix calculé automatiquement : {{ selectedProgramme?.prix || 0 }} € × {{ factureForm.get('nombreKg')?.value || 0 }} KG
+          </small>
         </div>
 
         <!-- Notes optionnelles -->
         <div class="field">
-          <label for="notes">Notes (optionnel)</label>
-          <textarea id="notes" pInputText formControlName="notes" rows="3" cols="50"></textarea>
+          <label for="notes">📝 Notes / Commentaires (optionnel)</label>
+          <textarea
+            id="notes"
+            pInputText
+            formControlName="notes"
+            rows="3"
+            [maxlength]="500"
+            placeholder="Informations supplémentaires, instructions spéciales..."
+            [style]="{'width': '100%'}"
+          ></textarea>
+          <small class="text-info">
+            {{ factureForm.get('notes')?.value?.length || 0 }}/500 caractères
+          </small>
+          <small *ngIf="notesError" class="text-danger">
+            {{ notesError }}
+          </small>
         </div>
       </div>
 
       <!-- Zone de signature -->
       <div class="signature-section">
-        <h3>Signature de l'Agence GP *</h3>
+        <h3>✍️ Signature de l'Agence GP *</h3>
         <div class="signature-container">
-          <canvas #signatureCanvas width="400" height="200"></canvas>
-          <button
-            type="button"
-            pButton
-            icon="pi pi-times"
-            [rounded]="true"
-            severity="danger"
-            [outlined]="true"
-            label="Effacer la signature"
-            (click)="clearSignature()"
-          ></button>
+          <p class="signature-hint">
+            <i class="pi pi-info-circle"></i>
+            Signez dans la zone ci-dessous avec votre souris ou votre doigt (écran tactile)
+          </p>
+
+          <canvas
+            #signatureCanvas
+            width="450"
+            height="200"
+            [style]="{'border': '2px solid #ddd', 'border-radius': '8px', 'cursor': 'crosshair'}"
+          ></canvas>
+
+          <div class="signature-actions">
+            <button
+              type="button"
+              pButton
+              icon="pi pi-times"
+              [rounded]="true"
+              severity="danger"
+              [outlined]="true"
+              label="Effacer la signature"
+              (click)="clearSignature()"
+              [style]="{'margin-top': '10px'}"
+            ></button>
+          </div>
+
+          <small *ngIf="factureForm.get('programme')?.value && !signatureData" class="signature-hint">
+            ⚠️ La signature est obligatoire pour créer la facture
+          </small>
+        </div>
+      </div>
+
+      <!-- Récapitulatif avant création -->
+      <div *ngIf="selectedProgramme && factureForm.get('nombreKg')?.value > 0" class="form-section">
+        <h3>📊 Récapitulatif</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Trajet :</span>
+            <span class="value">{{ selectedProgramme.depart }} → {{ selectedProgramme.destination }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Client :</span>
+            <span class="value">{{ factureForm.get('nomClient')?.value || 'Non renseigné' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Poids :</span>
+            <span class="value">{{ factureForm.get('nombreKg')?.value || 0 }} KG</span>
+          </div>
+          <div class="info-item">
+            <span class="label font-bold">Total à payer :</span>
+            <span class="value font-bold text-success">{{ factureForm.get('prixTransport')?.value || 0 }} €</span>
+          </div>
         </div>
       </div>
 
@@ -181,8 +274,21 @@
           [rounded]="true"
           [outlined]="false"
           severity="success"
-          label="Créer la Facture"
+          label="🧾 Créer la Facture"
           [disabled]="!factureForm.valid || !signatureData || isLoading"
+          [style]="{'font-size': '1.1em', 'padding': '12px 24px'}"
+        ></button>
+
+        <button
+          type="button"
+          pButton
+          icon="pi pi-list"
+          [rounded]="true"
+          [outlined]="true"
+          severity="info"
+          label="📋 Mes Factures"
+          (click)="goToFactureList()"
+          [style]="{'margin-left': '15px'}"
         ></button>
       </div>
     </form>
@@ -192,46 +298,55 @@
   <div *ngIf="factureGeneree && factureCreee" class="invoice-success">
     <div class="success-header">
       <i class="pi pi-check-circle"></i>
-      <h3>Facture créée avec succès !</h3>
+      <h3>✅ Facture créée avec succès !</h3>
     </div>
 
     <!-- Informations de la facture créée -->
     <div class="invoice-info">
       <div class="info-grid">
         <div class="info-item">
-          <span class="label">Numéro de facture :</span>
+          <span class="label">📋 Numéro de facture :</span>
           <span class="value font-bold">{{ factureCreee.numeroFacture }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Client :</span>
+          <span class="label">👤 Client :</span>
           <span class="value">{{ factureCreee.nomClient }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Montant :</span>
+          <span class="label">💰 Montant :</span>
           <span class="value font-bold text-success">{{ factureCreee.prixTransport }} €</span>
         </div>
         <div class="info-item">
-          <span class="label">Statut :</span>
+          <span class="label">🏷️ Statut :</span>
           <span class="value">
             <span [class]="'badge badge-' + getStatutColor()">
+              <i [class]="getStatutIcon()"></i>
               {{ getStatutLabel() }}
             </span>
           </span>
         </div>
         <div class="info-item">
-          <span class="label">Date de création :</span>
-          <span class="value">{{ factureCreee.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span class="label">📅 Date de création :</span>
+          <span class="value">{{ factureCreee.dateCreation | date:'dd/MM/yyyy à HH:mm' }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Trajet :</span>
+          <span class="label">🛤️ Trajet :</span>
           <span class="value">{{ factureCreee.depart }} → {{ factureCreee.destination }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">⚖️ Poids :</span>
+          <span class="value">{{ factureCreee.nombreKg }} KG</span>
+        </div>
+        <div class="info-item">
+          <span class="label">💵 Prix unitaire :</span>
+          <span class="value">{{ factureCreee.prixUnitaire }} €/KG</span>
         </div>
       </div>
     </div>
 
     <!-- Actions sur la facture -->
     <div class="invoice-actions">
-      <h3>Actions disponibles</h3>
+      <h3>🛠️ Actions disponibles</h3>
 
       <div class="action-buttons">
         <!-- Actions principales -->
@@ -242,7 +357,7 @@
             [rounded]="true"
             [outlined]="false"
             severity="info"
-            label="Prévisualiser"
+            label="👁️ Prévisualiser"
             (click)="previewPDF()"
             [disabled]="isLoading"
           ></button>
@@ -253,7 +368,7 @@
             [rounded]="true"
             [outlined]="false"
             severity="success"
-            label="Télécharger PDF"
+            label="📥 Télécharger PDF"
             (click)="downloadPDF()"
             [disabled]="isLoading"
           ></button>
@@ -264,16 +379,24 @@
             [rounded]="true"
             [outlined]="false"
             severity="primary"
-            label="Imprimer"
+            label="🖨️ Imprimer"
             (click)="printInvoice()"
             [disabled]="isLoading"
           ></button>
         </div>
 
         <!-- Actions de gestion du statut -->
-        <div class="status-actions" *ngIf="factureCreee.statut !== 'PAYEE'">
-
-
+        <div class="status-actions" *ngIf="isFactureNonPayee()">
+          <button
+            pButton
+            icon="pi pi-check"
+            [rounded]="true"
+            [outlined]="false"
+            severity="success"
+            label="✅ Marquer comme Payée"
+            (click)="marquerPayee()"
+            [disabled]="isLoading"
+          ></button>
         </div>
 
         <!-- Bouton de partage -->
@@ -283,14 +406,14 @@
           [rounded]="true"
           [outlined]="true"
           severity="help"
-          label="Partager"
+          label="📤 Partager"
           (click)="toggleShareOptions()"
         ></button>
       </div>
 
       <!-- Options de partage -->
       <div *ngIf="showShareOptions" class="share-options">
-        <div class="share-title">Partager la facture via :</div>
+        <div class="share-title">📱 Partager la facture via :</div>
         <div class="share-buttons">
           <button
             pButton
@@ -308,13 +431,13 @@
             [outlined]="false"
             severity="info"
             icon="pi pi-envelope"
-            label="Email"
+            label="📧 Email"
             (click)="shareViaEmail()"
           ></button>
         </div>
       </div>
 
-      <!-- Bouton pour créer une nouvelle facture -->
+      <!-- Boutons de navigation -->
       <div class="new-invoice-section">
         <button
           pButton
@@ -322,8 +445,19 @@
           [rounded]="true"
           [outlined]="true"
           severity="secondary"
-          label="Créer une nouvelle facture"
+          label="➕ Créer une nouvelle facture"
           (click)="createNewInvoice()"
+          [style]="{'margin-right': '15px'}"
+        ></button>
+
+        <button
+          pButton
+          icon="pi pi-list"
+          [rounded]="true"
+          [outlined]="true"
+          severity="info"
+          label="📋 Voir toutes mes factures"
+          (click)="goToFactureList()"
         ></button>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -24,6 +24,7 @@ import { ChipModule } from 'primeng/chip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { MenuModule } from 'primeng/menu';
 import { CheckboxModule } from 'primeng/checkbox';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { MenuComponent } from '../menu/menu.component';
 import { FactureService, FactureResponse, FactureFilter, StatutFacture, FactureStatistiques } from '../services/facture.service';
@@ -61,7 +62,8 @@ interface ColumnDefinition {
     ChipModule,
     SkeletonModule,
     MenuModule,
-    CheckboxModule
+    CheckboxModule,
+    TooltipModule
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './facture-list.component.html',
@@ -70,6 +72,12 @@ interface ColumnDefinition {
 export class FactureListComponent implements OnInit, OnDestroy {
   @ViewChild('dt') table!: Table;
   @ViewChild('filterPanel') filterPanel!: any;
+
+  // Services injectés
+  private factureService = inject(FactureService);
+  private router = inject(Router);
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
 
   // State management
   factures: FactureResponse[] = [];
@@ -93,24 +101,10 @@ export class FactureListComponent implements OnInit, OnDestroy {
     { field: 'actions', header: 'Actions', sortable: false, width: '180px', type: 'actions' }
   ];
 
+  selectedColumns: ColumnDefinition[] = [...this.columns];
+
   // Facture courante pour les menus
   menuFacture: FactureResponse | null = null;
-
-  // Actions d'export
-  exportActions: MenuItem[] = [
-    {
-      label: 'Exporter CSV',
-      icon: 'pi pi-file',
-      command: () => this.exportCSV()
-    },
-    {
-      label: 'Exporter Excel',
-      icon: 'pi pi-file-excel',
-      command: () => this.exportExcel()
-    }
-  ];
-
-  selectedColumns: ColumnDefinition[] = [...this.columns];
 
   // Filtres de recherche avancés
   searchTerms = {
@@ -157,86 +151,30 @@ export class FactureListComponent implements OnInit, OnDestroy {
       label: 'Exporter PDF',
       icon: 'pi pi-file-pdf',
       command: () => this.exporterSelectionPDF()
-    },
-    {
-      label: 'Supprimer la sélection',
-      icon: 'pi pi-trash',
-      command: () => this.supprimerSelection()
     }
   ];
 
-  // Actions pour une facture
-  factureActions: MenuItem[] = [
+  // Actions d'export
+  exportActions: MenuItem[] = [
     {
-      label: 'Voir détails',
-      icon: 'pi pi-eye',
-      command: () => {
-        if (this.menuFacture) {
-          this.voirDetails(this.menuFacture);
-        }
-      }
+      label: 'Exporter CSV',
+      icon: 'pi pi-file',
+      command: () => this.exportCSV()
     },
     {
-      label: 'Prévisualiser PDF',
-      icon: 'pi pi-search',
-      command: () => {
-        if (this.menuFacture) {
-          this.previsualiserPDF(this.menuFacture);
-        }
-      }
-    },
-    {
-      label: 'Télécharger PDF',
-      icon: 'pi pi-download',
-      command: () => {
-        if (this.menuFacture) {
-          this.telechargerPDF(this.menuFacture);
-        }
-      }
-    },
-    {
-      label: 'Imprimer',
-      icon: 'pi pi-print',
-      command: () => {
-        if (this.menuFacture) {
-          this.imprimerFacture(this.menuFacture);
-        }
-      }
-    },
-    {
-      separator: true
-    },
-    {
-      label: 'Partager WhatsApp',
-      icon: 'pi pi-whatsapp',
-      command: () => {
-        if (this.menuFacture) {
-          this.partagerWhatsApp(this.menuFacture);
-        }
-      }
-    },
-    {
-      label: 'Partager Email',
-      icon: 'pi pi-envelope',
-      command: () => {
-        if (this.menuFacture) {
-          this.partagerEmail(this.menuFacture);
-        }
-      }
+      label: 'Exporter Excel',
+      icon: 'pi pi-file-excel',
+      command: () => this.exportExcel()
     }
   ];
+
+  // Actions pour une facture (seront mises à jour dynamiquement)
+  factureActions: MenuItem[] = [];
 
   // Subject pour la recherche automatique
   private searchSubject = new Subject<void>();
   private destroy$ = new Subject<void>();
   private refreshSubject = new BehaviorSubject<boolean>(true);
-
-  constructor(
-    private factureService: FactureService,
-    private router: Router,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {}
 
   ngOnInit(): void {
     this.initializeComponent();
@@ -281,18 +219,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(loading => {
       this.loading = loading;
-    });
-
-    // Auto-refresh périodique
-    combineLatest([
-      this.refreshSubject,
-      this.factureService.factures$
-    ]).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      if (this.refreshSubject.value) {
-        this.loadFactures();
-      }
     });
   }
 
@@ -439,7 +365,14 @@ export class FactureListComponent implements OnInit, OnDestroy {
   }
 
   voirDetails(facture: FactureResponse): void {
-    this.router.navigate(['/facture', facture.id]);
+    // Pour l'instant, on affiche les détails via toast
+    // Plus tard, on pourra créer une page de détails
+    this.messageService.add({
+      severity: 'info',
+      summary: `Facture ${facture.numeroFacture}`,
+      detail: `Client: ${facture.nomClient} | Trajet: ${facture.depart} → ${facture.destination} | Montant: ${this.formatCurrency(facture.prixTransport)}`,
+      life: 5000
+    });
   }
 
   telechargerPDF(facture: FactureResponse): void {
@@ -530,7 +463,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
       header: 'Confirmation de paiement groupé',
       icon: 'pi pi-check-circle',
       accept: () => {
-        // Traitement séquentiel pour éviter la surcharge
         this.processFacturesSequentially(facturesNonPayees, 'payer');
       }
     });
@@ -546,17 +478,9 @@ export class FactureListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Pour l'instant, télécharger une par une
+    // Télécharger une par une
     this.selectedFactures.forEach(facture => {
       this.telechargerPDF(facture);
-    });
-  }
-
-  supprimerSelection(): void {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Information',
-      detail: 'Fonctionnalité en cours de développement'
     });
   }
 
@@ -574,6 +498,7 @@ export class FactureListComponent implements OnInit, OnDestroy {
         success++;
       } catch (error) {
         errors++;
+        console.error(`Erreur pour la facture ${facture.numeroFacture}:`, error);
       }
     }
 
@@ -595,9 +520,13 @@ export class FactureListComponent implements OnInit, OnDestroy {
       dateDebut: null,
       dateFin: null
     };
-    this.table.clear();
+
+    if (this.table) {
+      this.table.clear();
+    }
+
     this.updateFilterState();
-    this.onSearchChange();
+    this.loadFactures(); // Recharger directement au lieu d'utiliser searchSubject
   }
 
   toggleAdvancedFilters(): void {
@@ -606,7 +535,9 @@ export class FactureListComponent implements OnInit, OnDestroy {
 
   applyGlobalFilter(event: Event): void {
     const target = event.target as HTMLInputElement;
-    this.table.filterGlobal(target.value, 'contains');
+    if (this.table) {
+      this.table.filterGlobal(target.value, 'contains');
+    }
   }
 
   // Gestion de l'affichage
@@ -682,7 +613,9 @@ export class FactureListComponent implements OnInit, OnDestroy {
 
   // Export
   exportCSV(): void {
-    this.table.exportCSV();
+    if (this.table) {
+      this.table.exportCSV();
+    }
   }
 
   exportExcel(): void {
@@ -696,6 +629,74 @@ export class FactureListComponent implements OnInit, OnDestroy {
   // Méthode pour ouvrir le menu d'actions
   openFactureMenu(event: Event, facture: FactureResponse, menu: any): void {
     this.menuFacture = facture;
+
+    // Créer les actions dynamiquement selon le statut
+    this.factureActions = this.createFactureActions(facture);
+
     menu.toggle(event);
+  }
+
+  // Créer les actions de menu selon le statut de la facture
+  private createFactureActions(facture: FactureResponse): MenuItem[] {
+    const baseActions: MenuItem[] = [
+      {
+        label: 'Voir détails',
+        icon: 'pi pi-eye',
+        command: () => this.voirDetails(facture)
+      },
+      {
+        label: 'Prévisualiser PDF',
+        icon: 'pi pi-search',
+        command: () => this.previsualiserPDF(facture)
+      },
+      {
+        label: 'Télécharger PDF',
+        icon: 'pi pi-download',
+        command: () => this.telechargerPDF(facture)
+      },
+      {
+        label: 'Imprimer',
+        icon: 'pi pi-print',
+        command: () => this.imprimerFacture(facture)
+      },
+      {
+        separator: true
+      }
+    ];
+
+    // Ajouter les actions de statut selon l'état actuel
+    const statusActions: MenuItem[] = [];
+
+    if (facture.statut === 'NON_PAYEE') {
+      statusActions.push({
+        label: 'Marquer comme payée',
+        icon: 'pi pi-check',
+        command: () => this.marquerPayee(facture)
+      });
+    } else if (facture.statut === 'PAYEE') {
+      statusActions.push({
+        label: 'Marquer comme non payée',
+        icon: 'pi pi-times',
+        command: () => this.marquerNonPayee(facture)
+      });
+    }
+
+    const shareActions: MenuItem[] = [
+      {
+        separator: true
+      },
+      {
+        label: 'Partager WhatsApp',
+        icon: 'pi pi-whatsapp',
+        command: () => this.partagerWhatsApp(facture)
+      },
+      {
+        label: 'Partager Email',
+        icon: 'pi pi-envelope',
+        command: () => this.partagerEmail(facture)
+      }
+    ];
+
+    return [...baseActions, ...statusActions, ...shareActions];
   }
 }
