@@ -81,7 +81,7 @@ export interface FactureStatistiques {
   providedIn: 'root'
 })
 export class FactureService {
-  private readonly apiUrl = `${environment.apiUrl}api/factures`;
+  private readonly apiUrl = `${environment.apiUrl}factures`;
   private http = inject(HttpClient);
 
   // State management
