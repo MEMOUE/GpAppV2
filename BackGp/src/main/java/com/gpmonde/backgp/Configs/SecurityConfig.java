@@ -46,6 +46,7 @@ public class SecurityConfig {
 								"/api/suivi/**",
 								"/api/ws/**",
 								"/api/notifications/user/**",
+
 								"/h2-console/**",
 								"/swagger-ui/**",
 								"/swagger-resources/**",
@@ -57,6 +58,17 @@ public class SecurityConfig {
 								"/api/auth/reset-password/**",
 								"/v3/api-docs/**"
 						).permitAll()
+						// Endpoints des factures - réservés aux agents GP
+						.requestMatchers("/api/factures/**").hasRole("AGENTGP")
+						.requestMatchers( "/api/factures").hasRole("AGENTGP")
+						.requestMatchers("/api/factures").hasRole("AGENTGP")
+						.requestMatchers("/api/factures/paginated").hasRole("AGENTGP")
+						.requestMatchers("/api/factures/statistiques").hasRole("AGENTGP")
+						.requestMatchers("/api/factures/*").hasRole("AGENTGP")
+						.requestMatchers("/api/factures/*/pdf").hasRole("AGENTGP")
+						.requestMatchers("/api/factures/*/pdf/preview").hasRole("AGENTGP")
+						.requestMatchers( "/api/factures/*/payer").hasRole("AGENTGP")
+						.requestMatchers("/api/factures/*/statut").hasRole("AGENTGP")
 						.anyRequest().authenticated()
 				)
 				.addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
