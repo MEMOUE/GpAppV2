@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
 public class AgentGpService {
@@ -39,6 +38,15 @@ public class AgentGpService {
 
 		if (utilisateurRepository.findByEmail(agentGp.getEmail()).isPresent()) {
 			throw new UserAlreadyExistsException("Un compte existe déjà avec cet email");
+		}
+
+		// Validation des champs obligatoires
+		if (agentGp.getLogourl() == null || agentGp.getLogourl().trim().isEmpty()) {
+			throw new IllegalArgumentException("Le logo est obligatoire");
+		}
+
+		if (agentGp.getCarteidentiteurl() == null || agentGp.getCarteidentiteurl().trim().isEmpty()) {
+			throw new IllegalArgumentException("La carte d'identité est obligatoire");
 		}
 
 		Role adminRole = roleRepository.findByName(DEFAULT_ROLE)
@@ -83,17 +91,70 @@ public class AgentGpService {
 	public AgentGp updateAgentGp(Long id, AgentGp agentGp) {
 		// Récupérer l'agent existant
 		AgentGp existingAgent = agentGPRepository.findById(id)
-				.orElseThrow();
+				.orElseThrow(() -> new IllegalArgumentException("Agent non trouvé avec l'ID: " + id));
 
-		// Mettre à jour les informations de l'agent
-		existingAgent.setUsername(agentGp.getUsername());
-		existingAgent.setPassword(agentGp.getPassword());
-		existingAgent.setEmail(agentGp.getEmail());
-		existingAgent.setAdresse(agentGp.getAdresse());
-		existingAgent.setTelephone(agentGp.getTelephone());
-		existingAgent.setDestinations(agentGp.getDestinations());
+		// Mettre à jour les informations de base
+		if (agentGp.getUsername() != null) {
+			existingAgent.setUsername(agentGp.getUsername());
+		}
 
-		existingAgent.setPassword(passwordEncoder.encode(existingAgent.getPassword()));
+		if (agentGp.getPassword() != null && !agentGp.getPassword().isEmpty()) {
+			existingAgent.setPassword(passwordEncoder.encode(agentGp.getPassword()));
+		}
+
+		if (agentGp.getEmail() != null) {
+			existingAgent.setEmail(agentGp.getEmail());
+		}
+
+		if (agentGp.getNomagence() != null) {
+			existingAgent.setNomagence(agentGp.getNomagence());
+		}
+
+		if (agentGp.getAdresse() != null) {
+			existingAgent.setAdresse(agentGp.getAdresse());
+		}
+
+		if (agentGp.getTelephone() != null) {
+			existingAgent.setTelephone(agentGp.getTelephone());
+		}
+
+		if (agentGp.getDestinations() != null) {
+			existingAgent.setDestinations(agentGp.getDestinations());
+		}
+
+		// Mettre à jour les URLs des fichiers
+		if (agentGp.getLogourl() != null) {
+			existingAgent.setLogourl(agentGp.getLogourl());
+		}
+
+		if (agentGp.getCarteidentiteurl() != null) {
+			existingAgent.setCarteidentiteurl(agentGp.getCarteidentiteurl());
+		}
+
+		return agentGPRepository.save(existingAgent);
+	}
+
+	/**
+	 * Met à jour uniquement l'URL du logo d'un agent
+	 */
+	@Transactional
+	public AgentGp updateAgentLogo(Long id, String logoUrl) {
+		AgentGp existingAgent = agentGPRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Agent non trouvé avec l'ID: " + id));
+
+		existingAgent.setLogourl(logoUrl);
+		return agentGPRepository.save(existingAgent);
+	}
+
+	/**
+	 * Met à jour uniquement l'URL de la carte d'identité d'un agent
+	 */
+	@Transactional
+	public AgentGp updateAgentCarteIdentite(Long id, String carteIdentiteUrl) {
+		AgentGp existingAgent = agentGPRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Agent non trouvé avec l'ID: " + id));
+
+		existingAgent.setCarteidentiteurl(carteIdentiteUrl);
 		return agentGPRepository.save(existingAgent);
 	}
 
@@ -121,7 +182,6 @@ public class AgentGpService {
 				.orElseThrow(() -> new IllegalArgumentException("Agent non trouvé avec l'ID: " + id));
 	}
 
-
 	public List<AgentGp> findByDepartAndArriveeAgence(String depart, String destination) {
 		List<AgentGp> agents = agentGPRepository.findByDepartAndArriveeAgence(depart, destination);
 
@@ -134,5 +194,4 @@ public class AgentGpService {
 
 		return agents;
 	}
-
 }
