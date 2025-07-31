@@ -29,6 +29,14 @@ public class AgentGp extends Utilisateur {
 	@Size(max = 20)
 	private String telephone;
 
+	@Column(name = "logo_url", nullable = false)
+	@Size(min = 1, message = "Le logo est obligatoire")
+	private String logourl;
+
+	@Column(name = "carte_identite_url", nullable = false)
+	@Size(min = 1, message = "La carte d'identité est obligatoire")
+	private String carteidentiteurl;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "agent_destinations", joinColumns = @JoinColumn(name = "agent_id"))
 	@Column(name = "destination")

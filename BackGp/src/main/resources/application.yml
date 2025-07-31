@@ -29,8 +29,20 @@ spring:
           ssl:
             trust: "*"
 
+  # Configuration pour l'upload de fichiers
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+      enabled: true
+
 jwt:
   secret: "ojJMx7uTkjO3Ov5BOjUimTFkk5Nb+zXvW+6wSRQUqSZeR9OjhseXki3vSA055PApH5ApNPXngdkkFfwOtax4eg=="
+
+# Configuration personnalisée pour le stockage des fichiers
+app:
+  upload:
+    dir: "uploads"
 
 logging:
   level:
