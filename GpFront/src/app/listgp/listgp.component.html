@@ -51,7 +51,7 @@
           </div>
 
           <!-- Boutons d'action pour le propriétaire -->
-          <div class="p-buttonset" *ngIf="isOwner(programme.agentGp.id)">
+          <div class="p-buttonset" *ngIf="programme.agentGp.id !== undefined && isOwner(programme.agentGp.id)">
             <p-button icon="pi pi-pencil" class="p-button-primary p-button-sm" (click)="onEdit(programme.id)"></p-button>
             <p-button icon="pi pi-trash" severity="danger" class="p-button-sm" (click)="onDelete(programme.id)"></p-button>
           </div>

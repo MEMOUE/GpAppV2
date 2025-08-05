@@ -53,7 +53,7 @@ public class AgentGpController {
 	/**
 	 * Créer un nouvel agent GP avec logo et carte d'identité
 	 */
-	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping()
 	@Operation(
 			summary = "Créer un nouvel agent GP",
 			description = "Créer un nouveau compte d'agent GP avec logo et carte d'identité obligatoires. Tous les champs sont requis."
@@ -135,7 +135,7 @@ public class AgentGpController {
 	/**
 	 * Uploader le logo d'un agent existant
 	 */
-	@PostMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/{id}/logo")
 	@Operation(
 			summary = "Mettre à jour le logo d'un agent",
 			description = "Remplace le logo existant d'un agent GP par un nouveau fichier image."
@@ -178,7 +178,7 @@ public class AgentGpController {
 	/**
 	 * Uploader la carte d'identité d'un agent existant
 	 */
-	@PostMapping(value = "/{id}/carte-identite", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/{id}/carte-identite")
 	@Operation(
 			summary = "Mettre à jour la carte d'identité d'un agent",
 			description = "Remplace la carte d'identité existante d'un agent GP par un nouveau fichier image."

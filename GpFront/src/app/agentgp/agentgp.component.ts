@@ -61,7 +61,9 @@ export class AgentgpComponent implements OnInit {
               this.agences = data;
               this.errorMessage = null;
               this.agences.forEach(agence => {
-                this.suivis[agence.id] = false;
+                if (agence.id !== undefined) {
+                  this.suivis[agence.id] = false;
+                }
               });
 
               this.agenceService.getAgentsSuivis(this.utilisateurId).subscribe(suivis => {
@@ -118,13 +120,21 @@ export class AgentgpComponent implements OnInit {
       return;
     }
 
+    if (agence.id === undefined) {
+      return;
+    }
+
+    if (agence.id === undefined) {
+      return;
+    }
+
     if (this.suivis[agence.id]) {
       this.agenceService.arreterSuivreAgent(Number(utilisateurId), agence.id).subscribe(() => {
-        this.suivis[agence.id] = false;
+        this.suivis[agence.id!] = false;
       });
     } else {
       this.agenceService.suivreAgent(Number(utilisateurId), agence.id).subscribe(() => {
-        this.suivis[agence.id] = true;
+        this.suivis[agence.id!] = true;
       });
     }
   }
