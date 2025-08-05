@@ -68,6 +68,8 @@
     "password": "Mot de passe",
     "confirmPassword": "Confirmez le mot de passe",
     "email": "Email",
+    "photo": "Photo de profil (Agent GP)",
+    "carteIdentite": "Carte d'identité (Agent GP)",
     "isAgentGp": "Êtes-vous un Agent GP ?",
     "nomagence": "Nom Agence",
     "adresse": "Adresse",
@@ -83,16 +85,48 @@
       "telephone": "Entrez votre numéro de téléphone",
       "destinations": "Entrez les destinations (séparées par des virgules)"
     },
-    "errors": {
-      "required": "Ce champ est obligatoire.",
-      "email": "Veuillez entrer une adresse email valide.",
-      "minlength": "Ce champ doit contenir au moins {{ minLength }} caractères.",
-      "maxlength": "Ce champ ne doit pas dépasser {{ maxLength }} caractères.",
-      "passwordMismatch": "Les mots de passe ne correspondent pas."
+    "fields": {
+      "username": "nom d'utilisateur",
+      "password": "mot de passe",
+      "confirmPassword": "confirmation du mot de passe",
+      "email": "adresse e-mail",
+      "photo": "photo de profil",
+      "carteIdentite": "carte d'identité",
+      "nomagence": "nom de l'agence",
+      "adresse": "adresse",
+      "telephone": "téléphone",
+      "destinations": "destinations"
     },
-    "successMessage": "Inscription réussie !",
+    "errors": {
+      "required": "Le champ {{field}} est obligatoire",
+      "email": "Veuillez entrer une adresse email valide",
+      "minlength": "Le {{field}} doit contenir au moins {{minLength}} caractères",
+      "maxlength": "Ce champ ne doit pas dépasser {{ maxLength }} caractères",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "fileSize": "Le fichier est trop volumineux (max 5MB)",
+      "fileType": "Type de fichier non autorisé (JPG, PNG uniquement)"
+    },
+    "successMessage": "Inscription réussie ! Vérifiez votre e-mail pour activer votre compte.",
     "errorMessage": "Une erreur s'est produite lors de l'inscription.",
+    "formErrorMessage": "Veuillez corriger les erreurs dans le formulaire.",
     "submitButton": "Inscription"
+  },
+
+  "registerForm": {
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "signIn": "Connectez-vous ici"
+  },
+
+  "fileUpload": {
+    "choosePhoto": "Choisir une photo",
+    "chooseIdCard": "Choisir carte d'identité",
+    "removePhoto": "Supprimer la photo",
+    "removeIdCard": "Supprimer la carte",
+    "photoPreview": "Aperçu de la photo",
+    "idCardPreview": "Aperçu de la carte d'identité",
+    "optional": "Optionnel",
+    "required": "Obligatoire",
+    "agentGpOnly": "Uniquement pour les agents GP"
   },
 
   "homegp": {
@@ -101,15 +135,16 @@
     "exploreMessage": "Explorez nos fonctionnalités et services pour optimiser vos opérations et améliorer votre expérience."
   },
 
-
   "Login": {
     "noAccount": "Vous n'avez pas de compte ?",
     "signUp": "Inscrivez-vous ici"
   },
+
   "registe": {
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "signIn": "Connectez-vous ici"
   },
+
   "resetPassword": {
     "newPassword": "Nouveau mot de passe",
     "placeholders": {
@@ -119,6 +154,7 @@
     "confirmPassword": "Confirmez le mot de passe",
     "submitButton": "Réinitialiser le mot de passe"
   },
+
   "forgotPassword": {
     "email": "Adresse e-mail",
     "placeholders": {
@@ -127,5 +163,4 @@
     "submitButton": "Envoyer le lien de réinitialisation",
     "backToLogin": "Retour à la connexion"
   }
-
 }

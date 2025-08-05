@@ -9,25 +9,25 @@
   "profile": "Profile",
   "logout": "Logout",
   "language": "Language",
-  "OFFRE_GP": "OfferGp",
-  "AGENCE_GP": "AgencyGp",
-  "PROGRAMMES_GP": "Our Programs",
-  "DEPART_PLACEHOLDER": "Departure place",
+  "OFFRE_GP": "GP Offers",
+  "AGENCE_GP": "GP Agencies",
+  "PROGRAMMES_GP": "GP Programs",
+  "DEPART_PLACEHOLDER": "Departure location",
   "DESTINATION_PLACEHOLDER": "Destination",
   "COUNTRY_CITY_PLACEHOLDER": "Country or City",
   "SEARCH_BUTTON": "Search",
   "WHO_WE_ARE": "Who are we?",
-  "MISSION": "GpMonde is an innovative platform connecting different entities and clients. Our mission is to make every transport and service experience smoother, faster, and more secure.",
+  "MISSION": "GpMonde is an innovative connection platform between different entities and clients. Our mission is to make every transport and service experience more fluid, fast and secure.",
   "STATISTICS": "Our Statistics",
   "SATISFIED_CLIENTS": "Satisfied Clients",
   "SUCCESSFUL_DELIVERIES": "Successful Deliveries",
   "COVERED_DESTINATIONS": "Covered Destinations",
-  "GP_AGENCIES": "GP Agencies",
+  "GP_AGENCIES": "GP Agencies Users",
   "ASSISTANT": "Assistant",
   "PHONE": "Phone",
   "EMAIL": "Email",
   "TESTIMONIALS": "What our clients say",
-  "TESTIMONIAL_1": "GpMonde made my travel experience much easier and more enjoyable. Quality service and a great team!",
+  "TESTIMONIAL_1": "GpMonde made my travel experience much easier and enjoyable. Quality service and great team!",
   "TESTIMONIAL_2": "Customer service is exceptional, and my packages are always delivered on time, no matter the destination.",
   "TESTIMONIAL_3": "I highly recommend GpMonde for all your transport and logistics needs. Efficient and reliable.",
 
@@ -38,13 +38,12 @@
     "privacy_policy": "Privacy Policy",
     "copyright": "&copy; {{currentYear}} GpMonde. All rights reserved."
   },
-
   "sidebar": {
     "home": "Home",
     "invoice": "Invoice",
     "addGP": "Add GP",
     "needGP": "Need GP",
-    "offersGP": "Offers GP",
+    "offersGP": "GP Offers",
     "buyAd": "Buy Ad",
     "partnership": "Partnership",
     "message": "Message",
@@ -56,7 +55,7 @@
     "password": "Password",
     "emailPlaceholder": "Enter your email",
     "passwordPlaceholder": "Enter your password",
-    "submitButton": "Log in",
+    "submitButton": "Login",
     "forgotPassword": "Forgot password?",
     "errors": {
       "emailRequired": "A valid email address is required.",
@@ -69,6 +68,8 @@
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "email": "Email",
+    "photo": "Profile Photo (GP Agent)",
+    "carteIdentite": "Identity Card (GP Agent)",
     "isAgentGp": "Are you a GP Agent?",
     "nomagence": "Agency Name",
     "adresse": "Address",
@@ -82,48 +83,84 @@
       "nomagence": "Enter your agency name",
       "adresse": "Enter your address",
       "telephone": "Enter your phone number",
-      "destinations": "Enter destinations (comma-separated)"
+      "destinations": "Enter destinations (comma separated)"
+    },
+    "fields": {
+      "username": "username",
+      "password": "password",
+      "confirmPassword": "password confirmation",
+      "email": "email address",
+      "photo": "profile photo",
+      "carteIdentite": "identity card",
+      "nomagence": "agency name",
+      "adresse": "address",
+      "telephone": "phone",
+      "destinations": "destinations"
     },
     "errors": {
-      "required": "This field is required.",
-      "email": "Please enter a valid email address.",
-      "minlength": "This field must be at least {{ minLength }} characters long.",
-      "maxlength": "This field cannot exceed {{ maxLength }} characters.",
-      "passwordMismatch": "Passwords do not match."
+      "required": "The {{field}} field is required",
+      "email": "Please enter a valid email address",
+      "minlength": "The {{field}} must contain at least {{minLength}} characters",
+      "maxlength": "This field must not exceed {{ maxLength }} characters",
+      "passwordMismatch": "Passwords do not match",
+      "fileSize": "File is too large (max 5MB)",
+      "fileType": "File type not allowed (JPG, PNG only)"
     },
-    "successMessage": "Registration successful!",
+    "successMessage": "Registration successful! Check your email to activate your account.",
     "errorMessage": "An error occurred during registration.",
+    "formErrorMessage": "Please correct the errors in the form.",
     "submitButton": "Register"
   },
-  "homegp": {
-    "welcomeTitle": "Welcome to the GP Agent Home",
-    "welcomeMessage": "We are delighted to welcome you to our platform dedicated to GP agents and agencies.",
-    "exploreMessage": "Explore our features and services to optimize your operations and enhance your experience."
+
+  "registerForm": {
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign in here"
   },
+
+  "fileUpload": {
+    "choosePhoto": "Choose Photo",
+    "chooseIdCard": "Choose ID Card",
+    "removePhoto": "Remove Photo",
+    "removeIdCard": "Remove Card",
+    "photoPreview": "Photo Preview",
+    "idCardPreview": "ID Card Preview",
+    "optional": "Optional",
+    "required": "Required",
+    "agentGpOnly": "GP Agents only"
+  },
+
+  "homegp": {
+    "welcomeTitle": "Welcome to GP Agent Dashboard",
+    "welcomeMessage": "We are delighted to welcome you to our platform dedicated to GP agents and agencies.",
+    "exploreMessage": "Explore our features and services to optimize your operations and improve your experience."
+  },
+
   "Login": {
     "noAccount": "Don't have an account?",
     "signUp": "Sign up here"
   },
+
   "registe": {
     "alreadyHaveAccount": "Already have an account?",
     "signIn": "Sign in here"
   },
+
   "resetPassword": {
-    "newPassword": "New Password",
+    "newPassword": "New password",
     "placeholders": {
       "newPassword": "Enter your new password",
       "confirmPassword": "Confirm your new password"
     },
-    "confirmPassword": "Confirm Password",
-    "submitButton": "Reset Password"
+    "confirmPassword": "Confirm password",
+    "submitButton": "Reset password"
   },
+
   "forgotPassword": {
-    "email": "Email Address",
+    "email": "Email address",
     "placeholders": {
       "email": "Enter your email address"
     },
-    "submitButton": "Send Reset Link",
-    "backToLogin": "Back to Login"
+    "submitButton": "Send reset link",
+    "backToLogin": "Back to login"
   }
-
 }

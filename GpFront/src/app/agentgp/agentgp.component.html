@@ -31,10 +31,10 @@
         <button pButton icon="pi pi-phone" class="p-button-info p-button-rounded" (click)="callAgent(agence.telephone)"></button>
         <button
           pButton
-          [label]="suivis[agence.id] ? 'Suivi' : 'Suivre'"
-          [icon]="suivis[agence.id] ? 'pi pi-user-check' : 'pi pi-user-plus'"
-          [class.p-button-warning]="!suivis[agence.id]"
-          [class.p-button-success]="suivis[agence.id]"
+          [label]="agence.id !== undefined && suivis[agence.id] ? 'Suivi' : 'Suivre'"
+          [icon]="agence.id !== undefined && suivis[agence.id] ? 'pi pi-user-check' : 'pi pi-user-plus'"
+          [class.p-button-warning]="!(agence.id !== undefined && suivis[agence.id])"
+          [class.p-button-success]="agence.id !== undefined && suivis[agence.id]"
           class="p-button-sm"
           (click)="toggleSuivi(agence)">
         </button>

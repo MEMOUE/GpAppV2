@@ -145,6 +145,53 @@
             formControlName="destinations"
             [placeholder]="'registration.placeholders.destinations' | translate"
           />
+          <small class="text-muted">Exemple: Paris, Lyon, Marseille</small>
+        </div>
+
+        <!-- Upload Logo -->
+        <div class="field">
+          <label for="logo">Logo de l'agence *</label>
+          <input
+            type="file"
+            id="logo"
+            accept="image/*"
+            (change)="onFileSelected('logo', $event)"
+            class="form-control"
+          />
+          <small class="text-muted">Formats acceptés: JPG, PNG, GIF (max 5MB)</small>
+          <small *ngIf="selectedFiles['logo']" class="text-success">
+            ✓ {{ selectedFiles['logo'].name }}
+            <button type="button" class="btn-remove" (click)="removeFile('logo')">×</button>
+          </small>
+          <small
+            *ngIf="fileErrors['logo']"
+            class="p-error"
+          >
+            {{ fileErrors['logo'] }}
+          </small>
+        </div>
+
+        <!-- Upload Carte d'identité -->
+        <div class="field">
+          <label for="carteIdentite">Carte d'identité *</label>
+          <input
+            type="file"
+            id="carteIdentite"
+            accept="image/*"
+            (change)="onFileSelected('carteIdentite', $event)"
+            class="form-control"
+          />
+          <small class="text-muted">Formats acceptés: JPG, PNG, GIF (max 5MB)</small>
+          <small *ngIf="selectedFiles['carteIdentite']" class="text-success">
+            ✓ {{ selectedFiles['carteIdentite'].name }}
+            <button type="button" class="btn-remove" (click)="removeFile('carteIdentite')">×</button>
+          </small>
+          <small
+            *ngIf="fileErrors['carteIdentite']"
+            class="p-error"
+          >
+            {{ fileErrors['carteIdentite'] }}
+          </small>
         </div>
       </div>
 
@@ -162,7 +209,7 @@
           [label]="'registration.submitButton' | translate"
           icon="pi pi-check"
           type="submit"
-          [disabled]="registrationForm.invalid"
+          [disabled]="!canSubmit()"
         ></p-button>
       </div>
     </form>

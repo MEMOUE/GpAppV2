@@ -1,5 +1,331 @@
 /* Styles personnalisés pour le formulaire */
 .card {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.field-checkbox {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.field-checkbox label {
+  margin-bottom: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.p-inputtext {
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.p-inputtext:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  border-color: #3b82f6;
+}
+
+.p-inputtext.p-invalid {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.25);
+}
+
+.p-error {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.help-text {
+  color: #6b7280;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Styles pour l'indicateur de force du mot de passe */
+.password-strength {
+  margin-top: 0.5rem;
+}
+
+.strength-indicator {
+  padding: 0.5rem;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.strength-indicator.strength-weak {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.strength-indicator.strength-medium {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fcd34d;
+}
+
+.strength-indicator.strength-strong {
+  background-color: #d1fae5;
+  color: #059669;
+  border: 1px solid #6ee7b7;
+}
+
+/* Section des informations agent */
+.agent-fields {
+  background-color: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+  margin-top: 1rem;
+}
+
+.agent-section-header {
+  margin-bottom: 1.5rem;
+}
+
+.agent-section-header h4 {
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.section-description {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Styles pour les messages */
+.p-message {
+  margin: 1rem 0;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.p-message-success {
+  background-color: #ecfdf5;
+  border-left: 4px solid #10b981;
+}
+
+.p-message-success .p-message-text {
+  color: #065f46;
+}
+
+.p-message-error {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+}
+
+.p-message-error .p-message-text {
+  color: #991b1b;
+}
+
+.p-message-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.p-message-icon {
+  font-size: 1.25rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.p-message-text {
+  flex: 1;
+  line-height: 1.5;
+}
+
+/* Styles pour le bouton */
+.p-button {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  transition: all 0.3s ease;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+}
+
+.p-button:hover:not(:disabled) {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.p-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Résumé des exigences */
+.requirements-summary {
+  background-color: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin-top: 1.5rem;
+}
+
+.requirements-summary h5 {
+  color: #374151;
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.requirements-summary ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.requirements-summary li {
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  transition: color 0.3s ease;
+}
+
+.requirements-summary li:before {
+  content: "○";
+  color: #9ca3af;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.requirements-summary li.completed {
+  color: #059669;
+}
+
+.requirements-summary li.completed:before {
+  content: "✓";
+  color: #059669;
+}
+
+/* Lien vers la connexion */
+.text-center {
+  text-align: center;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-blue-500 {
+  color: #3b82f6;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.text-blue-500:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+/* Labels */
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .card {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .agent-fields {
+    padding: 1rem;
+  }
+
+  .p-button {
+    width: 100%;
+    padding: 0.875rem;
+  }
+
+  .requirements-summary {
+    padding: 1rem;
+  }
+}
+
+/* Animation d'entrée */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.agent-fields {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Checkbox personnalisé */
+.p-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Focus states pour l'accessibilité */
+.p-checkbox:focus-within {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  border-radius: 4px;
+}
+
+.p-button:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+/* Loading state */
+.p-button .p-button-loading-icon {
+  margin-right: 0.5rem;
+}
+/* Styles personnalisés pour le formulaire */
+.card {
   max-width: 600px;
   margin: 2rem auto;
   padding: 2rem;
@@ -19,6 +345,59 @@
   color: #dc2626; /* Rouge */
   font-size: 0.875rem; /* 14px */
   margin-top: 0.25rem; /* 4px */
+}
+
+/* Styles pour les champs de fichiers */
+input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.375rem;
+  background-color: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+input[type="file"]:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+input[type="file"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.text-muted {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.text-success {
+  color: #16a34a;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* Styles pour les sections agents GP */
+.agent-fields {
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  background-color: #f8fafc;
+}
+
+.agent-fields::before {
+  content: "Informations Agent GP";
+  display: block;
+  font-weight: bold;
+  color: #374151;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
 }
 
 /* Styles pour les messages */
@@ -45,4 +424,10 @@
 .p-button:hover {
   background-color: #2563eb; /* Bleu plus foncé */
   border-color: #2563eb;
+}
+
+.p-button:disabled {
+  background-color: #9ca3af;
+  border-color: #9ca3af;
+  cursor: not-allowed;
 }

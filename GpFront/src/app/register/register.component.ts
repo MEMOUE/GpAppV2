@@ -22,11 +22,15 @@ export class RegisterComponent {
   isAgentGp = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
+  
+  // Gestion des fichiers
+  selectedFiles: { [key: string]: File } = {};
+  fileErrors: { [key: string]: string } = {};
 
   constructor(
     private fb: FormBuilder,
     private registerService: RegisterService,
-    private translate: TranslateService // <-- Injecté
+    private translate: TranslateService
   ) {
     this.registrationForm = this.fb.group({
       username: ['', Validators.required],
@@ -60,11 +64,81 @@ export class RegisterComponent {
         this.registrationForm.get('nomagence')?.clearValidators();
         this.registrationForm.get('adresse')?.clearValidators();
         this.registrationForm.get('telephone')?.clearValidators();
+        // Nettoyer les fichiers si on désélectionne agent GP
+        this.selectedFiles = {};
+        this.fileErrors = {};
       }
 
       this.registrationForm.get('nomagence')?.updateValueAndValidity();
       this.registrationForm.get('adresse')?.updateValueAndValidity();
       this.registrationForm.get('telephone')?.updateValueAndValidity();
+    });
+  }
+
+  onFileSelected(fileType: string, event: any): void {
+    const file = event.target.files[0];
+    
+    if (file) {
+      // Validation du fichier
+      const validationError = this.validateFile(file);
+      
+      if (validationError) {
+        this.fileErrors[fileType] = validationError;
+        delete this.selectedFiles[fileType];
+      } else {
+        this.selectedFiles[fileType] = file;
+        delete this.fileErrors[fileType];
+      }
+    }
+  }
+
+  removeFile(fileType: string): void {
+    delete this.selectedFiles[fileType];
+    delete this.fileErrors[fileType];
+    
+    // Réinitialiser l'input file
+    const fileInput = document.getElementById(fileType) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
+  validateFile(file: File): string | null {
+    // Vérifier la taille (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      return 'Le fichier ne peut pas dépasser 5MB';
+    }
+
+    // Vérifier le type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      return 'Seuls les fichiers JPG, PNG et GIF sont acceptés';
+    }
+
+    return null;
+  }
+
+  // Méthode pour vérifier si le formulaire peut être soumis
+  canSubmit(): boolean {
+    if (!this.registrationForm.valid) {
+      return false;
+    }
+
+    const isAgentGp = this.registrationForm.get('isAgentGp')?.value;
+    
+    if (isAgentGp) {
+      // Pour les agents GP, vérifier que les fichiers sont présents et valides
+      return this.selectedFiles['logo'] && 
+             this.selectedFiles['carteIdentite'] && 
+             Object.keys(this.fileErrors).length === 0;
+    }
+
+    return true;
+  }
+
+  private markAllFieldsAsTouched(): void {
+    Object.keys(this.registrationForm.controls).forEach(key => {
+      this.registrationForm.get(key)?.markAsTouched();
     });
   }
 
@@ -90,41 +164,55 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
-    if (this.registrationForm.valid) {
-      const formData = { ...this.registrationForm.value };
-
-      if (formData.destinations) {
-        if (typeof formData.destinations === 'string') {
-          formData.destinations = formData.destinations
-            .split(',')
-            .map((d: string) => d.trim()); // Nettoyage des espaces
-        } else if (Array.isArray(formData.destinations)) {
-          formData.destinations = formData.destinations.map((d: string) => d.trim());
+    if (!this.canSubmit()) {
+      if (this.registrationForm.get('isAgentGp')?.value) {
+        if (!this.selectedFiles['logo'] || !this.selectedFiles['carteIdentite']) {
+          this.errorMessage = 'Veuillez sélectionner le logo et la carte d\'identité pour les agents GP';
+        } else if (Object.keys(this.fileErrors).length > 0) {
+          this.errorMessage = 'Veuillez corriger les erreurs dans les fichiers';
         }
+      } else {
+        this.errorMessage = 'Veuillez corriger les erreurs dans le formulaire';
       }
-
-      const endpoint = formData.isAgentGp ? 'agentgp' : 'user';
-
-      const apiCall = formData.isAgentGp
-        ? this.registerService.registerAgent(formData)
-        : this.registerService.registerUser(formData);
-
-      apiCall.subscribe({
-        next: (response) => {
-          this.successMessage = this.translate.instant('registration.successMessage');
-          this.errorMessage = null;
-          this.registrationForm.reset();
-        },
-        error: (err) => {
-          console.error('Erreur lors de l\'inscription :', err);
-          this.successMessage = null;
-          this.errorMessage = err?.error?.message || this.translate.instant('registration.errorMessage');
-        }
-      });
-    } else {
-      console.error('Formulaire invalide', this.registrationForm.errors);
-      this.successMessage = null;
-      this.errorMessage = this.translate.instant('registration.formErrorMessage');
+      this.markAllFieldsAsTouched();
+      return;
     }
+
+    const formData = { ...this.registrationForm.value };
+
+    if (formData.destinations) {
+      if (typeof formData.destinations === 'string') {
+        formData.destinations = formData.destinations
+          .split(',')
+          .map((d: string) => d.trim());
+      } else if (Array.isArray(formData.destinations)) {
+        formData.destinations = formData.destinations.map((d: string) => d.trim());
+      }
+    }
+
+    console.log('Données du formulaire:', formData);
+    console.log('Fichiers sélectionnés:', this.selectedFiles);
+
+    const apiCall = formData.isAgentGp
+      ? this.registerService.registerAgent(formData, this.selectedFiles)
+      : this.registerService.registerUser(formData);
+
+    apiCall.subscribe({
+      next: (response) => {
+        console.log('Réponse du serveur:', response);
+        this.successMessage = this.translate.instant('registration.successMessage');
+        this.errorMessage = null;
+        this.registrationForm.reset();
+        this.selectedFiles = {};
+        this.fileErrors = {};
+      },
+      error: (err) => {
+        console.error('Erreur complète:', err);
+        console.error('Status:', err.status);
+        console.error('Error object:', err.error);
+        this.successMessage = null;
+        this.errorMessage = err?.error?.error || err?.error?.message || this.translate.instant('registration.errorMessage');
+      }
+    });
   }
 }
