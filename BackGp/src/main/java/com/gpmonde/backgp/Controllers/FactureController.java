@@ -19,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Map;
 
@@ -67,8 +70,33 @@ public class FactureController {
 	@GetMapping("/paginated")
 	@Operation(summary = "Lister les factures avec pagination", description = "Récupère les factures avec pagination et filtres")
 	public ResponseEntity<Page<FactureResponseDTO>> getFacturesPaginated(
-			@Parameter(description = "Filtres de recherche") FactureFilterDTO filter) {
+			@Parameter(description = "Nom du client") @RequestParam(required = false) String nomClient,
+			@Parameter(description = "Numéro de facture") @RequestParam(required = false) String numeroFacture,
+			@Parameter(description = "Statut de la facture") @RequestParam(required = false) Facture.StatutFacture statut,
+			@Parameter(description = "Date de début (yyyy-mm-dd)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+			@Parameter(description = "Date de fin (yyyy-mm-dd)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin,
+			@Parameter(description = "Recherche globale dans tous les champs") @RequestParam(required = false) String globalFilter,
+			@Parameter(description = "Numéro de page (commence à 0)") @RequestParam(defaultValue = "0") int page,
+			@Parameter(description = "Nombre d'éléments par page") @RequestParam(defaultValue = "25") int size,
+			@Parameter(description = "Champ de tri") @RequestParam(defaultValue = "dateCreation") String sortBy,
+			@Parameter(description = "Direction du tri (ASC ou DESC)") @RequestParam(defaultValue = "DESC") String sortDirection) {
+
 		try {
+			// Construire l'objet de filtre
+			FactureFilterDTO filter = new FactureFilterDTO();
+			filter.setNomClient(nomClient);
+			filter.setNumeroFacture(numeroFacture);
+			filter.setStatut(statut);
+			filter.setDateDebut(dateDebut);
+			filter.setDateFin(dateFin);
+			filter.setGlobalFilter(globalFilter);
+			filter.setPage(page);
+			filter.setSize(size);
+			filter.setSortBy(sortBy);
+			filter.setSortDirection(sortDirection);
+
+			log.debug("Requête de factures paginées avec filtres: {}", filter);
+
 			Page<FactureResponseDTO> factures = factureService.getFacturesAgentPaginated(filter);
 			return ResponseEntity.ok(factures);
 		} catch (Exception e) {

@@ -115,6 +115,9 @@ export class FactureListComponent implements OnInit, OnDestroy {
     dateFin: null as Date | null
   };
 
+  // Filtre global
+  globalFilterValue: string = '';
+
   // État des filtres
   hasActiveFilters = false;
   showAdvancedFilters = false;
@@ -190,7 +193,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
   private initializeComponent(): void {
     // Charger les préférences utilisateur sauvegardées
     this.loadUserPreferences();
-
     // Charger les données initiales
     this.loadFactures();
   }
@@ -222,6 +224,29 @@ export class FactureListComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Méthode appelée par le tableau en mode lazy
+  onLazyLoad(event: any): void {
+    console.log('Lazy load event:', event);
+    
+    // Mettre à jour les paramètres de pagination et tri depuis l'événement
+    if (event) {
+      this.first = event.first || 0;
+      this.rows = event.rows || 25;
+      
+      if (event.sortField) {
+        this.sortField = event.sortField;
+        this.sortOrder = event.sortOrder || 1;
+      }
+      
+      // Appliquer le filtre global si présent
+      if (event.globalFilter !== undefined) {
+        this.globalFilterValue = event.globalFilter;
+      }
+    }
+    
+    this.loadFactures();
+  }
+
   // Méthode appelée à chaque changement dans les champs de recherche
   onSearchChange(): void {
     this.updateFilterState();
@@ -238,18 +263,29 @@ export class FactureListComponent implements OnInit, OnDestroy {
       this.searchTerms.numeroFacture ||
       this.searchTerms.statut ||
       this.searchTerms.dateDebut ||
-      this.searchTerms.dateFin
+      this.searchTerms.dateFin ||
+      this.globalFilterValue
     );
   }
 
   // Chargement des factures avec filtres
   loadFactures(): void {
+    console.log('Loading factures with params:', {
+      first: this.first,
+      rows: this.rows,
+      sortField: this.sortField,
+      sortOrder: this.sortOrder,
+      globalFilter: this.globalFilterValue,
+      searchTerms: this.searchTerms
+    });
+
     const filter: FactureFilter = {
       nomClient: this.searchTerms.nomClient || undefined,
       numeroFacture: this.searchTerms.numeroFacture || undefined,
       statut: this.searchTerms.statut || undefined,
       dateDebut: this.searchTerms.dateDebut?.toISOString().split('T')[0] || undefined,
       dateFin: this.searchTerms.dateFin?.toISOString().split('T')[0] || undefined,
+      globalFilter: this.globalFilterValue || undefined,
       page: Math.floor(this.first / this.rows),
       size: this.rows,
       sortBy: this.sortField,
@@ -261,6 +297,7 @@ export class FactureListComponent implements OnInit, OnDestroy {
         this.factures = response.content;
         this.totalRecords = response.totalElements;
         this.selectedFactures = []; // Reset selection
+        console.log('Factures loaded:', response);
       },
       error: (error) => {
         console.error('Erreur lors du chargement des factures:', error);
@@ -269,21 +306,39 @@ export class FactureListComponent implements OnInit, OnDestroy {
           summary: 'Erreur',
           detail: error.message || 'Impossible de charger les factures'
         });
+        // Réinitialiser en cas d'erreur
+        this.factures = [];
+        this.totalRecords = 0;
       }
     });
   }
 
-  // Pagination et tri
+  // Gestion du filtre global
+  applyGlobalFilter(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.globalFilterValue = target.value;
+    
+    // Pour un tableau lazy, on ne peut pas utiliser filterGlobal directement
+    // À la place, on déclenche une recherche
+    this.first = 0; // Reset à la première page
+    this.searchSubject.next();
+  }
+
+  // Pagination
   onPageChange(event: any): void {
+    console.log('Page change event:', event);
     this.first = event.first;
     this.rows = event.rows;
     this.saveUserPreferences();
     this.loadFactures();
   }
 
+  // Tri
   onSort(event: any): void {
+    console.log('Sort event:', event);
     this.sortField = event.field;
     this.sortOrder = event.order;
+    this.first = 0; // Reset à la première page lors du tri
     this.loadFactures();
   }
 
@@ -365,8 +420,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
   }
 
   voirDetails(facture: FactureResponse): void {
-    // Pour l'instant, on affiche les détails via toast
-    // Plus tard, on pourra créer une page de détails
     this.messageService.add({
       severity: 'info',
       summary: `Facture ${facture.numeroFacture}`,
@@ -478,7 +531,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Télécharger une par une
     this.selectedFactures.forEach(facture => {
       this.telechargerPDF(facture);
     });
@@ -521,23 +573,20 @@ export class FactureListComponent implements OnInit, OnDestroy {
       dateFin: null
     };
 
+    this.globalFilterValue = '';
+
+    // Reset du tableau si disponible
     if (this.table) {
-      this.table.clear();
+      this.table.reset();
     }
 
+    this.first = 0;
     this.updateFilterState();
-    this.loadFactures(); // Recharger directement au lieu d'utiliser searchSubject
+    this.loadFactures();
   }
 
   toggleAdvancedFilters(): void {
     this.showAdvancedFilters = !this.showAdvancedFilters;
-  }
-
-  applyGlobalFilter(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    if (this.table) {
-      this.table.filterGlobal(target.value, 'contains');
-    }
   }
 
   // Gestion de l'affichage
@@ -629,10 +678,7 @@ export class FactureListComponent implements OnInit, OnDestroy {
   // Méthode pour ouvrir le menu d'actions
   openFactureMenu(event: Event, facture: FactureResponse, menu: any): void {
     this.menuFacture = facture;
-
-    // Créer les actions dynamiquement selon le statut
     this.factureActions = this.createFactureActions(facture);
-
     menu.toggle(event);
   }
 
@@ -664,7 +710,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
       }
     ];
 
-    // Ajouter les actions de statut selon l'état actuel
     const statusActions: MenuItem[] = [];
 
     if (facture.statut === 'NON_PAYEE') {

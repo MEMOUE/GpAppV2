@@ -21,9 +21,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -102,13 +104,28 @@ public class FactureService {
 				.collect(Collectors.toList());
 	}
 
+	// MÉTHODE CORRIGÉE : Récupérer les factures avec pagination et filtres
 	public Page<FactureResponseDTO> getFacturesAgentPaginated(FactureFilterDTO filter) {
 		AgentGp agent = getCurrentAgent();
 
-		Sort sort = Sort.by(Sort.Direction.fromString(filter.getSortDirection()), filter.getSortBy());
+		log.debug("Filtrage des factures avec les paramètres: {}", filter);
+
+		// Créer la spécification avec tous les filtres
+		Specification<Facture> spec = FactureSpecifications.withFilters(filter, agent);
+
+		// Créer le tri
+		Sort sort = Sort.by(
+				Sort.Direction.fromString(filter.getSortDirection()),
+				filter.getSortBy()
+		);
+
+		// Créer la pagination
 		Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize(), sort);
 
-		Page<Facture> factures = factureRepository.findByAgentGpOrderByDateCreationDesc(agent, pageable);
+		// Exécuter la requête avec les filtres
+		Page<Facture> factures = factureRepository.findAll(spec, pageable);
+
+		log.debug("Factures trouvées: {} sur {}", factures.getNumberOfElements(), factures.getTotalElements());
 
 		return factures.map(FactureResponseDTO::fromEntity);
 	}
