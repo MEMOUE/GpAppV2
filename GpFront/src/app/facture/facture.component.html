@@ -55,7 +55,7 @@
           <div class="detail-row">
             <div class="detail-item">
               <span class="label">💰 Prix par KG :</span>
-              <span class="value">{{ selectedProgramme.prix }} €</span>
+              <span class="value">{{ selectedProgramme.prix }} </span>
             </div>
             <div class="detail-item">
               <span class="label">🛡️ Garantie :</span>
@@ -127,13 +127,13 @@
         <div class="form-row">
           <!-- Laveur de bagage -->
           <div class="field">
-            <label for="laveurBagage">Laveur du Bagage *</label>
+            <label for="laveurBagage">Valeur du Bagage *</label>
             <input
               id="laveurBagage"
               type="text"
               pInputText
               formControlName="laveurBagage"
-              placeholder="Nom du laveur"
+              placeholder="Valeur Bagage ici"
               [maxlength]="100"
             />
             <small *ngIf="laveurBagageError" class="text-danger">
@@ -181,7 +181,7 @@
           ></p-inputNumber>
           <small class="text-info">
             <i class="pi pi-info-circle"></i>
-            Prix calculé automatiquement : {{ selectedProgramme?.prix || 0 }} € × {{ factureForm.get('nombreKg')?.value || 0 }} KG
+            Prix calculé automatiquement : {{ selectedProgramme?.prix || 0 }}  × {{ factureForm.get('nombreKg')?.value || 0 }} KG
           </small>
         </div>
 
@@ -260,7 +260,7 @@
           </div>
           <div class="info-item">
             <span class="label font-bold">Total à payer :</span>
-            <span class="value font-bold text-success">{{ factureForm.get('prixTransport')?.value || 0 }} €</span>
+            <span class="value font-bold text-success">{{ factureForm.get('prixTransport')?.value || 0 }} </span>
           </div>
         </div>
       </div>
@@ -314,7 +314,7 @@
         </div>
         <div class="info-item">
           <span class="label">💰 Montant :</span>
-          <span class="value font-bold text-success">{{ factureCreee.prixTransport }} €</span>
+          <span class="value font-bold text-success">{{ factureCreee.prixTransport }} </span>
         </div>
         <div class="info-item">
           <span class="label">🏷️ Statut :</span>
@@ -339,7 +339,7 @@
         </div>
         <div class="info-item">
           <span class="label">💵 Prix unitaire :</span>
-          <span class="value">{{ factureCreee.prixUnitaire }} €/KG</span>
+          <span class="value">{{ factureCreee.prixUnitaire }} /KG</span>
         </div>
       </div>
     </div>

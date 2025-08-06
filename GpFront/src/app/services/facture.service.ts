@@ -53,6 +53,7 @@ export interface FactureFilter {
   statut?: StatutFacture;
   dateDebut?: string;
   dateFin?: string;
+  globalFilter?: string; // AJOUT: Filtre global
   page?: number;
   size?: number;
   sortBy?: string;
@@ -136,11 +137,19 @@ export class FactureService {
 
     let params = new HttpParams();
 
+    // Filtres spécifiques
     if (filter.nomClient) params = params.set('nomClient', filter.nomClient);
     if (filter.numeroFacture) params = params.set('numeroFacture', filter.numeroFacture);
     if (filter.statut) params = params.set('statut', filter.statut);
     if (filter.dateDebut) params = params.set('dateDebut', filter.dateDebut);
     if (filter.dateFin) params = params.set('dateFin', filter.dateFin);
+    
+    // AJOUT: Gestion du filtre global
+    if (filter.globalFilter) {
+      params = params.set('globalFilter', filter.globalFilter);
+    }
+    
+    // Pagination et tri
     if (filter.page !== undefined) params = params.set('page', filter.page.toString());
     if (filter.size !== undefined) params = params.set('size', filter.size.toString());
     if (filter.sortBy) params = params.set('sortBy', filter.sortBy);

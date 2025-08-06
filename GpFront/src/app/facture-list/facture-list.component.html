@@ -100,6 +100,7 @@
               pInputText
               type="text"
               placeholder="Recherche globale..."
+              [(ngModel)]="globalFilterValue"
               (input)="applyGlobalFilter($event)"
               class="global-search">
           </span>
@@ -190,7 +191,7 @@
               id="nomClient"
               pInputText
               [(ngModel)]="searchTerms.nomClient"
-              (input)="onAdvancedSearchChange()"
+              (ngModelChange)="onAdvancedSearchChange()"
               placeholder="Rechercher par nom..."
               class="filter-input">
           </div>
@@ -201,7 +202,7 @@
               id="numeroFacture"
               pInputText
               [(ngModel)]="searchTerms.numeroFacture"
-              (input)="onAdvancedSearchChange()"
+              (ngModelChange)="onAdvancedSearchChange()"
               placeholder="Ex: FAC-2024-001"
               class="filter-input">
           </div>
@@ -214,7 +215,7 @@
               [options]="statutOptions"
               optionLabel="label"
               optionValue="value"
-              (onChange)="onAdvancedSearchChange()"
+              (ngModelChange)="onAdvancedSearchChange()"
               placeholder="Tous les statuts"
               [showClear]="true"
               class="filter-dropdown">
@@ -227,6 +228,7 @@
               id="dateDebut"
               [(ngModel)]="searchTerms.dateDebut"
               (onSelect)="onAdvancedSearchChange()"
+              (onClearClick)="onAdvancedSearchChange()"
               dateFormat="dd/mm/yy"
               placeholder="Date début"
               [showIcon]="true"
@@ -241,6 +243,7 @@
               id="dateFin"
               [(ngModel)]="searchTerms.dateFin"
               (onSelect)="onAdvancedSearchChange()"
+              (onClearClick)="onAdvancedSearchChange()"
               dateFormat="dd/mm/yy"
               placeholder="Date fin"
               [showIcon]="true"
@@ -248,6 +251,23 @@
               class="filter-calendar">
             </p-calendar>
           </div>
+        </div>
+
+        <!-- Actions pour les filtres -->
+        <div style="display: flex; justify-content: end; gap: 10px; margin-top: 15px;">
+          <p-button
+            label="Réinitialiser"
+            icon="pi pi-refresh"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="clearFilters()">
+          </p-button>
+          <p-button
+            label="Appliquer"
+            icon="pi pi-check"
+            severity="primary"
+            (onClick)="onAdvancedSearchChange()">
+          </p-button>
         </div>
       </div>
 
@@ -274,15 +294,14 @@
           #dt
           [value]="factures"
           [columns]="selectedColumns"
-          [paginator]="false"
+          [paginator]="true"
           [rows]="rows"
           [totalRecords]="totalRecords"
           [loading]="loading"
           [lazy]="true"
-          (onLazyLoad)="loadFactures()"
+          (onLazyLoad)="onLazyLoad($event)"
           [sortField]="sortField"
           [sortOrder]="sortOrder"
-          (onSort)="onSort($event)"
           selectionMode="multiple"
           [(selection)]="selectedFactures"
           dataKey="id"
@@ -290,7 +309,11 @@
           styleClass="p-datatable-striped p-datatable-gridlines"
           [tableStyle]="{'min-width': '80rem'}"
           [scrollable]="true"
-          scrollHeight="calc(100vh - 400px)">
+          scrollHeight="calc(100vh - 500px)"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures"
+          [rowsPerPageOptions]="rowsPerPageOptions"
+          [first]="first">
 
           <!-- Header template -->
           <ng-template pTemplate="header" let-columns>
@@ -321,14 +344,29 @@
                 </span>
 
                 <!-- Client -->
-                <span *ngIf="col.field === 'nomClient'" class="client-info">
+                <div *ngIf="col.field === 'nomClient'" class="client-info">
                   <div class="client-name">{{ facture.nomClient }}</div>
                   <div class="client-address">{{ facture.adresseClient }}</div>
-                </span>
+                </div>
 
                 <!-- Montant -->
                 <span *ngIf="col.field === 'prixTransport'" class="amount">
                   {{ formatCurrency(facture.prixTransport) }}
+                </span>
+
+                <!-- Poids -->
+                <span *ngIf="col.field === 'nombreKg'">
+                  {{ facture.nombreKg }} KG
+                </span>
+
+                <!-- Départ -->
+                <span *ngIf="col.field === 'depart'">
+                  {{ facture.depart }}
+                </span>
+
+                <!-- Destination -->
+                <span *ngIf="col.field === 'destination'">
+                  {{ facture.destination }}
                 </span>
 
                 <!-- Statut -->
@@ -354,6 +392,7 @@
                     severity="success"
                     [rounded]="true"
                     [text]="true"
+                    size="small"
                     pTooltip="Marquer comme payée"
                     (onClick)="marquerPayee(facture)">
                   </p-button>
@@ -364,6 +403,7 @@
                     severity="warning"
                     [rounded]="true"
                     [text]="true"
+                    size="small"
                     pTooltip="Marquer comme non payée"
                     (onClick)="marquerNonPayee(facture)">
                   </p-button>
@@ -374,6 +414,7 @@
                     severity="info"
                     [rounded]="true"
                     [text]="true"
+                    size="small"
                     pTooltip="Voir détails"
                     (onClick)="voirDetails(facture)">
                   </p-button>
@@ -383,6 +424,7 @@
                     severity="help"
                     [rounded]="true"
                     [text]="true"
+                    size="small"
                     pTooltip="Télécharger PDF"
                     (onClick)="telechargerPDF(facture)">
                   </p-button>
@@ -392,17 +434,13 @@
                     severity="secondary"
                     [rounded]="true"
                     [text]="true"
+                    size="small"
                     (onClick)="openFactureMenu($event, facture, menu)"
                     pTooltip="Plus d'actions">
                   </p-button>
 
                   <p-menu #menu [model]="factureActions" [popup]="true"></p-menu>
                 </div>
-
-                <!-- Autres champs -->
-                <span *ngIf="!['numeroFacture','nomClient','prixTransport','statut','dateCreation','actions'].includes(col.field)">
-                  {{ facture[col.field] }}
-                </span>
               </td>
             </tr>
           </ng-template>
@@ -425,20 +463,17 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
 
-        <!-- Pagination custom -->
-        <div class="pagination-container">
-          <p-paginator
-            [rows]="rows"
-            [totalRecords]="totalRecords"
-            [first]="first"
-            [rowsPerPageOptions]="rowsPerPageOptions"
-            [showCurrentPageReport]="true"
-            currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures"
-            (onPageChange)="onPageChange($event)">
-          </p-paginator>
-        </div>
+          <!-- Loading template -->
+          <ng-template pTemplate="loadingbody" let-columns="columns">
+            <tr>
+              <td></td>
+              <td *ngFor="let col of columns">
+                <p-skeleton></p-skeleton>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
 
       <!-- Vue Cartes -->
