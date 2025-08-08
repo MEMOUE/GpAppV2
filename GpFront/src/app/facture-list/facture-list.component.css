@@ -20,6 +20,7 @@
   padding: 20px;
   min-height: calc(100vh - 80px);
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  animation: fadeInUp 0.5s ease-out;
 }
 
 /* Section header avec statistiques */
@@ -202,13 +203,6 @@
   outline: none;
 }
 
-/* Contrôles de vue */
-.view-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 /* Badge pour les filtres actifs */
 .filter-badge {
   background: var(--danger-color) !important;
@@ -267,150 +261,16 @@
   padding: 20px;
 }
 
-.skeleton-header {
-  margin-bottom: 20px;
+.skeleton-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
 }
 
-.skeleton-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.skeleton-row {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-/* Conteneur du tableau */
-.table-container {
+.skeleton-card {
   background: white;
-}
-
-/* Styles du tableau PrimeNG améliorés */
-:host ::ng-deep .p-datatable {
-  border: none;
-  border-radius: 0;
-}
-
-:host ::ng-deep .p-datatable .p-datatable-header {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border: none;
-  padding: 20px;
-  font-weight: 600;
-  color: var(--secondary-color);
-}
-
-:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  color: var(--secondary-color);
-  font-weight: 700;
-  padding: 18px 15px;
-  border: none;
-  border-bottom: 2px solid var(--primary-color);
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
-  padding: 15px;
-  border: none;
-  border-bottom: 1px solid #f0f0f0;
-  vertical-align: middle;
-  font-size: 14px;
-}
-
-:host ::ng-deep .p-datatable .p-datatable-tbody > tr {
-  transition: var(--transition);
-}
-
-:host ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
-  background-color: rgba(33, 150, 243, 0.05);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Styles pour les cellules spécifiques */
-.facture-number {
-  font-weight: 700;
-  color: var(--primary-color);
-  font-family: 'Courier New', monospace;
-}
-
-.client-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.client-name {
-  font-weight: 600;
-  color: var(--secondary-color);
-  margin-bottom: 3px;
-}
-
-.client-address {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.amount {
-  font-weight: 700;
-  color: var(--success-color);
-  font-size: 16px;
-}
-
-.date {
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-/* Boutons d'action dans le tableau */
-.action-buttons {
-  display: flex;
-  gap: 5px;
-  justify-content: center;
-}
-
-/* Tags de statut personnalisés */
-:host ::ng-deep .p-tag {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-/* Pagination personnalisée */
-.pagination-container {
-  background: #f8f9fa;
-  border-top: 1px solid var(--border-color);
-}
-
-:host ::ng-deep .p-paginator {
-  background: transparent;
-  border: none;
-  padding: 20px;
-}
-
-:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page {
-  min-width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  margin: 0 3px;
-  transition: var(--transition);
-  font-weight: 600;
-}
-
-:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page:hover {
-  background: var(--primary-color);
-  color: white;
-  transform: translateY(-2px);
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
 /* Vue en cartes */
@@ -468,6 +328,12 @@
   color: var(--secondary-color);
   font-size: 18px;
   font-weight: 600;
+}
+
+.client-address {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .journey-section {
@@ -532,6 +398,53 @@
   flex-wrap: wrap;
 }
 
+/* Numéro de facture dans les cartes */
+.facture-number {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-family: 'Courier New', monospace;
+}
+
+/* Tags de statut personnalisés */
+:host ::ng-deep .p-tag {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Pagination personnalisée */
+.pagination-container {
+  background: #f8f9fa;
+  border-top: 1px solid var(--border-color);
+}
+
+:host ::ng-deep .p-paginator {
+  background: transparent;
+  border: none;
+  padding: 20px;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page {
+  min-width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  margin: 0 3px;
+  transition: var(--transition);
+  font-weight: 600;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
 /* État vide */
 .empty-state {
   padding: 60px 20px;
@@ -560,36 +473,6 @@
   margin-right: auto;
 }
 
-/* Panel de sélection des colonnes */
-.column-selector {
-  width: 300px;
-  padding: 20px;
-}
-
-.column-selector h4 {
-  margin: 0 0 15px 0;
-  color: var(--secondary-color);
-  font-size: 16px;
-}
-
-.column-options {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.column-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.column-option label {
-  font-size: 14px;
-  color: var(--secondary-color);
-  cursor: pointer;
-}
-
 /* Animations */
 @keyframes slideDown {
   from {
@@ -613,10 +496,6 @@
   }
 }
 
-.facture-list-container {
-  animation: fadeInUp 0.5s ease-out;
-}
-
 /* Améliorations des boutons PrimeNG */
 :host ::ng-deep .p-button {
   transition: var(--transition);
@@ -637,10 +516,46 @@
   border-radius: 20px;
 }
 
+/* Menu contextuel stylisé */
+:host ::ng-deep .p-menu {
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-hover);
+  border: none;
+}
+
+:host ::ng-deep .p-menu .p-menuitem-link {
+  padding: 12px 15px;
+  transition: var(--transition);
+}
+
+:host ::ng-deep .p-menu .p-menuitem-link:hover {
+  background: rgba(33, 150, 243, 0.1);
+}
+
+/* Loading states améliorés pour les skeletons */
+:host ::ng-deep .p-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 2s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* Responsive design */
 @media (max-width: 1200px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
 }
 
@@ -684,14 +599,8 @@
     width: 100%;
   }
 
-  /* Masquer certaines colonnes sur mobile */
-  :host ::ng-deep .p-datatable th:nth-child(4),
-  :host ::ng-deep .p-datatable td:nth-child(4),
-  :host ::ng-deep .p-datatable th:nth-child(5),
-  :host ::ng-deep .p-datatable td:nth-child(5),
-  :host ::ng-deep .p-datatable th:nth-child(6),
-  :host ::ng-deep .p-datatable td:nth-child(6) {
-    display: none;
+  .skeleton-cards-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -715,51 +624,64 @@
   .global-search {
     min-width: 200px;
   }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-title {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
 }
 
-/* Custom scrollbar */
-:host ::ng-deep .p-datatable .p-datatable-scrollable-body::-webkit-scrollbar {
+/* Amélioration de l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom scrollbar pour le conteneur principal */
+.facture-list-container::-webkit-scrollbar {
   width: 8px;
-  height: 8px;
 }
 
-:host ::ng-deep .p-datatable .p-datatable-scrollable-body::-webkit-scrollbar-track {
+.facture-list-container::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
-:host ::ng-deep .p-datatable .p-datatable-scrollable-body::-webkit-scrollbar-thumb {
+.facture-list-container::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 4px;
 }
 
-:host ::ng-deep .p-datatable .p-datatable-scrollable-body::-webkit-scrollbar-thumb:hover {
+.facture-list-container::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
 
-/* Loading states améliorés */
-:host ::ng-deep .p-datatable .p-datatable-loading-overlay {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(2px);
-}
+/* Styles pour l'impression */
+@media print {
+  .facture-list-container {
+    background: white;
+    padding: 0;
+  }
 
-:host ::ng-deep .p-datatable .p-datatable-loading-icon {
-  color: var(--primary-color);
-  font-size: 24px;
-}
+  .header-actions,
+  .p-toolbar,
+  .advanced-filters,
+  .pagination-container {
+    display: none !important;
+  }
 
-/* Menu contextuel stylisé */
-:host ::ng-deep .p-menu {
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-hover);
-  border: none;
-}
-
-:host ::ng-deep .p-menu .p-menuitem-link {
-  padding: 12px 15px;
-  transition: var(--transition);
-}
-
-:host ::ng-deep .p-menu .p-menuitem-link:hover {
-  background: rgba(33, 150, 243, 0.1);
+  .facture-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+    margin-bottom: 15px;
+  }
 }

@@ -1,11 +1,10 @@
-import { Component, OnInit, OnDestroy, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, debounceTime, distinctUntilChanged, takeUntil, combineLatest, BehaviorSubject } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil, BehaviorSubject } from 'rxjs';
 
 // PrimeNG imports
-import { TableModule, Table } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
@@ -19,7 +18,6 @@ import { CardModule } from 'primeng/card';
 import { ToolbarModule } from 'primeng/toolbar';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { CalendarModule } from 'primeng/calendar';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ChipModule } from 'primeng/chip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { MenuModule } from 'primeng/menu';
@@ -29,14 +27,6 @@ import { TooltipModule } from 'primeng/tooltip';
 import { MenuComponent } from '../menu/menu.component';
 import { FactureService, FactureResponse, FactureFilter, StatutFacture, FactureStatistiques } from '../services/facture.service';
 
-interface ColumnDefinition {
-  field: string;
-  header: string;
-  sortable: boolean;
-  width?: string;
-  type?: 'text' | 'currency' | 'date' | 'status' | 'actions';
-}
-
 @Component({
   selector: 'app-facture-list',
   standalone: true,
@@ -44,7 +34,6 @@ interface ColumnDefinition {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    TableModule,
     ButtonModule,
     InputTextModule,
     DropdownModule,
@@ -58,7 +47,6 @@ interface ColumnDefinition {
     ToolbarModule,
     SplitButtonModule,
     CalendarModule,
-    OverlayPanelModule,
     ChipModule,
     SkeletonModule,
     MenuModule,
@@ -70,8 +58,6 @@ interface ColumnDefinition {
   styleUrls: ['./facture-list.component.css']
 })
 export class FactureListComponent implements OnInit, OnDestroy {
-  @ViewChild('dt') table!: Table;
-  @ViewChild('filterPanel') filterPanel!: any;
 
   // Services injectés
   private factureService = inject(FactureService);
@@ -84,24 +70,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
   loading = false;
   totalRecords = 0;
   statistiques: FactureStatistiques | null = null;
-
-  // Vue d'affichage
-  viewMode: 'table' | 'card' = 'table';
-
-  // Colonnes du tableau
-  columns: ColumnDefinition[] = [
-    { field: 'numeroFacture', header: 'N° Facture', sortable: true, width: '150px' },
-    { field: 'nomClient', header: 'Client', sortable: true },
-    { field: 'depart', header: 'Départ', sortable: true, width: '120px' },
-    { field: 'destination', header: 'Destination', sortable: true, width: '120px' },
-    { field: 'nombreKg', header: 'Poids (KG)', sortable: true, width: '100px' },
-    { field: 'prixTransport', header: 'Montant', sortable: true, width: '120px', type: 'currency' },
-    { field: 'statut', header: 'Statut', sortable: true, width: '100px', type: 'status' },
-    { field: 'dateCreation', header: 'Date création', sortable: true, width: '150px', type: 'date' },
-    { field: 'actions', header: 'Actions', sortable: false, width: '180px', type: 'actions' }
-  ];
-
-  selectedColumns: ColumnDefinition[] = [...this.columns];
 
   // Facture courante pour les menus
   menuFacture: FactureResponse | null = null;
@@ -130,11 +98,11 @@ export class FactureListComponent implements OnInit, OnDestroy {
   ];
 
   // Options d'affichage
-  rowsPerPageOptions = [10, 25, 50, 100];
+  rowsPerPageOptions = [12, 24, 48, 96]; // Adapté pour les cartes
 
   // Pagination
   first = 0;
-  rows = 25;
+  rows = 24; // Nombre adapté pour l'affichage en cartes
 
   // Tri
   sortField = 'dateCreation';
@@ -224,29 +192,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Méthode appelée par le tableau en mode lazy
-  onLazyLoad(event: any): void {
-    console.log('Lazy load event:', event);
-    
-    // Mettre à jour les paramètres de pagination et tri depuis l'événement
-    if (event) {
-      this.first = event.first || 0;
-      this.rows = event.rows || 25;
-      
-      if (event.sortField) {
-        this.sortField = event.sortField;
-        this.sortOrder = event.sortOrder || 1;
-      }
-      
-      // Appliquer le filtre global si présent
-      if (event.globalFilter !== undefined) {
-        this.globalFilterValue = event.globalFilter;
-      }
-    }
-    
-    this.loadFactures();
-  }
-
   // Méthode appelée à chaque changement dans les champs de recherche
   onSearchChange(): void {
     this.updateFilterState();
@@ -318,8 +263,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
     const target = event.target as HTMLInputElement;
     this.globalFilterValue = target.value;
     
-    // Pour un tableau lazy, on ne peut pas utiliser filterGlobal directement
-    // À la place, on déclenche une recherche
     this.first = 0; // Reset à la première page
     this.searchSubject.next();
   }
@@ -330,15 +273,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
     this.first = event.first;
     this.rows = event.rows;
     this.saveUserPreferences();
-    this.loadFactures();
-  }
-
-  // Tri
-  onSort(event: any): void {
-    console.log('Sort event:', event);
-    this.sortField = event.field;
-    this.sortOrder = event.order;
-    this.first = 0; // Reset à la première page lors du tri
     this.loadFactures();
   }
 
@@ -574,12 +508,6 @@ export class FactureListComponent implements OnInit, OnDestroy {
     };
 
     this.globalFilterValue = '';
-
-    // Reset du tableau si disponible
-    if (this.table) {
-      this.table.reset();
-    }
-
     this.first = 0;
     this.updateFilterState();
     this.loadFactures();
@@ -589,22 +517,10 @@ export class FactureListComponent implements OnInit, OnDestroy {
     this.showAdvancedFilters = !this.showAdvancedFilters;
   }
 
-  // Gestion de l'affichage
-  toggleViewMode(): void {
-    this.viewMode = this.viewMode === 'table' ? 'card' : 'table';
-    this.saveUserPreferences();
-  }
-
-  onColumnToggle(): void {
-    this.saveUserPreferences();
-  }
-
   // Gestion des préférences utilisateur
   private saveUserPreferences(): void {
     const preferences = {
-      viewMode: this.viewMode,
-      rows: this.rows,
-      selectedColumns: this.selectedColumns.map(col => col.field)
+      rows: this.rows
     };
     localStorage.setItem('facture-list-preferences', JSON.stringify(preferences));
   }
@@ -614,14 +530,7 @@ export class FactureListComponent implements OnInit, OnDestroy {
     if (saved) {
       try {
         const preferences = JSON.parse(saved);
-        this.viewMode = preferences.viewMode || 'table';
-        this.rows = preferences.rows || 25;
-
-        if (preferences.selectedColumns) {
-          this.selectedColumns = this.columns.filter(col =>
-            preferences.selectedColumns.includes(col.field)
-          );
-        }
+        this.rows = preferences.rows || 24;
       } catch (error) {
         console.error('Erreur lors du chargement des préférences:', error);
       }
@@ -662,9 +571,12 @@ export class FactureListComponent implements OnInit, OnDestroy {
 
   // Export
   exportCSV(): void {
-    if (this.table) {
-      this.table.exportCSV();
-    }
+    // Implémenter export CSV pour les cartes
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Information',
+      detail: 'Export CSV en cours de développement'
+    });
   }
 
   exportExcel(): void {

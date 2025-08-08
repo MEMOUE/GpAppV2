@@ -146,39 +146,14 @@
         </div>
 
         <div class="p-toolbar-group-end">
-          <!-- Options d'affichage -->
-          <div class="view-controls">
-            <!-- Vue table/card -->
-            <p-button
-              [icon]="viewMode === 'table' ? 'pi pi-th-large' : 'pi pi-list'"
-              [outlined]="true"
-              [rounded]="true"
-              severity="secondary"
-              (onClick)="toggleViewMode()"
-              [pTooltip]="viewMode === 'table' ? 'Vue en cartes' : 'Vue en tableau'"
-              tooltipPosition="bottom">
-            </p-button>
-
-            <!-- Choix des colonnes -->
-            <p-button
-              icon="pi pi-columns"
-              [outlined]="true"
-              [rounded]="true"
-              severity="secondary"
-              (onClick)="filterPanel.toggle($event)"
-              pTooltip="Choisir les colonnes"
-              tooltipPosition="bottom">
-            </p-button>
-
-            <!-- Export -->
-            <p-splitButton
-              icon="pi pi-download"
-              label="Export"
-              [model]="exportActions"
-              severity="help"
-              [rounded]="true">
-            </p-splitButton>
-          </div>
+          <!-- Export -->
+          <p-splitButton
+            icon="pi pi-download"
+            label="Export"
+            [model]="exportActions"
+            severity="help"
+            [rounded]="true">
+          </p-splitButton>
         </div>
       </p-toolbar>
 
@@ -273,211 +248,15 @@
 
       <!-- Loading Skeleton -->
       <div class="skeleton-container" *ngIf="loading">
-        <div class="skeleton-header">
-          <p-skeleton width="100%" height="2rem"></p-skeleton>
-        </div>
-        <div class="skeleton-rows">
-          <div class="skeleton-row" *ngFor="let item of [1,2,3,4,5]">
-            <p-skeleton width="15%" height="1.5rem"></p-skeleton>
-            <p-skeleton width="25%" height="1.5rem"></p-skeleton>
-            <p-skeleton width="15%" height="1.5rem"></p-skeleton>
-            <p-skeleton width="15%" height="1.5rem"></p-skeleton>
-            <p-skeleton width="10%" height="1.5rem"></p-skeleton>
-            <p-skeleton width="20%" height="1.5rem"></p-skeleton>
+        <div class="skeleton-cards-grid">
+          <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6,7,8]">
+            <p-skeleton width="100%" height="200px" borderRadius="8px"></p-skeleton>
           </div>
         </div>
       </div>
 
-      <!-- Vue Tableau -->
-      <div class="table-container" *ngIf="!loading && viewMode === 'table'">
-        <p-table
-          #dt
-          [value]="factures"
-          [columns]="selectedColumns"
-          [paginator]="true"
-          [rows]="rows"
-          [totalRecords]="totalRecords"
-          [loading]="loading"
-          [lazy]="true"
-          (onLazyLoad)="onLazyLoad($event)"
-          [sortField]="sortField"
-          [sortOrder]="sortOrder"
-          selectionMode="multiple"
-          [(selection)]="selectedFactures"
-          dataKey="id"
-          [globalFilterFields]="['numeroFacture','nomClient','depart','destination']"
-          styleClass="p-datatable-striped p-datatable-gridlines"
-          [tableStyle]="{'min-width': '80rem'}"
-          [scrollable]="true"
-          scrollHeight="calc(100vh - 500px)"
-          [showCurrentPageReport]="true"
-          currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} factures"
-          [rowsPerPageOptions]="rowsPerPageOptions"
-          [first]="first">
-
-          <!-- Header template -->
-          <ng-template pTemplate="header" let-columns>
-            <tr>
-              <th style="width: 4rem">
-                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-              </th>
-              <th
-                *ngFor="let col of columns"
-                [pSortableColumn]="col.sortable ? col.field : undefined"
-                [style.width]="col.width">
-                {{ col.header }}
-                <p-sortIcon [field]="col.field" *ngIf="col.sortable"></p-sortIcon>
-              </th>
-            </tr>
-          </ng-template>
-
-          <!-- Body template -->
-          <ng-template pTemplate="body" let-facture let-columns="columns">
-            <tr [pSelectableRow]="facture">
-              <td>
-                <p-tableCheckbox [value]="facture"></p-tableCheckbox>
-              </td>
-              <td *ngFor="let col of columns">
-                <!-- Numero Facture -->
-                <span *ngIf="col.field === 'numeroFacture'" class="facture-number">
-                  <strong>{{ facture.numeroFacture }}</strong>
-                </span>
-
-                <!-- Client -->
-                <div *ngIf="col.field === 'nomClient'" class="client-info">
-                  <div class="client-name">{{ facture.nomClient }}</div>
-                  <div class="client-address">{{ facture.adresseClient }}</div>
-                </div>
-
-                <!-- Montant -->
-                <span *ngIf="col.field === 'prixTransport'" class="amount">
-                  {{ formatCurrency(facture.prixTransport) }}
-                </span>
-
-                <!-- Poids -->
-                <span *ngIf="col.field === 'nombreKg'">
-                  {{ facture.nombreKg }} KG
-                </span>
-
-                <!-- Départ -->
-                <span *ngIf="col.field === 'depart'">
-                  {{ facture.depart }}
-                </span>
-
-                <!-- Destination -->
-                <span *ngIf="col.field === 'destination'">
-                  {{ facture.destination }}
-                </span>
-
-                <!-- Statut -->
-                <span *ngIf="col.field === 'statut'">
-                  <p-tag
-                    [severity]="getStatutSeverity(facture.statut)"
-                    [value]="getStatutLabel(facture.statut)"
-                    [icon]="getStatutIcon(facture.statut)">
-                  </p-tag>
-                </span>
-
-                <!-- Date -->
-                <span *ngIf="col.field === 'dateCreation'" class="date">
-                  {{ formatDate(facture.dateCreation) }}
-                </span>
-
-                <!-- Actions -->
-                <div *ngIf="col.field === 'actions'" class="action-buttons">
-                  <!-- Bouton statut -->
-                  <p-button
-                    *ngIf="facture.statut === 'NON_PAYEE'"
-                    icon="pi pi-check"
-                    severity="success"
-                    [rounded]="true"
-                    [text]="true"
-                    size="small"
-                    pTooltip="Marquer comme payée"
-                    (onClick)="marquerPayee(facture)">
-                  </p-button>
-
-                  <p-button
-                    *ngIf="facture.statut === 'PAYEE'"
-                    icon="pi pi-undo"
-                    severity="warning"
-                    [rounded]="true"
-                    [text]="true"
-                    size="small"
-                    pTooltip="Marquer comme non payée"
-                    (onClick)="marquerNonPayee(facture)">
-                  </p-button>
-
-                  <!-- Boutons d'action -->
-                  <p-button
-                    icon="pi pi-eye"
-                    severity="info"
-                    [rounded]="true"
-                    [text]="true"
-                    size="small"
-                    pTooltip="Voir détails"
-                    (onClick)="voirDetails(facture)">
-                  </p-button>
-
-                  <p-button
-                    icon="pi pi-download"
-                    severity="help"
-                    [rounded]="true"
-                    [text]="true"
-                    size="small"
-                    pTooltip="Télécharger PDF"
-                    (onClick)="telechargerPDF(facture)">
-                  </p-button>
-
-                  <p-button
-                    icon="pi pi-ellipsis-v"
-                    severity="secondary"
-                    [rounded]="true"
-                    [text]="true"
-                    size="small"
-                    (onClick)="openFactureMenu($event, facture, menu)"
-                    pTooltip="Plus d'actions">
-                  </p-button>
-
-                  <p-menu #menu [model]="factureActions" [popup]="true"></p-menu>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-
-          <!-- Empty state -->
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td [attr.colspan]="selectedColumns.length + 1" class="text-center">
-                <div class="empty-state">
-                  <i class="pi pi-info-circle"></i>
-                  <h3>Aucune facture trouvée</h3>
-                  <p>{{ hasActiveFilters ? 'Aucune facture ne correspond à vos critères de recherche.' : 'Vous n\'avez pas encore créé de factures.' }}</p>
-                  <p-button
-                    *ngIf="!hasActiveFilters"
-                    label="Créer ma première facture"
-                    icon="pi pi-plus"
-                    (onClick)="creerNouvelleFacture()">
-                  </p-button>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-
-          <!-- Loading template -->
-          <ng-template pTemplate="loadingbody" let-columns="columns">
-            <tr>
-              <td></td>
-              <td *ngFor="let col of columns">
-                <p-skeleton></p-skeleton>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-
       <!-- Vue Cartes -->
-      <div class="cards-container" *ngIf="!loading && viewMode === 'card'">
+      <div class="cards-container" *ngIf="!loading">
         <div class="cards-grid">
           <div class="facture-card" *ngFor="let facture of factures" [class.selected]="selectedFactures.includes(facture)">
             <!-- Header de la carte -->
@@ -578,8 +357,21 @@
           </div>
         </div>
 
+        <!-- État vide -->
+        <div class="empty-state" *ngIf="factures.length === 0 && !loading">
+          <i class="pi pi-info-circle"></i>
+          <h3>Aucune facture trouvée</h3>
+          <p>{{ hasActiveFilters ? 'Aucune facture ne correspond à vos critères de recherche.' : 'Vous n\'avez pas encore créé de factures.' }}</p>
+          <p-button
+            *ngIf="!hasActiveFilters"
+            label="Créer ma première facture"
+            icon="pi pi-plus"
+            (onClick)="creerNouvelleFacture()">
+          </p-button>
+        </div>
+
         <!-- Pagination pour les cartes -->
-        <div class="pagination-container">
+        <div class="pagination-container" *ngIf="factures.length > 0">
           <p-paginator
             [rows]="rows"
             [totalRecords]="totalRecords"
@@ -594,21 +386,3 @@
     </p-card>
   </div>
 </div>
-
-<!-- Panel pour le choix des colonnes -->
-<p-overlayPanel #filterPanel>
-  <div class="column-selector">
-    <h4>Choisir les colonnes à afficher</h4>
-    <div class="column-options">
-      <div class="column-option" *ngFor="let col of columns">
-        <p-checkbox
-          [(ngModel)]="selectedColumns"
-          [value]="col"
-          [binary]="false"
-          (onChange)="onColumnToggle()">
-        </p-checkbox>
-        <label>{{ col.header }}</label>
-      </div>
-    </div>
-  </div>
-</p-overlayPanel>
