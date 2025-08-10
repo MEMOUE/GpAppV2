@@ -16,6 +16,14 @@ public interface ProgrammeGpRepository extends JpaRepository<ProgrammeGp, Long> 
 
 	List<ProgrammeGp> findByAgentGpId(Long agentId);
 
+	@Query("""
+    SELECT p
+    FROM ProgrammeGp p
+    WHERE p.dateline >= CURRENT_DATE
+       OR p.dateline >= :yesterday
+""")
+	List<ProgrammeGp> findActiveOrRecent(@Param("yesterday") java.util.Date yesterday);
+
 
 }
 

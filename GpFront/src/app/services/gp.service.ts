@@ -12,6 +12,7 @@ export class GpService {
 
   private apiURL: string = `${environment.apiUrl}`;
   private gpEndpoint: string = `${this.apiURL}programmegp`;
+  private gpactiveEndpoint: string = `${this.apiURL}programmegp/active-or-recent`;
   private gpEndpoint_searsh: string = `${this.apiURL}programmegp/searsh`;
 
 
@@ -26,6 +27,11 @@ export class GpService {
 
 /////////////         OffreGP               /////////////////////////////
   }
+
+  getactivegp(): Observable<Programmegp[]> {
+    return this.http.get<Programmegp[]>(this.gpactiveEndpoint);
+  }
+
   getOffres(depart: string, destination: string): Observable<Programmegp[]> {
     return this.http.get<Programmegp[]>(`${this.gpEndpoint_searsh}?depart=${depart}&destination=${destination}`);
   }

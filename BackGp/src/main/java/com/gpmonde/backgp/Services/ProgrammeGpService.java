@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -43,6 +45,15 @@ public class ProgrammeGpService {
 
 	public List<ProgrammeGp> getAllProgrammes() {
 		return programmeGpRepository.findAll();
+	}
+
+	public List<ProgrammeGp> getActiveOrRecentProgrammes() {
+		// Calcule la date/heure d'il y a 24h
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.HOUR_OF_DAY, -24);
+		Date yesterday = cal.getTime();
+
+		return programmeGpRepository.findActiveOrRecent(yesterday);
 	}
 
 	public ProgrammeGp getProgrammeById(Long id) {
