@@ -1,11 +1,8 @@
-// FactureCreateDTO.java
 package com.gpmonde.backgp.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +13,8 @@ public class FactureCreateDTO {
 	private String adresseClient;
 	private String laveurBagage;
 	private Integer nombreKg;
-	private BigDecimal prixTransport;
+	// Changement: prix en string avec devise
+	private String prixTransport;
 	private String signatureBase64; // Signature en base64
 	private String notes;
 }

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,8 +17,9 @@ public class FactureResponseDTO {
 	private String adresseClient;
 	private String laveurBagage;
 	private Integer nombreKg;
-	private BigDecimal prixTransport;
-	private BigDecimal prixUnitaire;
+	// Changement: prix en string avec devise
+	private String prixTransport;
+	private String prixUnitaire;
 	private LocalDateTime dateCreation;
 	private Facture.StatutFacture statut;
 	private String notes;

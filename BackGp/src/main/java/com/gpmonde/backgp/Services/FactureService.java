@@ -36,10 +36,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,7 +70,10 @@ public class FactureService {
 		facture.setLaveurBagage(dto.getLaveurBagage());
 		facture.setNombreKg(dto.getNombreKg());
 		facture.setPrixTransport(dto.getPrixTransport());
-		facture.setPrixUnitaire(calculatePrixUnitaire(dto.getPrixTransport(), dto.getNombreKg()));
+
+		// Calculer le prix unitaire à partir du prix total et du programme
+		facture.setPrixUnitaire(calculatePrixUnitaire(dto.getPrixTransport(), dto.getNombreKg(), programme.getPrix()));
+
 		facture.setNotes(dto.getNotes());
 		facture.setAgentGp(agent);
 		facture.setProgrammeGp(programme);
@@ -431,11 +432,70 @@ public class FactureService {
 		table.addCell(valueCell);
 	}
 
-	private BigDecimal calculatePrixUnitaire(BigDecimal prixTotal, Integer nombreKg) {
-		if (nombreKg == null || nombreKg == 0) {
-			return BigDecimal.ZERO;
+	private double extractNumericalValue(String prix) {
+		if (prix == null || prix.trim().isEmpty()) {
+			return 0.0;
 		}
-		return prixTotal.divide(BigDecimal.valueOf(nombreKg), 2, BigDecimal.ROUND_HALF_UP);
+
+		try {
+			// Supprimer tout ce qui n'est pas un chiffre, point ou virgule
+			String cleanedPrice = prix.replaceAll("[^0-9.,]", "");
+
+			// Remplacer la virgule par un point pour la décimale
+			cleanedPrice = cleanedPrice.replace(",", ".");
+
+			return Double.parseDouble(cleanedPrice);
+		} catch (NumberFormatException e) {
+			log.warn("Impossible d'extraire la valeur numérique de: {}", prix);
+			return 0.0;
+		}
+	}
+
+	private String extractDevise(String prix) {
+		if (prix == null || prix.trim().isEmpty()) {
+			return null;
+		}
+
+		// Expressions régulières pour les devises courantes
+		String[] devises = {"XOF", "FCFA", "€", "EUR", "$", "USD", "£", "GBP", "¥", "JPY"};
+
+		for (String devise : devises) {
+			if (prix.toUpperCase().contains(devise)) {
+				return devise;
+			}
+		}
+
+		// Si aucune devise connue trouvée, extraire les caractères non numériques
+		String deviseExtracted = prix.replaceAll("[0-9.,\\s]", "").trim();
+		return deviseExtracted.isEmpty() ? null : deviseExtracted;
+	}
+
+	private String calculatePrixUnitaire(String prixTotal, Integer nombreKg, String prixProgramme) {
+		if (nombreKg == null || nombreKg == 0) {
+			return extractDevise(prixProgramme) != null ? "0 " + extractDevise(prixProgramme) : "0";
+		}
+
+		try {
+			// Extraire la valeur numérique du prix total
+			double valeurTotale = extractNumericalValue(prixTotal);
+			double prixUnitaire = valeurTotale / nombreKg;
+
+			// Extraire la devise du programme ou du prix total
+			String devise = extractDevise(prixTotal);
+			if (devise == null) {
+				devise = extractDevise(prixProgramme);
+			}
+			if (devise == null) {
+				devise = "€"; // Devise par défaut
+			}
+
+			// Formater avec 2 décimales
+			return String.format("%.2f %s", prixUnitaire, devise);
+
+		} catch (Exception e) {
+			log.warn("Erreur lors du calcul du prix unitaire: {}", e.getMessage());
+			return "0";
+		}
 	}
 
 	private AgentGp getCurrentAgent() {
@@ -448,9 +508,30 @@ public class FactureService {
 		AgentGp agent = getCurrentAgent();
 		List<Facture> factures = factureRepository.findByAgentGpOrderByDateCreationDesc(agent);
 
-		BigDecimal totalFactures = factures.stream()
-				.map(Facture::getPrixTransport)
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		// Calculer le total en regroupant par devise
+		Map<String, Double> totauxParDevise = new HashMap<>();
+
+		for (Facture facture : factures) {
+			try {
+				double valeur = extractNumericalValue(facture.getPrixTransport());
+				String devise = extractDevise(facture.getPrixTransport());
+				if (devise == null) devise = "€"; // Devise par défaut
+
+				totauxParDevise.merge(devise, valeur, Double::sum);
+			} catch (Exception e) {
+				log.warn("Erreur lors du calcul des statistiques pour la facture {}: {}",
+						facture.getNumeroFacture(), e.getMessage());
+			}
+		}
+
+		// Formater les totaux par devise
+		StringBuilder totalFormatted = new StringBuilder();
+		for (Map.Entry<String, Double> entry : totauxParDevise.entrySet()) {
+			if (totalFormatted.length() > 0) {
+				totalFormatted.append(" + ");
+			}
+			totalFormatted.append(String.format("%.2f %s", entry.getValue(), entry.getKey()));
+		}
 
 		long nombreFactures = factures.size();
 		long nombreFacturesPayees = factures.stream()
@@ -458,7 +539,7 @@ public class FactureService {
 				.count();
 
 		return Map.of(
-				"totalFactures", totalFactures,
+				"totalFactures", totalFormatted.toString(),
 				"nombreFactures", nombreFactures,
 				"nombreFacturesPayees", nombreFacturesPayees
 		);

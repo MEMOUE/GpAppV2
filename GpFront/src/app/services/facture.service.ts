@@ -13,7 +13,7 @@ export interface FactureCreateRequest {
   adresseClient: string;
   laveurBagage: string;
   nombreKg: number;
-  prixTransport: number;
+  prixTransport: string; // Changement: string avec devise
   signatureBase64?: string;
   notes?: string;
 }
@@ -25,8 +25,8 @@ export interface FactureResponse {
   adresseClient: string;
   laveurBagage: string;
   nombreKg: number;
-  prixTransport: number;
-  prixUnitaire: number;
+  prixTransport: string; // Changement: string avec devise
+  prixUnitaire: string; // Changement: string avec devise
   dateCreation: string;
   statut: StatutFacture;
   notes?: string;
@@ -53,7 +53,7 @@ export interface FactureFilter {
   statut?: StatutFacture;
   dateDebut?: string;
   dateFin?: string;
-  globalFilter?: string; // AJOUT: Filtre global
+  globalFilter?: string;
   page?: number;
   size?: number;
   sortBy?: string;
@@ -72,7 +72,7 @@ export interface PageResponse<T> {
 }
 
 export interface FactureStatistiques {
-  totalFactures: number;
+  totalFactures: string; // Changement: string pour gérer plusieurs devises
   nombreFactures: number;
   nombreFacturesPayees: number;
   pourcentagePayees: number;
@@ -98,6 +98,8 @@ export class FactureService {
   constructor() {
     this.loadStatistiques();
   }
+
+  // ===== CRUD OPERATIONS =====
 
   // Créer une facture
   creerFacture(facture: FactureCreateRequest): Observable<FactureResponse> {
@@ -143,12 +145,12 @@ export class FactureService {
     if (filter.statut) params = params.set('statut', filter.statut);
     if (filter.dateDebut) params = params.set('dateDebut', filter.dateDebut);
     if (filter.dateFin) params = params.set('dateFin', filter.dateFin);
-    
-    // AJOUT: Gestion du filtre global
+
+    // Gestion du filtre global
     if (filter.globalFilter) {
       params = params.set('globalFilter', filter.globalFilter);
     }
-    
+
     // Pagination et tri
     if (filter.page !== undefined) params = params.set('page', filter.page.toString());
     if (filter.size !== undefined) params = params.set('size', filter.size.toString());
@@ -174,6 +176,8 @@ export class FactureService {
     );
   }
 
+  // ===== STATUS MANAGEMENT =====
+
   // Marquer une facture comme payée
   marquerPayee(id: number): Observable<FactureResponse> {
     return this.http.post<FactureResponse>(`${this.apiUrl}/${id}/payer`, {}).pipe(
@@ -196,6 +200,8 @@ export class FactureService {
   marquerNonPayee(id: number): Observable<FactureResponse> {
     return this.changerStatut(id, 'NON_PAYEE');
   }
+
+  // ===== PDF OPERATIONS =====
 
   // Télécharger le PDF d'une facture
   downloadPDF(id: number): Observable<Blob> {
@@ -221,6 +227,8 @@ export class FactureService {
     );
   }
 
+  // ===== STATISTICS =====
+
   // Récupérer les statistiques
   getStatistiques(): Observable<any> {
     return this.http.get(`${this.apiUrl}/statistiques`).pipe(
@@ -233,7 +241,7 @@ export class FactureService {
     this.getStatistiques().subscribe({
       next: (stats) => {
         const formattedStats: FactureStatistiques = {
-          totalFactures: stats.totalFactures || 0,
+          totalFactures: stats.totalFactures || '0 €', // Maintenant string
           nombreFactures: stats.nombreFactures || 0,
           nombreFacturesPayees: stats.nombreFacturesPayees || 0,
           pourcentagePayees: stats.nombreFactures > 0
@@ -245,7 +253,7 @@ export class FactureService {
       error: (error) => {
         console.error('Erreur lors du chargement des statistiques:', error);
         this.statistiquesSubject.next({
-          totalFactures: 0,
+          totalFactures: '0 €',
           nombreFactures: 0,
           nombreFacturesPayees: 0,
           pourcentagePayees: 0
@@ -254,7 +262,117 @@ export class FactureService {
     });
   }
 
-  // Utilitaires pour l'affichage
+  // ===== PRICE UTILITIES =====
+
+  // Méthode pour extraire la valeur numérique d'un prix
+  extractNumericalValue(prix: string): number {
+    if (!prix || prix.trim() === '') {
+      return 0;
+    }
+
+    try {
+      // Supprimer tout ce qui n'est pas un chiffre, point ou virgule
+      const cleanedPrice = prix.replace(/[^0-9.,]/g, '');
+
+      // Remplacer la virgule par un point pour la décimale
+      const normalizedPrice = cleanedPrice.replace(',', '.');
+
+      return parseFloat(normalizedPrice) || 0;
+    } catch (error) {
+      console.warn('Impossible d\'extraire la valeur numérique de:', prix);
+      return 0;
+    }
+  }
+
+  // Méthode pour extraire la devise d'un prix
+  extractDevise(prix: string): string | null {
+    if (!prix || prix.trim() === '') {
+      return null;
+    }
+
+    // Devises courantes
+    const devises = ['XOF', 'FCFA', '€', 'EUR', '$', 'USD', '£', 'GBP', '¥', 'JPY'];
+
+    for (const devise of devises) {
+      if (prix.toUpperCase().includes(devise)) {
+        return devise;
+      }
+    }
+
+    // Si aucune devise connue trouvée, extraire les caractères non numériques
+    const deviseExtracted = prix.replace(/[0-9.,\s]/g, '').trim();
+    return deviseExtracted || null;
+  }
+
+  // Méthode pour calculer le prix total à partir du prix unitaire et du nombre de KG
+  calculatePrixTotal(prixUnitaire: string, nombreKg: number): string {
+    const valeurUnitaire = this.extractNumericalValue(prixUnitaire);
+    const devise = this.extractDevise(prixUnitaire) || '€';
+
+    const total = valeurUnitaire * nombreKg;
+    return `${total.toFixed(2)} ${devise}`;
+  }
+
+  // Méthode pour formater les prix
+  formatPrix(prix: string): string {
+    if (!prix) return '0 €';
+
+    const valeur = this.extractNumericalValue(prix);
+    const devise = this.extractDevise(prix) || '€';
+
+    return new Intl.NumberFormat('fr-FR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(valeur) + ' ' + devise;
+  }
+
+  // Méthode pour comparer les prix (utile pour le tri)
+  comparePrix(prix1: string, prix2: string): number {
+    const valeur1 = this.extractNumericalValue(prix1);
+    const valeur2 = this.extractNumericalValue(prix2);
+
+    return valeur1 - valeur2;
+  }
+
+  // Méthode pour additionner des prix (même devise)
+  additionnerPrix(prix1: string, prix2: string): string {
+    const valeur1 = this.extractNumericalValue(prix1);
+    const valeur2 = this.extractNumericalValue(prix2);
+    const devise = this.extractDevise(prix1) || this.extractDevise(prix2) || '€';
+
+    const total = valeur1 + valeur2;
+    return `${total.toFixed(2)} ${devise}`;
+  }
+
+  // Méthode pour calculer une remise
+  calculateRemise(prix: string, pourcentageRemise: number): string {
+    const valeur = this.extractNumericalValue(prix);
+    const devise = this.extractDevise(prix) || '€';
+
+    const remise = valeur * (pourcentageRemise / 100);
+    const nouveauPrix = valeur - remise;
+
+    return `${nouveauPrix.toFixed(2)} ${devise}`;
+  }
+
+  // Méthode pour grouper les prix par devise
+  groupPricesByCurrency(prix: string[]): Map<string, number> {
+    const grouped = new Map<string, number>();
+
+    prix.forEach(p => {
+      const valeur = this.extractNumericalValue(p);
+      const devise = this.extractDevise(p) || '€';
+
+      const current = grouped.get(devise) || 0;
+      grouped.set(devise, current + valeur);
+    });
+
+    return grouped;
+  }
+
+  // ===== DISPLAY UTILITIES =====
+
+  // Utilitaires pour l'affichage des statuts
   getStatutLabel(statut: StatutFacture): string {
     switch (statut) {
       case 'PAYEE': return 'Payée';
@@ -278,6 +396,8 @@ export class FactureService {
       default: return 'pi pi-info-circle';
     }
   }
+
+  // ===== FILE OPERATIONS =====
 
   // Utilitaires pour l'export et le partage
   saveFacturePDF(facture: FactureResponse, pdfBlob: Blob): void {
@@ -312,10 +432,12 @@ export class FactureService {
     }
   }
 
+  // ===== SHARING OPERATIONS =====
+
   partagerWhatsApp(facture: FactureResponse): void {
     const message = `Facture ${facture.numeroFacture}\n` +
       `Client: ${facture.nomClient}\n` +
-      `Montant: ${this.formatCurrency(facture.prixTransport)}\n` +
+      `Montant: ${facture.prixTransport}\n` +
       `Trajet: ${facture.depart} → ${facture.destination}`;
 
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
@@ -328,7 +450,7 @@ export class FactureService {
       `Veuillez trouver ci-joint la facture ${facture.numeroFacture}.\n\n` +
       `Détails:\n` +
       `- Client: ${facture.nomClient}\n` +
-      `- Montant: ${this.formatCurrency(facture.prixTransport)}\n` +
+      `- Montant: ${facture.prixTransport}\n` +
       `- Trajet: ${facture.depart} → ${facture.destination}\n` +
       `- Date: ${this.formatDate(facture.dateCreation)}\n\n` +
       `Cordialement,\n` +
@@ -338,11 +460,19 @@ export class FactureService {
     window.location.href = mailtoUrl;
   }
 
-  formatCurrency(amount: number): string {
+  // ===== FORMATTING UTILITIES =====
+
+  // Méthode mise à jour pour formater les devises
+  formatCurrency(prix: string | number): string {
+    if (typeof prix === 'string') {
+      return this.formatPrix(prix);
+    }
+
+    // Pour la compatibilité avec l'ancien code
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR'
-    }).format(amount);
+    }).format(prix);
   }
 
   formatDate(date: string): string {
@@ -354,6 +484,39 @@ export class FactureService {
       minute: '2-digit'
     }).format(new Date(date));
   }
+
+  formatDateTime(date: string): string {
+    return new Intl.DateTimeFormat('fr-FR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(date));
+  }
+
+  // ===== VALIDATION UTILITIES =====
+
+  // Valider le format d'un prix
+  isValidPriceFormat(prix: string): boolean {
+    if (!prix || prix.trim() === '') return false;
+
+    const valeur = this.extractNumericalValue(prix);
+    const devise = this.extractDevise(prix);
+
+    return valeur >= 0 && devise !== null;
+  }
+
+  // Valider si deux prix sont dans la même devise
+  isSameCurrency(prix1: string, prix2: string): boolean {
+    const devise1 = this.extractDevise(prix1);
+    const devise2 = this.extractDevise(prix2);
+
+    return devise1 === devise2;
+  }
+
+  // ===== ERROR HANDLING =====
 
   // Gestion des erreurs
   private handleError(error: any): Observable<never> {
@@ -378,5 +541,14 @@ export class FactureService {
 
   private setLoading(loading: boolean): void {
     this.loadingSubject.next(loading);
+  }
+
+  // ===== CLEANUP =====
+
+  // Nettoyer les ressources
+  destroy(): void {
+    this.loadingSubject.complete();
+    this.statistiquesSubject.complete();
+    this.facturesSubject.complete();
   }
 }

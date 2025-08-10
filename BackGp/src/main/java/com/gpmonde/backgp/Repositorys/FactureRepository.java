@@ -49,4 +49,16 @@ public interface FactureRepository extends JpaRepository<Facture, Long>, JpaSpec
 
 	// Dernières factures créées
 	List<Facture> findTop10ByAgentGpOrderByDateCreationDesc(AgentGp agentGp);
+
+	@Query("SELECT f FROM Facture f WHERE f.agentGp = :agent AND f.statut IN :statuts ORDER BY f.dateCreation DESC")
+	List<Facture> findByAgentAndStatuts(@Param("agent") AgentGp agent, @Param("statuts") List<Facture.StatutFacture> statuts);
+
+	// Méthode pour récupérer toutes les factures avec prix pour les statistiques
+	@Query("SELECT f.prixTransport FROM Facture f WHERE f.agentGp = :agent")
+	List<String> findAllPrixTransportByAgent(@Param("agent") AgentGp agent);
+
+	// Méthode pour récupérer les prix des factures payées
+	@Query("SELECT f.prixTransport FROM Facture f WHERE f.agentGp = :agent AND f.statut = 'PAYEE'")
+	List<String> findPrixTransportPayeesByAgent(@Param("agent") AgentGp agent);
+
 }

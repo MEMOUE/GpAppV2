@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -34,11 +33,13 @@ public class Facture {
 	@Column(nullable = false)
 	private Integer nombreKg;
 
-	@Column(nullable = false, precision = 10, scale = 2)
-	private BigDecimal prixTransport;
+	// Changement: prix comme string avec devise (ex: "1500 XOF", "15 $")
+	@Column(nullable = false)
+	private String prixTransport;
 
-	@Column(nullable = false, precision = 10, scale = 2)
-	private BigDecimal prixUnitaire;
+	// Prix unitaire aussi en string avec devise
+	@Column(nullable = false)
+	private String prixUnitaire;
 
 	@Lob
 	@Column(columnDefinition = "LONGBLOB")
