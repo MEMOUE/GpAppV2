@@ -208,7 +208,7 @@ export class AccueilComponent implements OnInit, OnDestroy {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.gpService.getAllgp()
+    this.gpService.getactivegp()
       .pipe(
         catchError(error => {
           console.error('Erreur lors du chargement des programmes:', error);

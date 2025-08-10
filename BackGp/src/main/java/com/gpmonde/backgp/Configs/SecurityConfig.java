@@ -41,6 +41,7 @@ public class SecurityConfig {
 								"/api/auth/logout/**",
 								"/api/programmegp/**", // Retirer cette ligne
 								"/api/programmegp/searsh/**",
+								"api/programmegp/active-or-recent",
 								"/api/tracking",
 								"/favicon.ico",
 								"/api/suivi/**",

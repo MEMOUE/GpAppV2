@@ -32,6 +32,11 @@ public class ProgrammeGpController {
 		return programmeGpService.getAllProgrammes();
 	}
 
+	@GetMapping("/active-or-recent")
+	public List<ProgrammeGp> getActiveOrRecentProgrammes() {
+		return programmeGpService.getActiveOrRecentProgrammes();
+	}
+
 	@GetMapping("/{id}")
 	public ProgrammeGp getProgrammeById(@PathVariable Long id) {
 		return programmeGpService.getProgrammeById(id);
