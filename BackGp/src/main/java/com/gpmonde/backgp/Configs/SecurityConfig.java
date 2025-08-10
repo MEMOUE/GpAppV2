@@ -47,6 +47,7 @@ public class SecurityConfig {
 								"/api/suivi/**",
 								"/api/ws/**",
 								"/api/notifications/user/**",
+								"/logos/**",
 
 								"/h2-console/**",
 								"/swagger-ui/**",
