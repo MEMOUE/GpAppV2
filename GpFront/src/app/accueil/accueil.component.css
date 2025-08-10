@@ -532,6 +532,99 @@
 .scroll-button:hover i {
   color: white;
 }
+
+/* ===== STYLES AMÉLIORÉS POUR LES LOGOS D'AGENTS ===== */
+
+/* Mise à jour du conteneur d'image de carte */
+.card-image-container {
+  position: relative;
+  overflow: hidden;
+  height: 130px;
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Style principal pour les images/logos */
+.card-img-top {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Changé de 'cover' à 'contain' pour préserver le ratio du logo */
+  object-position: center;
+  background-color: transparent;
+  transition: transform 0.3s ease;
+}
+
+/* Style spécial pour les logos d'agence */
+.agent-logo {
+  padding: 10px;
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+/* Animation pour le hover */
+.programme-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+/* Indicateur de logo manquant */
+.no-logo-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e9ecef, #f8f9fa);
+  color: #6c757d;
+  font-size: 2em;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+/* Style pour l'overlay quand on survole */
+.image-overlay-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(38, 166, 154, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+  font-weight: bold;
+  z-index: 2;
+  backdrop-filter: blur(5px);
+}
+
+.programme-card:hover .image-overlay-card {
+  opacity: 1;
+}
+
+.view-details-icon {
+  font-size: 2em;
+  margin-bottom: 8px;
+  animation: pulse 2s infinite;
+}
+
+/* Amélioration du logo dans l'overlay */
+.programme-card:hover .agent-logo {
+  opacity: 0.3;
+}
+
 /* Styles pour les inputs avec icônes */
 .input-with-icon {
   position: relative;
@@ -585,19 +678,6 @@
 }
 
 /* Styles pour les cartes de programme améliorées */
-.card-image-container {
-  position: relative;
-  overflow: hidden;
-  height: 130px;
-}
-
-.card-img-top {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
 .image-overlay-card {
   position: absolute;
   top: 0;
@@ -950,6 +1030,15 @@
   .contact-method-button i {
     font-size: 1.1em;
   }
+
+  /* Styles des logos pour tablettes */
+  .card-image-container {
+    height: 110px;
+  }
+
+  .agent-logo {
+    padding: 8px;
+  }
 }
 
 /* Petit tablette (576px - 767px) */
@@ -973,6 +1062,19 @@
     grid-column: 1 / -1;
     max-width: 280px;
     margin: 0 auto;
+  }
+
+  /* Styles des logos pour petites tablettes */
+  .card-image-container {
+    height: 100px;
+  }
+
+  .agent-logo {
+    padding: 6px;
+  }
+
+  .no-logo-indicator {
+    font-size: 1.8em;
   }
 }
 
@@ -1001,6 +1103,19 @@
   .contact-method-button i {
     font-size: 1.2em;
   }
+
+  /* Styles des logos pour mobile */
+  .card-image-container {
+    height: 90px;
+  }
+
+  .agent-logo {
+    padding: 5px;
+  }
+
+  .no-logo-indicator {
+    font-size: 1.5em;
+  }
 }
 
 /* Très petit mobile (moins de 400px) */
@@ -1023,6 +1138,19 @@
   .contact-title {
     font-size: 1em;
     margin-bottom: 15px;
+  }
+
+  /* Styles des logos pour très petit mobile */
+  .card-image-container {
+    height: 80px;
+  }
+
+  .agent-logo {
+    padding: 4px;
+  }
+
+  .no-logo-indicator {
+    font-size: 1.2em;
   }
 }
 
@@ -1356,32 +1484,7 @@
   padding-left: 40px;
 }
 
-/* Responsive Design général */
-@media (max-width: 768px) {
-  .route-display {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .card-info-grid {
-    gap: 8px;
-  }
-
-  .info-item {
-    padding: 6px;
-  }
-
-  /* Modal responsive */
-  .programme-details-dialog .p-dialog {
-    width: 95vw !important;
-    max-width: 500px !important;
-  }
-
-  .programme-details-content {
-    padding: 15px;
-  }
-}
-
+/* ===== RESPONSIVE DESIGN POUR LES LOGOS ===== */
 @media (max-width: 480px) {
   .search-inputs {
     flex-direction: column;
@@ -1415,4 +1518,72 @@
     padding: 6px 12px;
     font-size: 0.9em;
   }
+
+  /* Ajustements spéciaux pour les logos sur mobile */
+  .programme-card {
+    width: 220px;
+  }
+
+  .card-image-container {
+    height: 85px;
+  }
+
+  .agent-logo {
+    padding: 4px;
+    border-radius: 6px;
+  }
+
+  .no-logo-indicator {
+    font-size: 1.3em;
+  }
 }
+
+/* ===== STYLES ADDITIONNELS POUR LA QUALITÉ DES LOGOS ===== */
+
+/* Amélioration de la qualité d'image */
+.agent-logo {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated; /* Pour les logos pixelisés */
+}
+
+/* Fallback pour les logos corrompus ou manquants */
+.agent-logo[src=""],
+.agent-logo:not([src]) {
+  display: none;
+}
+
+.agent-logo[src=""]:after,
+.agent-logo:not([src]):after {
+  content: "🏢";
+  font-size: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Style pour les logos en mode sombre (si nécessaire) */
+@media (prefers-color-scheme: dark) {
+  .agent-logo {
+    filter: brightness(1.1) contrast(1.1);
+  }
+
+  .card-image-container {
+    background: linear-gradient(135deg, #2c2c2c, #3a3a3a);
+  }
+
+  .no-logo-indicator {
+    background: linear-gradient(135deg, #3a3a3a, #2c2c2c);
+    color: #a0a0a0;
+  }
+}
+
+/* Optimisation pour les écrans haute résolution */
+/*@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {*/
+/*  .agent-logo {*/
+/*    image-rendering: -webkit-optimize-contrast;*/
+/*    image-rendering: optimize-contrast;*/
+/*  }*/
+/*}*/

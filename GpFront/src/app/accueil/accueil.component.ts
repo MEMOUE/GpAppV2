@@ -12,6 +12,7 @@ import { DialogModule } from 'primeng/dialog';
 import { TrackingService } from '../services/tracking-service.service';
 import { Programmegp } from '../model/Programmegp';
 import { Subject, takeUntil, timer, startWith, switchMap, catchError, of, BehaviorSubject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // Constants
 const CAROUSEL_INTERVAL = 5000;
@@ -83,6 +84,10 @@ export class AccueilComponent implements OnInit, OnDestroy {
   // Scroll management
   private isScrolling = false;
   private currentScrollPosition = 0;
+
+  // URL de base pour les assets et image par défaut
+  private readonly baseUrl = environment.apiUrl.replace('/api/', '');
+  private readonly fallbackImage = 'icons/bag1.png';
 
   // Static data
   readonly phrases: readonly string[] = [
@@ -235,6 +240,48 @@ export class AccueilComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Logo management methods
+  /**
+   * Obtient l'URL complète du logo de l'agent
+   * @param agentGp L'agent GP
+   * @returns L'URL du logo ou une image par défaut
+   */
+  getAgentLogoUrl(agentGp: any): string {
+    if (!agentGp || !agentGp.logourl) {
+      return this.fallbackImage;
+    }
+
+    // Si l'URL commence par http, c'est déjà une URL complète
+    if (agentGp.logourl.startsWith('http')) {
+      return agentGp.logourl;
+    }
+
+    // Sinon, construire l'URL complète
+    const logoPath = agentGp.logourl.startsWith('/')
+      ? agentGp.logourl.substring(1)
+      : agentGp.logourl;
+
+    return `${this.baseUrl}/${logoPath}`;
+  }
+
+  /**
+   * Gère les erreurs de chargement d'image
+   * @param event L'événement d'erreur
+   */
+  onImageError(event: any): void {
+    console.warn('Erreur de chargement de l\'image:', event.target.src);
+    event.target.src = this.fallbackImage;
+  }
+
+  /**
+   * Vérifie si l'agent a un logo disponible
+   * @param agentGp L'agent GP
+   * @returns true si un logo est disponible
+   */
+  hasAgentLogo(agentGp: any): boolean {
+    return !!(agentGp && agentGp.logourl && agentGp.logourl.trim());
+  }
+
   // Public methods
   toggleContactOptions(): void {
     this.showContactOptions.update(current => !current);
@@ -348,112 +395,6 @@ export class AccueilComponent implements OnInit, OnDestroy {
     }, 200); // Délai réduit pour une réaction plus rapide
   }
 
-  // Méthode alternative avec animation de tirage visuelle
-  private pullCardsBackWithAnimation(direction: 'left' | 'right'): void {
-    const wrapper = this.getProgrammesWrapper();
-    if (!wrapper || this.isScrolling) return;
-
-    this.isScrolling = true;
-    this.pauseAnimation(wrapper);
-
-    const cardsToPull = 3;
-    const cardWidth = 270; // largeur de carte + marge
-    const pullDistance = cardWidth * cardsToPull;
-
-    // Animation de tirage: déplace temporairement le wrapper
-    if (direction === 'right') {
-      // Tirer vers la droite (montrer les cartes précédentes)
-      wrapper.style.transition = `transform ${SCROLL_ANIMATION_DURATION}ms ease-out`;
-      wrapper.style.transform = `translateX(${pullDistance}px)`;
-    } else {
-      // Tirer vers la gauche (montrer les cartes précédentes dans l'autre sens)
-      wrapper.style.transition = `transform ${SCROLL_ANIMATION_DURATION}ms ease-out`;
-      wrapper.style.transform = `translateX(-${pullDistance}px)`;
-    }
-
-    // Après l'animation, réorganiser les cartes et remettre à zéro
-    setTimeout(() => {
-      // Reset du transform
-      wrapper.style.transition = '';
-      wrapper.style.transform = '';
-
-      // Réorganiser les cartes selon la direction
-      if (direction === 'right') {
-        // Déplacer les dernières cartes au début
-        for (let i = 0; i < cardsToPull; i++) {
-          const lastCard = wrapper.lastElementChild;
-          if (lastCard) {
-            wrapper.insertBefore(lastCard, wrapper.firstElementChild);
-          }
-        }
-      } else {
-        // Déplacer les premières cartes à la fin
-        for (let i = 0; i < cardsToPull; i++) {
-          const firstCard = wrapper.firstElementChild;
-          if (firstCard) {
-            wrapper.appendChild(firstCard);
-          }
-        }
-      }
-
-      // Reprendre l'animation automatique
-      this.resumeAnimation(wrapper);
-      this.isScrolling = false;
-    }, SCROLL_ANIMATION_DURATION);
-  }
-
-  // Méthode alternative avec effet de tirage plus réaliste
-  private pullCardsWithSlideEffect(direction: 'left' | 'right'): void {
-    const wrapper = this.getProgrammesWrapper();
-    if (!wrapper || this.isScrolling) return;
-
-    this.isScrolling = true;
-    this.pauseAnimation(wrapper);
-
-    const cardsToPull = 3;
-
-    // Ajouter une classe CSS pour l'effet de tirage
-    wrapper.classList.add('pulling-cards');
-
-    if (direction === 'right') {
-      // Tirer vers la droite: montrer les 3 cartes précédentes
-      wrapper.classList.add('pull-right');
-
-      setTimeout(() => {
-        // Déplacer les 3 dernières cartes au début
-        for (let i = 0; i < cardsToPull; i++) {
-          const lastCard = wrapper.lastElementChild;
-          if (lastCard) {
-            wrapper.insertBefore(lastCard, wrapper.firstElementChild);
-          }
-        }
-
-        // Nettoyer les classes
-        wrapper.classList.remove('pulling-cards', 'pull-right');
-        this.resumeAnimation(wrapper);
-        this.isScrolling = false;
-      }, 300);
-
-    } else {
-      // Tirer vers la gauche: montrer les 3 cartes précédentes dans l'autre sens
-      wrapper.classList.add('pull-left');
-
-      setTimeout(() => {
-        // Déplacer les 3 premières cartes à la fin
-        for (let i = 0; i < cardsToPull; i++) {
-          const firstCard = wrapper.firstElementChild;
-          if (firstCard) {
-            wrapper.appendChild(firstCard);
-          }
-        }
-
-        // Nettoyer les classes
-        wrapper.classList.remove('pulling-cards', 'pull-left');
-        this.resumeAnimation(wrapper);
-        this.isScrolling = false;
-      }, 300);
-    }
-  }
   private getProgrammesWrapper(): HTMLElement | null {
     return document.querySelector('.programmes-wrapper') as HTMLElement;
   }
