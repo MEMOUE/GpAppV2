@@ -1,116 +1,151 @@
-<div class="hero_area">
-  <!-- Header Section Start -->
-  <header class="header_section">
-    <div class="header_bottom bg-body-secondary">
-      <div class="container-fluid">
-        <nav class="navbar navbar-expand-lg custom_nav-container d-flex justify-content-between align-items-center">
-          <!-- Logo Section -->
-          <a class="navbar-brand" routerLink="/">
-            <img src="/logo2.png" alt="GpMonde Logo" width="90" height="50" class="d-inline-block align-top">
-          </a>
+<!-- Header Moderne et Professionnel -->
+<header class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20 relative">
 
-          <!-- Right Side Navigation -->
+      <!-- Logo -->
+      <a routerLink="/" class="flex items-center space-x-3 group py-2">
+        <img src="/logo2.png" alt="GpMonde" class="h-14 w-auto transition-transform group-hover:scale-105 drop-shadow-md">
+        <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent hidden sm:block">
+          GpMonde
+        </span>
+      </a>
+
+      <!-- Boutons centrés Annonce / Besoin -->
+      <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+        <!-- Publier une annonce -->
+        <button
+          (click)="publishAnnouncement()"
+          class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg transition-all duration-200 group">
+          <span class="hidden xl:block">{{ 'publishAd' | translate }}</span>
+          <span class="xl:hidden">Annonce</span>
+        </button>
+
+        <!-- Publier un besoin -->
+        <button
+          (click)="publishNeed()"
+          class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-blue-700 bg-white border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-all duration-200 group">
+          <span class="hidden xl:block">{{ 'publishNeed' | translate }}</span>
+          <span class="xl:hidden">Besoin</span>
+        </button>
+      </div>
+
+      <!-- Actions à droite -->
+      <div class="flex items-center space-x-3">
+
+        <!-- Dashboard visible sur Desktop si Admin -->
+        <a *ngIf="isAdmin()"
+           href="/accueilgp"
+           class="hidden lg:flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200">
+          <i class="pi pi-chart-line text-lg"></i>
+          <span>{{ 'dashboard' | translate }}</span>
+        </a>
+
+        <!-- Notifications (Desktop uniquement) -->
+        <div class="relative hidden sm:block">
           <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
+            (click)="notifMenu.toggle($event)"
+            class="relative p-2.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group">
+            <i class="pi pi-bell text-xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"></i>
+            <span *ngIf="unreadCount > 0"
+                  class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full ring-2 ring-white animate-pulse">
+              {{ unreadCount }}
+            </span>
           </button>
+          <p-menu #notifMenu [model]="notificationItems" [popup]="true"
+                  [style]="{'width':'min(350px, 90vw)', 'max-width':'350px'}"
+                  appendTo="body"></p-menu>
+        </div>
 
-          <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item">
-                <a class="nav-link" routerLink="/">
-                  <i class="pi pi-home"></i> {{ 'home' | translate }} <!-- Texte traduit -->
-                </a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                  <i class="pi pi-bell"></i> Notifications
-                  <span *ngIf="unreadCount > 0" class="badge bg-danger">{{ unreadCount }}</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                  <li *ngFor="let notif of notifications" (click)="openNotification(notif)" class="dropdown-item">
-                    {{ notif.message }}
-                  </li>
-                  <li *ngIf="notifications.length === 0" class="dropdown-item text-muted">Aucune notification</li>
-                </ul>
-              </li>
+        <!-- Langue -->
+        <button
+          (click)="langMenu.toggle($event)"
+          class="hidden md:flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 group">
+          <i class="pi pi-globe text-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"></i>
+          <span>{{ currentLang === 'fr' ? 'FR' : 'EN' }}</span>
+        </button>
+        <p-menu #langMenu [model]="languageItems" [popup]="true" appendTo="body"></p-menu>
 
-
-              <li class="nav-item">
-                <a *ngIf="isAdmin()" class="nav-link" href="/accueilgp">
-                  <i class="pi pi-chart-line"></i> {{ 'dashboard' | translate }} <!-- Texte traduit -->
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" routerLink="#contact">
-                  <i class="pi pi-envelope"></i> {{ 'contact' | translate }} <!-- Texte traduit -->
-                </a>
-              </li>
-
-              <!-- Sélecteur de langue -->
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  id="languageDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <i class="pi pi-globe"></i> {{ 'language' | translate }} <!-- Texte traduit -->
-                </a>
-                <div class="dropdown-menu" aria-labelledby="languageDropdown">
-                  <a class="dropdown-item" (click)="changeLanguage('fr')">
-                    <img src="fr.png" alt="Drapeau français" width="20" height="15"> Français
-                  </a>
-                  <a class="dropdown-item" (click)="changeLanguage('en')">
-                    <img src="bg.png" alt="Drapeau britannique" width="20" height="15"> English
-                  </a>
-                </div>
-              </li>
-
-              <!-- Menu utilisateur -->
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  id="userDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <i class="pi pi-user"></i> {{ 'account' | translate }} <!-- Texte traduit -->
-                </a>
-                <div class="dropdown-menu" aria-labelledby="userDropdown">
-                  <a *ngIf="!(isAuthenticated$ | async)" class="dropdown-item" routerLink="/login">
-                    <i class="pi pi-sign-in"></i> {{ 'login' | translate }} <!-- Texte traduit -->
-                  </a>
-                  <a *ngIf="!(isAuthenticated$ | async)" class="dropdown-item" routerLink="/register">
-                    <i class="pi pi-user-plus"></i> {{ 'register' | translate }} <!-- Texte traduit -->
-                  </a>
-                  <a *ngIf="isAuthenticated$ | async" class="dropdown-item">
-                    <i class="pi pi-user"></i> {{ 'profile' | translate }} <!-- Texte traduit -->
-                  </a>
-                  <a *ngIf="isAuthenticated$ | async" class="dropdown-item" (click)="logout()">
-                    <i class="pi pi-sign-out"></i> {{ 'logout' | translate }} <!-- Texte traduit -->
-                  </a>
-                </div>
-              </li>
-            </ul>
+        <!-- Compte utilisateur (Desktop uniquement) -->
+        <button
+          (click)="userMenu.toggle($event)"
+          class="hidden sm:flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-200 group">
+          <div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
+            <i class="pi pi-user text-base"></i>
           </div>
-        </nav>
+          <span class="hidden md:block">{{ 'account' | translate }}</span>
+        </button>
+        <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
+
+        <!-- Menu mobile -->
+        <button
+          (click)="mobileMenuOpen = !mobileMenuOpen"
+          class="lg:hidden p-2.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200">
+          <i [class]="mobileMenuOpen ? 'pi pi-times' : 'pi pi-bars'" class="text-xl"></i>
+        </button>
       </div>
     </div>
-  </header>
-  <!-- Header Section End -->
-</div>
+  </div>
+
+  <!-- Menu Mobile -->
+  <div *ngIf="mobileMenuOpen"
+       class="lg:hidden border-t border-gray-200 bg-white shadow-lg"
+       [@slideDown]>
+    <div class="px-4 py-3 space-y-1">
+
+      <a routerLink="/agences"
+         (click)="mobileMenuOpen = false"
+         class="flex items-center gap-3 px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all group">
+        <i class="pi pi-building text-lg group-hover:scale-110 transition-transform"></i>
+        <span>{{ 'agencies' | translate }}</span>
+      </a>
+
+      <!-- Dashboard (mobile aussi si admin) -->
+      <a *ngIf="isAdmin()"
+         href="/accueilgp"
+         (click)="mobileMenuOpen = false"
+         class="flex items-center gap-3 px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all group">
+        <i class="pi pi-chart-line text-lg group-hover:scale-110 transition-transform"></i>
+        <span>{{ 'dashboard' | translate }}</span>
+      </a>
+
+      <!-- Notifications mobile -->
+      <div class="md:hidden border-t border-gray-200 pt-2 mt-2">
+        <button
+          (click)="notifMenu.toggle($event); mobileMenuOpen = false"
+          class="flex items-center gap-3 w-full px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-all group">
+          <i class="pi pi-bell text-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"></i>
+          <span>{{ 'notifications' | translate }}</span>
+          <span *ngIf="unreadCount > 0"
+                class="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+            {{ unreadCount }}
+          </span>
+        </button>
+      </div>
+
+      <!-- Compte mobile -->
+      <div class="md:hidden border-t border-gray-200 pt-2 mt-2">
+        <button
+          (click)="userMenu.toggle($event); mobileMenuOpen = false"
+          class="flex items-center gap-3 w-full px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-all group">
+          <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">
+            <i class="pi pi-user text-base"></i>
+          </div>
+          <span>{{ 'account' | translate }}</span>
+        </button>
+      </div>
+
+      <!-- Langue mobile -->
+      <div class="md:hidden border-t border-gray-200 pt-2 mt-2">
+        <button
+          (click)="changeLanguage(currentLang === 'fr' ? 'en' : 'fr'); mobileMenuOpen = false"
+          class="flex items-center gap-3 w-full px-4 py-3 text-base font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-all group">
+          <i class="pi pi-globe text-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"></i>
+          <span>{{ currentLang === 'fr' ? 'English' : 'Français' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
 <router-outlet></router-outlet>
