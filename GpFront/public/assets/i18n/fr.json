@@ -1,6 +1,8 @@
 {
   "home": "Accueil",
-  "dashboard": "Tableau de bord",
+  "dashboard": "Admin",
+  "publishAd": "Publier une annonce",
+  "publishNeed": "Publier un besoin",
   "notify": "Notification",
   "contact": "Contact",
   "account": "Compte",
