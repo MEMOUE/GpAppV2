@@ -164,5 +164,20 @@
     },
     "submitButton": "Send reset link",
     "backToLogin": "Back to login"
+  },
+  "footer": {
+    "about": "About",
+    "services": "Services",
+    "contact": "Contact",
+    "privacy_policy": "Privacy Policy",
+    "copyright": "&copy; {{currentYear}} GpMonde. All rights reserved.",
+
+    "quick_links": "Quick Links",
+    "our_services": "Our Services",
+    "follow_us": "Follow Us",
+    "newsletter": "Newsletter",
+    "newsletter_placeholder": "Your email address",
+    "subscribe": "Subscribe",
+    "made_with_love": "Made with ❤️ in Ivory Coast"
   }
 }

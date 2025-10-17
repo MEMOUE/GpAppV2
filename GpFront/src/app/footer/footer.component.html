@@ -1,26 +1,158 @@
-<footer class="footer bg-dark text-white">
-  <div class="footer-container">
-    <div class="footer-logo">
-      <img src="logo2.png" alt="GpMonde Logo" class="logo" />
+<footer class="relative bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden">
+  <!-- Vague décorative supérieure -->
+  <div class="absolute top-0 left-0 w-full h-20 -mt-1">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-full">
+      <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+            class="fill-slate-900 opacity-80"></path>
+    </svg>
+  </div>
+
+  <!-- Effets de fond -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="relative z-10">
+    <!-- Contenu principal -->
+    <div class="container mx-auto px-6 py-16 lg:py-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+
+        <!-- Section 1: Logo et Description -->
+        <div class="lg:col-span-1 space-y-6">
+          <div class="flex items-center gap-4">
+            <img [src]="companyInfo.logo"
+                 [alt]="companyInfo.name + ' Logo'"
+                 class="w-14 h-14 object-contain filter drop-shadow-lg hover:scale-110 transition-transform duration-300">
+            <h3 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-white bg-clip-text text-transparent">
+              {{ companyInfo.name }}
+            </h3>
+          </div>
+
+          <p class="text-gray-300 text-sm leading-relaxed">
+            {{ companyInfo.description | translate }}
+          </p>
+
+          <!-- Réseaux sociaux -->
+          <div class="flex gap-3 flex-wrap">
+            <a *ngFor="let social of socialLinks"
+               [href]="social.url"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="w-11 h-11 flex items-center justify-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl hover:bg-blue-600 hover:border-blue-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300"
+               [attr.aria-label]="social.name"
+               (click)="onSocialClick(social.name)">
+              <i [class]="social.icon + ' text-lg'"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Section 2: Liens rapides -->
+        <div class="space-y-6">
+          <h4 class="text-lg font-semibold text-white border-b-2 border-blue-600 pb-3 inline-block">
+            {{ 'home' | translate }}
+          </h4>
+          <ul class="space-y-3">
+            <li *ngFor="let link of quickLinks">
+              <a [routerLink]="link.route"
+                 class="flex items-center gap-2 text-gray-300 hover:text-blue-400 hover:translate-x-1 transition-all duration-300 group">
+                <i class="pi pi-chevron-right text-xs text-blue-500 group-hover:translate-x-1 transition-transform"></i>
+                <span>{{ link.translateKey | translate }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 3: Services -->
+        <div class="space-y-6">
+          <h4 class="text-lg font-semibold text-white border-b-2 border-blue-600 pb-3 inline-block">
+            {{ 'footer.services' | translate }}
+          </h4>
+          <ul class="space-y-3">
+            <li *ngFor="let service of serviceLinks">
+              <a [routerLink]="service.route"
+                 class="flex items-center gap-2 text-gray-300 hover:text-blue-400 hover:translate-x-1 transition-all duration-300 group">
+                <i class="pi pi-chevron-right text-xs text-blue-500 group-hover:translate-x-1 transition-transform"></i>
+                <span>{{ service.translateKey | translate }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Section 4: Contact -->
+        <div class="space-y-6">
+          <h4 class="text-lg font-semibold text-white border-b-2 border-blue-600 pb-3 inline-block">
+            {{ 'contact' | translate }}
+          </h4>
+
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <i class="pi pi-map-marker text-blue-500 mt-1"></i>
+              <span>{{ contactInfo.address }}</span>
+            </li>
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <i class="pi pi-phone text-blue-500 mt-1"></i>
+              <a [href]="'tel:' + contactInfo.phone"
+                 class="hover:text-blue-400 transition-colors">
+                {{ contactInfo.phone }}
+              </a>
+            </li>
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <i class="pi pi-envelope text-blue-500 mt-1"></i>
+              <a [href]="'mailto:' + contactInfo.email"
+                 class="hover:text-blue-400 transition-colors break-all">
+                {{ contactInfo.email }}
+              </a>
+            </li>
+          </ul>
+
+          <!-- Newsletter -->
+          <div class="mt-6">
+            <h5 class="text-base font-semibold text-white mb-3">Newsletter</h5>
+            <div class="flex gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-1 focus-within:border-blue-500 transition-all">
+              <input type="email"
+                     [(ngModel)]="newsletterEmail"
+                     [placeholder]="'EMAIL' | translate"
+                     class="flex-1 bg-transparent border-0 text-white placeholder:text-gray-400 px-3 py-2 outline-none text-sm">
+              <button (click)="onNewsletterSubmit()"
+                      class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-4 py-2 rounded-md transition-all hover:scale-105 hover:shadow-lg hover:shadow-blue-500/50">
+                <i class="pi pi-send"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="footer-links">
-      <ul class="link-list">
-        <li><a href="/about" class="link">{{ 'footer.about' | translate }}</a></li>
-        <li><a href="/services" class="link">{{ 'footer.services' | translate }}</a></li>
-        <li><a href="/contact" class="link">{{ 'footer.contact' | translate }}</a></li>
-        <li><a href="/privacy-policy" class="link">{{ 'footer.privacy_policy' | translate }}</a></li>
-      </ul>
-    </div>
-    <div class="footer-social">
-      <ul class="social-list">
-        <li><a href="https://www.facebook.com/gpmonde" target="_blank" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a></li>
-        <li><a href="https://twitter.com/gpmonde" target="_blank" class="social-icon twitter"><i class="fab fa-twitter"></i></a></li>
-        <li><a href="https://www.instagram.com/gpmonde" target="_blank" class="social-icon instagram"><i class="fab fa-instagram"></i></a></li>
-        <li><a href="https://www.linkedin.com/company/gpmonde" target="_blank" class="social-icon linkedin"><i class="fab fa-linkedin"></i></a></li>
-      </ul>
+
+    <!-- Divider -->
+    <div class="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+    <!-- Footer Bottom -->
+    <div class="bg-black/20 backdrop-blur-sm">
+      <div class="container mx-auto px-6 py-6">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <p class="text-gray-400 text-sm text-center md:text-left">
+            <span [innerHTML]="'footer.copyright' | translate: { currentYear: currentYear }"></span>
+          </p>
+
+          <div class="flex items-center gap-4 flex-wrap justify-center">
+            <a *ngFor="let legal of legalLinks; let last = last"
+               [routerLink]="legal.route"
+               class="text-gray-400 hover:text-blue-400 text-sm transition-colors">
+              {{ legal.translateKey | translate }}
+              <span *ngIf="!last" class="mx-2 opacity-50">•</span>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="footer-bottom">
-    <p [innerHTML]="'footer.copyright' | translate: { currentYear: currentYear }"></p>
-  </div>
+
+  <!-- Bouton Scroll to Top -->
+  <button *ngIf="showScrollTop"
+          (click)="scrollToTop()"
+          class="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-500/50 hover:shadow-xl hover:shadow-blue-500/60 hover:-translate-y-1 transition-all duration-300 z-50 flex items-center justify-center text-white"
+          [attr.aria-label]="'Retour en haut'">
+    <i class="pi pi-arrow-up"></i>
+  </button>
 </footer>
