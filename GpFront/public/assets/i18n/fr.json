@@ -164,5 +164,20 @@
     },
     "submitButton": "Envoyer le lien de réinitialisation",
     "backToLogin": "Retour à la connexion"
+  },
+  "footer": {
+    "about": "À propos",
+    "services": "Services",
+    "contact": "Contact",
+    "privacy_policy": "Politique de confidentialité",
+    "copyright": "&copy; {{currentYear}} GpMonde. Tous droits réservés.",
+
+    "quick_links": "Liens rapides",
+    "our_services": "Nos services",
+    "follow_us": "Suivez-nous",
+    "newsletter": "Newsletter",
+    "newsletter_placeholder": "Votre adresse email",
+    "subscribe": "S'abonner",
+    "made_with_love": "Fait avec ❤️ en Côte d'Ivoire"
   }
 }

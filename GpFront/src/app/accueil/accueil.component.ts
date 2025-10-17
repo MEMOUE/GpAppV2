@@ -1,44 +1,43 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FooterComponent } from '../footer/footer.component';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { GpService } from '../services/gp.service';
+import { BesoinService } from '../services/besoin.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { TrackingService } from '../services/tracking-service.service';
 import { Programmegp } from '../model/Programmegp';
-import { Subject, takeUntil, timer, startWith, switchMap, catchError, of, BehaviorSubject } from 'rxjs';
+import { Besoin } from '../model/Besoin';
+import { Subject, timer, takeUntil, catchError, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-// Constants
-const CAROUSEL_INTERVAL = 5000;
-const SCROLL_ANIMATION_DURATION = 300; // Réduit pour une réaction plus rapide
-const SCROLL_CARDS_COUNT = 3; // Fixé à 3 cartes comme demandé
-const DEFAULT_CURRENCY = '€';
-
-// Interfaces
 interface SearchParams {
   depart: string;
   destination: string;
 }
 
-interface ContactMethod {
-  icon: string;
-  label: string;
-  action: () => void;
+interface Agence {
+  id: number;
+  nom: string;
+  ville: string;
+  telephone: string;
+  logo?: string;
+}
+
+interface Publicite {
+  id: number;
+  titre: string;
+  image: string;
 }
 
 type SearchType = 'offreGp' | 'agenceGp';
-type CurrencyType =
-  | 'EUR' | 'USD' | 'GBP' | 'JPY' | 'AUD' | 'CAD' | 'CHF' | 'CNY'
-  | 'XOF' | 'MAD' | 'DZD' | 'EGP' | 'NGN' | 'ZAR' | 'TND'
-  | 'BRL' | 'RUB' | 'INR' | 'KRW' | 'MXN' | 'SGD' | 'NZD'
-  | 'SEK' | 'NOK' | 'DKK' | 'TRY' | 'PLN' | 'THB' | 'HKD' | 'ILS'
-  | '€' | '$' | '£' | '¥' | '₽' | '₹' | '₩' | '₺' | 'zł' | '฿' | '₪';
+type CurrencyType = 'EUR' | 'USD' | 'GBP' | 'XOF' | 'MAD' | '€' | '$' | '£';
 
 @Component({
   selector: 'app-accueil',
@@ -47,149 +46,104 @@ type CurrencyType =
     CommonModule,
     FooterComponent,
     FormsModule,
-    TranslatePipe,
+    RouterModule,
     ButtonModule,
     CarouselModule,
     InputTextModule,
     DialogModule,
+    TooltipModule
   ],
   templateUrl: './accueil.component.html',
-  styleUrls: ['./accueil.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./accueil.component.css']
 })
 export class AccueilComponent implements OnInit, OnDestroy {
-  // Services injection
   private readonly gpService = inject(GpService);
+  private readonly besoinService = inject(BesoinService);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
   private readonly trackingService = inject(TrackingService);
-
-  // Destruction signal
   private readonly destroy$ = new Subject<void>();
 
-  // State signals
-  readonly activePhraseIndex = signal<number>(0);
+  // Signals d'état
   readonly activeImageIndex = signal<number>(0);
   readonly activeSearch = signal<SearchType>('offreGp');
   readonly showContactOptions = signal<boolean>(false);
   readonly programmegps = signal<Programmegp[]>([]);
   readonly selectedProgramme = signal<Programmegp | null>(null);
   readonly displayDetails = signal<boolean>(false);
+  readonly selectedBesoin = signal<Besoin | null>(null);
+  readonly displayBesoinDetails = signal<boolean>(false);
   readonly isLoading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
-
-  // Search form state
   readonly search = signal<SearchParams>({ depart: '', destination: '' });
 
-  // Scroll management
-  private isScrolling = false;
-  private currentScrollPosition = 0;
+  // Signals pour les besoins
+  readonly besoins = signal<Besoin[]>([]);
+  readonly besoinsLoading = signal<boolean>(false);
+  readonly besoinsError = signal<string | null>(null);
 
-  // URL de base pour les assets et image par défaut
+  // Signals pour les agences et publicités
+  readonly agences = signal<Agence[]>([]);
+  readonly publicites = signal<Publicite[]>([]);
+
+  // Configuration
   private readonly baseUrl = environment.apiUrl.replace('/api/', '');
   private readonly fallbackImage = 'icons/bag1.png';
 
-  // Static data
   readonly phrases: readonly string[] = [
-    'Bienvenue sur notre plateforme de transport et de services.',
-    'Nous mettons l\'innovation au cœur de chaque expérience.',
-    'Faites confiance à notre équipe pour un service rapide et sécurisé.',
-    'Nous sommes là pour vous accompagner dans vos projets de transport.',
-  ] as const;
+    'Trouvez les meilleures offres de transport',
+    'Connectez-vous avec des agences fiables',
+    'Expédiez vos colis en toute sécurité',
+    'Des milliers de destinations disponibles'
+  ];
 
   readonly images: readonly string[] = [
     'images/vol.jpg',
     'images/colis.png',
     'images/bateau.jpg',
-    'images/car.png',
-  ] as const;
+    'images/car.png'
+  ];
 
-  readonly whatsappLink: string = 'https://wa.me/221761517642';
+  readonly carouselResponsiveOptions = [
+    {
+      breakpoint: '1400px',
+      numVisible: 3,
+      numScroll: 1
+    },
+    {
+      breakpoint: '1024px',
+      numVisible: 2,
+      numScroll: 1
+    },
+    {
+      breakpoint: '768px',
+      numVisible: 1,
+      numScroll: 1
+    }
+  ];
 
-  // Computed values
-  readonly currentPhrase = computed(() => this.phrases[this.activePhraseIndex()]);
-  readonly currentImage = computed(() => this.images[this.activeImageIndex()]);
+  readonly currentPhrase = computed(() => this.phrases[this.activeImageIndex()]);
   readonly hasSearchData = computed(() => {
     const searchData = this.search();
     return Boolean(searchData.depart?.trim() && searchData.destination?.trim());
   });
 
-  readonly contactMethods = computed((): ContactMethod[] => {
-    const programme = this.selectedProgramme();
-    if (!programme?.agentGp?.telephone) return [];
-
-    return [
-      {
-        icon: 'pi pi-whatsapp',
-        label: 'WhatsApp',
-        action: () => this.openWhatsApp()
-      },
-      {
-        icon: 'pi pi-phone',
-        label: 'Téléphone',
-        action: () => this.makePhoneCall()
-      },
-      {
-        icon: 'pi pi-comment',
-        label: 'SMS',
-        action: () => this.sendSms()
-      }
-    ];
-  });
-
-  // Currency mapping for price formatting
   private readonly currencyMapping: Record<CurrencyType, { symbol: string; decimals: number }> = {
-    // Devises principales
     'EUR': { symbol: '€', decimals: 2 },
     '€': { symbol: '€', decimals: 2 },
     'USD': { symbol: '$', decimals: 2 },
     '$': { symbol: '$', decimals: 2 },
     'GBP': { symbol: '£', decimals: 2 },
     '£': { symbol: '£', decimals: 2 },
-    'JPY': { symbol: '¥', decimals: 0 },
-    '¥': { symbol: '¥', decimals: 0 },
-    'AUD': { symbol: 'A$', decimals: 2 },
-    'CAD': { symbol: 'CA$', decimals: 2 },
-    'CHF': { symbol: 'CHF', decimals: 2 },
-    'CNY': { symbol: 'CN¥', decimals: 2 },
-
-    // Devises africaines
     'XOF': { symbol: 'FCFA', decimals: 0 },
-    'MAD': { symbol: 'MAD', decimals: 2 },
-    'DZD': { symbol: 'DZD', decimals: 2 },
-    'EGP': { symbol: 'EG£', decimals: 2 },
-    'NGN': { symbol: '₦', decimals: 2 },
-    'ZAR': { symbol: 'R', decimals: 2 },
-    'TND': { symbol: 'DT', decimals: 3 },
-
-    // Autres devises importantes
-    'BRL': { symbol: 'R$', decimals: 2 },
-    'RUB': { symbol: '₽', decimals: 2 },
-    '₽': { symbol: '₽', decimals: 2 },
-    'INR': { symbol: '₹', decimals: 2 },
-    '₹': { symbol: '₹', decimals: 2 },
-    'KRW': { symbol: '₩', decimals: 0 },
-    '₩': { symbol: '₩', decimals: 0 },
-    'MXN': { symbol: 'MX$', decimals: 2 },
-    'SGD': { symbol: 'S$', decimals: 2 },
-    'NZD': { symbol: 'NZ$', decimals: 2 },
-    'SEK': { symbol: 'kr', decimals: 2 },
-    'NOK': { symbol: 'kr', decimals: 2 },
-    'DKK': { symbol: 'kr', decimals: 2 },
-    'TRY': { symbol: '₺', decimals: 2 },
-    '₺': { symbol: '₺', decimals: 2 },
-    'PLN': { symbol: 'zł', decimals: 2 },
-    'zł': { symbol: 'zł', decimals: 2 },
-    'THB': { symbol: '฿', decimals: 2 },
-    '฿': { symbol: '฿', decimals: 2 },
-    'HKD': { symbol: 'HK$', decimals: 2 },
-    'ILS': { symbol: '₪', decimals: 2 },
-    '₪': { symbol: '₪', decimals: 2 }
+    'MAD': { symbol: 'MAD', decimals: 2 }
   };
 
   ngOnInit(): void {
     this.initializeCarousel();
     this.loadProgrammes();
+    this.loadBesoins();
+    this.loadAgences();
+    this.loadPublicites();
     this.trackUserVisit();
   }
 
@@ -198,234 +152,214 @@ export class AccueilComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Initialization methods
   private initializeCarousel(): void {
-    timer(0, CAROUSEL_INTERVAL)
+    timer(0, 5000)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        const nextIndex = (this.activePhraseIndex() + 1) % this.phrases.length;
-        this.activePhraseIndex.set(nextIndex);
+        const nextIndex = (this.activeImageIndex() + 1) % this.images.length;
         this.activeImageIndex.set(nextIndex);
       });
   }
 
-  protected loadProgrammes(): void {
+  loadProgrammes(): void {
     this.isLoading.set(true);
     this.error.set(null);
 
     this.gpService.getactivegp()
       .pipe(
         catchError(error => {
-          console.error('Erreur lors du chargement des programmes:', error);
-          this.error.set('Impossible de charger les programmes. Veuillez réessayer.');
+          console.error('Erreur chargement programmes:', error);
+          this.error.set('Impossible de charger les programmes');
           return of([]);
         }),
         takeUntil(this.destroy$)
       )
       .subscribe(data => {
-        const enhancedProgrammes = data.map(programme => ({
-          ...programme,
-          isExpanded: false
-        }));
-        this.programmegps.set(enhancedProgrammes);
+        this.programmegps.set(data);
         this.isLoading.set(false);
       });
   }
 
+  loadBesoins(): void {
+    this.besoinsLoading.set(true);
+    this.besoinsError.set(null);
+
+    this.besoinService.getAllBesoins()
+      .pipe(
+        catchError(error => {
+          console.error('Erreur chargement besoins:', error);
+          this.besoinsError.set('Impossible de charger les besoins');
+          return of([]);
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(data => {
+        this.besoins.set(data);
+        this.besoinsLoading.set(false);
+      });
+  }
+
+  private loadAgences(): void {
+    // Données de démonstration - À remplacer par un vrai service
+    this.agences.set([
+      { id: 1, nom: 'GP Express', ville: 'Dakar', telephone: '+221771234567' },
+      { id: 2, nom: 'Trans Africa', ville: 'Abidjan', telephone: '+225071234567' },
+      { id: 3, nom: 'Euro GP', ville: 'Paris', telephone: '+33612345678' },
+      { id: 4, nom: 'Quick Send', ville: 'Lomé', telephone: '+228901234567' }
+    ]);
+  }
+
+  private loadPublicites(): void {
+    this.publicites.set([
+      { id: 1, titre: 'Partenaire 1', image: 'emunie.jpg' },
+      { id: 2, titre: 'Partenaire 2', image: 'iub.png' },
+      { id: 3, titre: 'Partenaire 3', image: 'memkotech.png' },
+      { id: 4, titre: 'Partenaire 4', image: 'images/partner4.png' }
+    ]);
+  }
+
   private trackUserVisit(): void {
     try {
-      this.trackingService.trackUserAction('Home Page');
+      this.trackingService.trackUserAction('Home Page Visit');
     } catch (error) {
-      console.warn('Erreur de tracking:', error);
+      console.warn('Erreur tracking:', error);
     }
   }
 
-  // Logo management methods
-  /**
-   * Obtient l'URL complète du logo de l'agent
-   * @param agentGp L'agent GP
-   * @returns L'URL du logo ou une image par défaut
-   */
-  getAgentLogoUrl(agentGp: any): string {
-    if (!agentGp || !agentGp.logourl) {
-      return this.fallbackImage;
-    }
-
-    // Si l'URL commence par http, c'est déjà une URL complète
-    if (agentGp.logourl.startsWith('http')) {
-      return agentGp.logourl;
-    }
-
-    // Sinon, construire l'URL complète
-    const logoPath = agentGp.logourl.startsWith('/')
-      ? agentGp.logourl.substring(1)
-      : agentGp.logourl;
-
-    return `${this.baseUrl}/${logoPath}`;
-  }
-
-  /**
-   * Gère les erreurs de chargement d'image
-   * @param event L'événement d'erreur
-   */
-  onImageError(event: any): void {
-    console.warn('Erreur de chargement de l\'image:', event.target.src);
-    event.target.src = this.fallbackImage;
-  }
-
-  /**
-   * Vérifie si l'agent a un logo disponible
-   * @param agentGp L'agent GP
-   * @returns true si un logo est disponible
-   */
-  hasAgentLogo(agentGp: any): boolean {
-    return !!(agentGp && agentGp.logourl && agentGp.logourl.trim());
-  }
-
-  // Public methods
-  toggleContactOptions(): void {
-    this.showContactOptions.update(current => !current);
-  }
-
+  // Méthodes de recherche
   showSearchForm(type: SearchType): void {
     this.activeSearch.set(type);
   }
 
+  updateSearch(field: keyof SearchParams, value: string): void {
+    this.search.update(current => ({
+      ...current,
+      [field]: value
+    }));
+  }
+
   searchResults(): void {
     if (!this.hasSearchData()) {
-      this.showValidationError('Veuillez entrer un lieu de départ et une destination.');
+      alert('Veuillez remplir tous les champs');
       return;
     }
 
     const queryParams = {
       type: this.activeSearch(),
       depart: this.search().depart.trim(),
-      destination: this.search().destination.trim(),
+      destination: this.search().destination.trim()
     };
 
-    const navigationTarget = this.activeSearch() === 'offreGp' ? '/listgp' : '/agencegp';
-
-    this.router.navigate([navigationTarget], { queryParams })
-      .catch(error => {
-        console.error('Erreur de navigation:', error);
-        this.showValidationError('Erreur lors de la navigation. Veuillez réessayer.');
-      });
+    const route = this.activeSearch() === 'offreGp' ? '/listgp' : '/agencegp';
+    this.router.navigate([route], { queryParams });
   }
 
-  // Price formatting with improved currency handling
+  // Gestion des logos
+  getAgentLogoUrl(agentGp: any): string {
+    if (!agentGp?.logourl) return this.fallbackImage;
+    if (agentGp.logourl.startsWith('http')) return agentGp.logourl;
+
+    const logoPath = agentGp.logourl.startsWith('/')
+      ? agentGp.logourl.substring(1)
+      : agentGp.logourl;
+    return `${this.baseUrl}/${logoPath}`;
+  }
+
+  hasAgentLogo(agentGp: any): boolean {
+    return !!(agentGp?.logourl?.trim());
+  }
+
+  onImageError(event: any): void {
+    console.warn('Erreur chargement image:', event.target.src);
+    event.target.src = this.fallbackImage;
+  }
+
+  // Formatage du prix
   formatPrice(prix: string | number): string {
     if (!prix) return 'Prix non spécifié';
 
     const prixString = prix.toString().trim();
-    const deviseRegex = /(\d+(?:[.,]\d{1,2})?)\s*(EUR|USD|GBP|CHF|CAD|XOF|MAD|€|\$|£)/i;
+    const deviseRegex = /(\d+(?:[.,]\d{1,2})?)\s*(EUR|USD|GBP|XOF|MAD|€|\$|£)/i;
     const match = prixString.match(deviseRegex);
 
     if (match) {
-      const montant = this.parseAmount(match[1]);
+      const montant = parseFloat(match[1].replace(',', '.'));
       const devise = match[2].toUpperCase() as CurrencyType;
       return this.formatCurrency(montant, devise);
     }
 
-    // Fallback: treat as number
-    const montant = this.parseAmount(prixString);
+    const montant = parseFloat(prixString.replace(',', '.'));
     return isNaN(montant) ? prixString : this.formatCurrency(montant, 'EUR');
-  }
-
-  private parseAmount(amount: string): number {
-    return parseFloat(amount.replace(',', '.'));
   }
 
   private formatCurrency(amount: number, currency: CurrencyType): string {
     const config = this.currencyMapping[currency];
-    if (!config) {
-      return `${amount.toFixed(2)} ${currency}`;
-    }
+    if (!config) return `${amount.toFixed(2)} ${currency}`;
 
     const formattedAmount = amount.toFixed(config.decimals);
     return `${formattedAmount} ${config.symbol}`;
   }
 
-  // Improved scroll methods - tire les cartes en arrière
-  scrollLeft(): void {
-    if (this.isScrolling) return;
-    this.pullCardsBack('left');
-  }
+  // Méthodes pour les besoins
+  formatDate(dateString: string): string {
+    if (!dateString) return 'Date non spécifiée';
 
-  scrollRight(): void {
-    if (this.isScrolling) return;
-    this.pullCardsBack('right');
-  }
-
-  private pullCardsBack(direction: 'left' | 'right'): void {
-    const wrapper = this.getProgrammesWrapper();
-    if (!wrapper) {
-      console.warn('Wrapper element not found');
-      return;
+    try {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat('fr-FR', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }).format(date);
+    } catch (error) {
+      return dateString;
     }
+  }
 
-    this.isScrolling = true;
-    this.pauseAnimation(wrapper);
-
-    const cardsToPull = 3; // Toujours 3 cartes comme demandé
-
-    if (direction === 'right') {
-      // Scroll droite: tirer les cartes de la fin vers le début (ramener en arrière)
-      // Prendre les 3 dernières cartes et les mettre au début
-      for (let i = 0; i < cardsToPull; i++) {
-        const lastCard = wrapper.lastElementChild;
-        if (lastCard) {
-          wrapper.insertBefore(lastCard, wrapper.firstElementChild);
-        }
-      }
-    } else {
-      // Scroll gauche: tirer les cartes du début vers la fin (ramener en arrière dans l'autre sens)
-      // Prendre les 3 premières cartes et les mettre à la fin
-      for (let i = 0; i < cardsToPull; i++) {
-        const firstCard = wrapper.firstElementChild;
-        if (firstCard) {
-          wrapper.appendChild(firstCard);
-        }
-      }
+  openWhatsapp(telephone: string): void {
+    if (telephone) {
+      const cleanedPhone = telephone.replace(/\s+/g, '');
+      window.open(`https://wa.me/${cleanedPhone}`, '_blank');
     }
-
-    // Reprendre l'animation après un court délai
-    setTimeout(() => {
-      this.resumeAnimation(wrapper);
-      this.isScrolling = false;
-    }, 200); // Délai réduit pour une réaction plus rapide
   }
 
-  private getProgrammesWrapper(): HTMLElement | null {
-    return document.querySelector('.programmes-wrapper') as HTMLElement;
+  callPhone(telephone: string): void {
+    if (telephone) {
+      window.location.href = `tel:${telephone}`;
+    }
   }
 
-  private getProgrammesContainer(): HTMLElement | null {
-    return document.querySelector('.programmes-container') as HTMLElement;
+  // Gestion des détails
+  showDetails(programme: Programmegp): void {
+    this.selectedProgramme.set(programme);
+    this.displayDetails.set(true);
   }
 
-  pauseScroll(): void {
-    const wrapper = this.getProgrammesWrapper();
-    if (wrapper) this.pauseAnimation(wrapper);
+  closeDetails(): void {
+    this.displayDetails.set(false);
+    this.selectedProgramme.set(null);
   }
 
-  resumeScroll(): void {
-    const wrapper = this.getProgrammesWrapper();
-    if (wrapper && !this.isScrolling) this.resumeAnimation(wrapper);
+  // Gestion des détails de besoin
+  showBesoinDetails(besoin: Besoin): void {
+    this.selectedBesoin.set(besoin);
+    this.displayBesoinDetails.set(true);
   }
 
-  private pauseAnimation(element: HTMLElement): void {
-    element.style.animationPlayState = 'paused';
+  closeBesoinDetails(): void {
+    this.displayBesoinDetails.set(false);
+    this.selectedBesoin.set(null);
   }
 
-  private resumeAnimation(element: HTMLElement): void {
-    element.style.animationPlayState = 'running';
+  // Méthodes de contact
+  toggleContactOptions(): void {
+    this.showContactOptions.update(current => !current);
   }
 
-  // Contact methods
   openWhatsApp(): void {
     const telephone = this.selectedProgramme()?.agentGp?.telephone;
     if (telephone) {
-      this.openExternalLink(`https://wa.me/${telephone}`);
+      window.open(`https://wa.me/${telephone}`, '_blank');
     }
   }
 
@@ -439,83 +373,7 @@ export class AccueilComponent implements OnInit, OnDestroy {
   sendSms(): void {
     const telephone = this.selectedProgramme()?.agentGp?.telephone;
     if (telephone) {
-      this.openExternalLink(`sms:+${telephone}`);
-    }
-  }
-
-  private openExternalLink(url: string): void {
-    try {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } catch (error) {
-      console.error('Erreur lors de l\'ouverture du lien:', error);
-    }
-  }
-
-  // Modal methods
-  showDetails(programme: Programmegp): void {
-    this.selectedProgramme.set(programme);
-    this.displayDetails.set(true);
-  }
-
-  closeDetails(): void {
-    this.displayDetails.set(false);
-    this.selectedProgramme.set(null);
-  }
-
-  // Utility methods
-  private showValidationError(message: string): void {
-    // Vous pouvez remplacer ceci par votre système de notification préféré
-    alert(message);
-  }
-
-  // TrackBy functions for performance
-  trackByProgrammeId(index: number, programme: Programmegp): string | number {
-    return programme.id || index;
-  }
-
-  trackByIndex(index: number): number {
-    return index;
-  }
-
-  // Update search form
-  updateSearch(field: keyof SearchParams, value: string): void {
-    this.search.update(current => ({
-      ...current,
-      [field]: value
-    }));
-  }
-
-  // Accessibility helpers
-  getSearchButtonAriaLabel(): string {
-    const type = this.activeSearch() === 'offreGp' ? 'offres' : 'agences';
-    return `Rechercher des ${type} GP`;
-  }
-
-  getProgrammeAriaLabel(programme: Programmegp): string {
-    return `Programme de ${programme.depart} vers ${programme.destination}, prix ${this.formatPrice(programme.prix)}`;
-  }
-
-  // Debug methods for development
-  private logScrollState(): void {
-    console.log('Current scroll position:', this.currentScrollPosition);
-    console.log('Is scrolling:', this.isScrolling);
-
-    const wrapper = this.getProgrammesWrapper();
-    if (wrapper) {
-      console.log('Cards count:', wrapper.children.length);
-    }
-  }
-
-  // Reset scroll position (useful for testing)
-  resetScrollPosition(): void {
-    this.currentScrollPosition = 0;
-    this.isScrolling = false;
-
-    const wrapper = this.getProgrammesWrapper();
-    if (wrapper) {
-      wrapper.style.transform = '';
-      wrapper.style.transition = '';
-      this.resumeAnimation(wrapper);
+      window.open(`sms:+${telephone}`, '_blank');
     }
   }
 }
