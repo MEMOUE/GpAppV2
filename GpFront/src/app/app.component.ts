@@ -202,12 +202,30 @@ export class AppComponent implements OnInit {
   }
 
   publishAnnouncement(): void {
-    // Naviguer vers la page de publication d'annonce
+    // Vérifier si l'utilisateur est connecté
+    if (!this.authService.isLoggedIn()) {
+      // Rediriger vers la page de connexion
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: '/addgp' }
+      });
+      return;
+    }
+
+    // Si connecté, naviguer vers la page de publication d'annonce
     this.router.navigate(['/addgp']);
   }
 
   publishNeed(): void {
-    // Naviguer vers la page de publication de besoin
+    // Vérifier si l'utilisateur est connecté
+    if (!this.authService.isLoggedIn()) {
+      // Rediriger vers la page de connexion
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: '/besoingp' }
+      });
+      return;
+    }
+
+    // Si connecté, naviguer vers la page de publication de besoin
     this.router.navigate(['/besoingp']);
   }
 }

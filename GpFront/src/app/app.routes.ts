@@ -27,10 +27,10 @@ export const routes: Routes = [
   {path:'register', component: RegisterComponent},
   {path: 'user', component: UserComponent},
   {path:'menu', component: MenuComponent},
-  {path: 'addgp', component: AddgpComponent},
+  {path: 'addgp', component: AddgpComponent, canActivate: [AdminGuard]},
   {path: 'listgp', component: ListgpComponent},
   {path: 'besoingp', component: AddbesoinComponent},
-  {path:'facture', component: FactureComponent},
+  {path:'facture', component: FactureComponent, canActivate: [AdminGuard]},
   {path:'publicite', component: PubliciteComponent},
   {path: 'footer',component: FooterComponent},
   {path: 'agencegp', component: AgentgpComponent},
@@ -39,5 +39,5 @@ export const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'verify', component: VerifyComponent },
   {path: 'notification', component: NotificationComponent},
-  {path: 'list-facture', component: FactureListComponent}
+  {path: 'list-facture', component: FactureListComponent, canActivate: [AdminGuard]}
 ];
