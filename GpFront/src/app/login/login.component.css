@@ -1,32 +1,82 @@
-.card {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* login.component.css - Version minimaliste */
+
+/* Animation pour le fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.field {
-  margin-bottom: 1.5rem;
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
 }
 
-.p-inputgroup {
-  margin-top: 0.5rem;
+/* Personnalisation PrimeNG si nécessaire */
+::ng-deep .p-inputtext {
+  font-size: 0.875rem;
 }
 
-.p-error {
-  color: #dc2626; /* Rouge */
-  font-size: 0.875rem; /* 14px */
-  margin-top: 0.25rem; /* 4px */
+::ng-deep .p-button {
+  justify-content: center;
 }
 
-/* Styles pour le bouton */
-.p-button {
-  background-color: #3b82f6; /* Bleu */
-  border-color: #3b82f6;
+/* ===================================== */
+
+/* register.component.css - Version minimaliste */
+
+/* Animation pour le fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.p-button:hover {
-  background-color: #2563eb; /* Bleu plus foncé */
-  border-color: #2563eb;
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Styles pour les inputs de fichier */
+input[type="file"]::file-selector-button {
+  cursor: pointer;
+}
+
+/* Personnalisation PrimeNG si nécessaire */
+::ng-deep .p-inputtext {
+  font-size: 0.875rem;
+}
+
+::ng-deep .p-button {
+  justify-content: center;
+}
+
+::ng-deep .p-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Focus pour l'accessibilité */
+::ng-deep .p-checkbox:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  border-radius: 0.25rem;
+}
+
+::ng-deep .p-button:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .p-button {
+    font-size: 0.875rem;
+  }
 }

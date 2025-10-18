@@ -1,89 +1,153 @@
-<div class="card flex justify-content-center">
-  <div class="p-fluid">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8">
+    <!-- En-tête -->
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-2">
+        {{ 'LoginComponent.title' | translate }}
+      </h2>
+      <p class="text-gray-600">
+        {{ 'LoginComponent.subtitle' | translate }}
+      </p>
+    </div>
+
     <!-- Formulaire principal -->
     <form
       [formGroup]="loginForm"
       (ngSubmit)="onSubmit()"
-      class="flex flex-col gap-6 w-full md:w-2/3"
+      class="space-y-6"
     >
-      <div class="grid grid-cols-1 gap-4">
-        <!-- Champ Email -->
-        <div class="field">
-          <label for="email" class="block text-right font-semibold">
-            {{ 'LoginComponent.email' | translate }}
-          </label>
-          <div class="p-inputgroup">
-            <input
-              pInputText
-              id="email"
-              formControlName="email"
-              [placeholder]="'LoginComponent.emailPlaceholder' | translate"
-              aria-label="email"
-              type="email"
-              [attr.disabled]="isLockedOut() ? '' : null"
-            />
-          </div>
-          <small
-            *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-            class="p-error"
-          >
-            {{ 'LoginComponent.errors.emailRequired' | translate }}
-          </small>
+      <!-- Champ Email -->
+      <div>
+        <label
+          for="email"
+          class="block text-sm font-semibold text-gray-700 mb-2"
+        >
+          {{ 'LoginComponent.email' | translate }}
+        </label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <i class="pi pi-envelope"></i>
+          </span>
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
+            [placeholder]="'LoginComponent.emailPlaceholder' | translate"
+            aria-label="email"
+            type="email"
+            [attr.disabled]="isLockedOut() ? '' : null"
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            [ngClass]="{
+              'border-red-500 focus:ring-red-500': loginForm.get('email')?.invalid && loginForm.get('email')?.touched
+            }"
+          />
         </div>
+        <small
+          *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          class="block mt-1 text-sm text-red-600"
+        >
+          {{ 'LoginComponent.errors.emailRequired' | translate }}
+        </small>
+      </div>
 
-        <!-- Champ Password -->
-        <div class="field">
-          <label for="password" class="block text-right font-semibold">
-            {{ 'LoginComponent.password' | translate }}
-          </label>
-          <div class="p-inputgroup">
-            <input
-              pInputText
-              id="password"
-              formControlName="password"
-              type="password"
-              [placeholder]="'LoginComponent.passwordPlaceholder' | translate"
-              aria-label="password"
-              [attr.disabled]="isLockedOut() ? '' : null"
-            />
-          </div>
-          <small
-            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-            class="p-error"
-          >
-            {{ 'LoginComponent.errors.passwordRequired' | translate }}
-          </small>
+      <!-- Champ Password -->
+      <div>
+        <label
+          for="password"
+          class="block text-sm font-semibold text-gray-700 mb-2"
+        >
+          {{ 'LoginComponent.password' | translate }}
+        </label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <i class="pi pi-lock"></i>
+          </span>
+          <input
+            pInputText
+            id="password"
+            formControlName="password"
+            type="password"
+            [placeholder]="'LoginComponent.passwordPlaceholder' | translate"
+            aria-label="password"
+            [attr.disabled]="isLockedOut() ? '' : null"
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            [ngClass]="{
+              'border-red-500 focus:ring-red-500': loginForm.get('password')?.invalid && loginForm.get('password')?.touched
+            }"
+          />
         </div>
+        <small
+          *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          class="block mt-1 text-sm text-red-600"
+        >
+          {{ 'LoginComponent.errors.passwordRequired' | translate }}
+        </small>
       </div>
 
       <!-- Messages de succès et d'erreur -->
-      <div *ngIf="successMessage" class="p-message p-message-success">
-        {{ successMessage }}
+      <div
+        *ngIf="successMessage"
+        class="p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg"
+      >
+        <div class="flex items-center">
+          <i class="pi pi-check-circle text-green-500 mr-3"></i>
+          <p class="text-sm text-green-700">{{ successMessage }}</p>
+        </div>
       </div>
-      <div *ngIf="errorMessage" class="p-message p-message-error">
-        {{ errorMessage }}
+
+      <div
+        *ngIf="errorMessage"
+        class="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg"
+      >
+        <div class="flex items-center">
+          <i class="pi pi-exclamation-circle text-red-500 mr-3"></i>
+          <p class="text-sm text-red-700">{{ errorMessage }}</p>
+        </div>
       </div>
 
       <!-- Bouton de connexion -->
-      <div class="flex justify-center">
+      <div>
         <p-button
           [label]="'LoginComponent.submitButton' | translate"
-          icon="pi pi-user"
+          icon="pi pi-sign-in"
           type="submit"
           [disabled]="loginForm.invalid || isLockedOut()"
+          class="w-full"
+          styleClass="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-200 font-semibold"
         ></p-button>
       </div>
 
-      <div class="text-center mt-4">
-        <a href="/forgot-password" class="text-blue-500 hover:text-blue-700 text-sm">
+      <!-- Lien mot de passe oublié -->
+      <div class="text-center">
+        <a
+          href="/forgot-password"
+          class="text-sm text-blue-600 hover:text-blue-800 hover:underline transition duration-200"
+        >
           {{ 'LoginComponent.forgotPassword' | translate }}
         </a>
       </div>
 
+      <!-- Séparateur -->
+      <div class="relative my-6">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white text-gray-500">
+            {{ 'LoginComponent.or' | translate }}
+          </span>
+        </div>
+      </div>
+
       <!-- Lien vers l'inscription -->
-      <div class="text-center mt-4">
-        <span class="text-sm">{{ 'Login.noAccount' | translate }}</span>
-        <a href="/register" class="text-blue-500 hover:text-blue-700 text-sm font-semibold">
+      <div class="text-center">
+        <span class="text-sm text-gray-600">
+          {{ 'Login.noAccount' | translate }}
+        </span>
+        <a
+          href="/register"
+          class="ml-1 text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline transition duration-200"
+        >
           {{ 'Login.signUp' | translate }}
         </a>
       </div>
