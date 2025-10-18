@@ -38,8 +38,16 @@
     "services": "Services",
     "contact": "Contact",
     "privacy_policy": "Privacy Policy",
-    "copyright": "&copy; {{currentYear}} GpMonde. All rights reserved."
+    "copyright": "&copy; {{currentYear}} GpMonde. All rights reserved.",
+    "quick_links": "Quick Links",
+    "our_services": "Our Services",
+    "follow_us": "Follow Us",
+    "newsletter": "Newsletter",
+    "newsletter_placeholder": "Your email address",
+    "subscribe": "Subscribe",
+    "made_with_love": "Made with ❤️ in Ivory Coast"
   },
+
   "sidebar": {
     "home": "Home",
     "invoice": "Invoice",
@@ -53,12 +61,15 @@
   },
 
   "LoginComponent": {
+    "title": "Login",
+    "subtitle": "Sign in to your account",
     "email": "Email",
     "password": "Password",
     "emailPlaceholder": "Enter your email",
     "passwordPlaceholder": "Enter your password",
     "submitButton": "Login",
     "forgotPassword": "Forgot password?",
+    "or": "or",
     "errors": {
       "emailRequired": "A valid email address is required.",
       "passwordRequired": "Password is required."
@@ -66,6 +77,8 @@
   },
 
   "registration": {
+    "title": "Registration",
+    "subtitle": "Create your GpMonde account",
     "username": "Username",
     "password": "Password",
     "confirmPassword": "Confirm Password",
@@ -77,6 +90,9 @@
     "adresse": "Address",
     "telephone": "Phone",
     "destinations": "Destinations",
+    "agentInfo": "GP Agent Information",
+    "agentInfoDescription": "Please fill in the following information for your agency",
+    "or": "or",
     "placeholders": {
       "username": "Enter your username",
       "password": "Enter your password",
@@ -164,20 +180,5 @@
     },
     "submitButton": "Send reset link",
     "backToLogin": "Back to login"
-  },
-  "footer": {
-    "about": "About",
-    "services": "Services",
-    "contact": "Contact",
-    "privacy_policy": "Privacy Policy",
-    "copyright": "&copy; {{currentYear}} GpMonde. All rights reserved.",
-
-    "quick_links": "Quick Links",
-    "our_services": "Our Services",
-    "follow_us": "Follow Us",
-    "newsletter": "Newsletter",
-    "newsletter_placeholder": "Your email address",
-    "subscribe": "Subscribe",
-    "made_with_love": "Made with ❤️ in Ivory Coast"
   }
 }
