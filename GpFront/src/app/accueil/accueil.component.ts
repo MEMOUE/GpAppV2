@@ -86,7 +86,6 @@ export class AccueilComponent implements OnInit, OnDestroy {
   readonly publicites = signal<Publicite[]>([]);
 
   // Configuration
-  private readonly baseUrl = environment.apiUrl.replace('/api/', '');
   private readonly fallbackImage = 'icons/bag1.png';
 
   readonly phrases: readonly string[] = [
@@ -259,10 +258,13 @@ export class AccueilComponent implements OnInit, OnDestroy {
     if (!agentGp?.logourl) return this.fallbackImage;
     if (agentGp.logourl.startsWith('http')) return agentGp.logourl;
 
-    const logoPath = agentGp.logourl.startsWith('/')
+    // Le backend retourne "/logos/filename.jpg"
+    const cleanPath = agentGp.logourl.startsWith('/')
       ? agentGp.logourl.substring(1)
       : agentGp.logourl;
-    return `${this.baseUrl}/${logoPath}`;
+
+    // Construction correcte : http://localhost:8080/api/files/logos/filename.jpg
+    return `${environment.apiUrl}files/${cleanPath}`;  // ✅ CORRECTION
   }
 
   hasAgentLogo(agentGp: any): boolean {

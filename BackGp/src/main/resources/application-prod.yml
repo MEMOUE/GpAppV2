@@ -47,7 +47,7 @@ server:
 # Configuration personnalisée pour le stockage des fichiers
 app:
   upload:
-    dir: "/app/uploads"
+    dir: "/uploads"
 
 logging:
   level:
