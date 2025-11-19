@@ -51,8 +51,9 @@ public class SecurityConfig {
                                 "/api/files/logos/**",
                                 "/api/files/cartes-identite/**",
                                 "/api/files/**",
+                                "/api/agentgp",
 
-								"/h2-console/**",
+                                "/h2-console/**",
 								"/swagger-ui/**",
 								"/swagger-resources/**",
 								"/swagger-ui.html/**",
@@ -87,8 +88,8 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("https://gpmonde.com","https://www.gpmonde.com"));
-		//configuration.setAllowedOrigins(List.of("http://localhost:4200/"));
+		//configuration.setAllowedOrigins(List.of("https://gpmonde.com","https://www.gpmonde.com"));
+		configuration.setAllowedOrigins(List.of("http://localhost:4200/"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 		configuration.setAllowCredentials(true);
