@@ -1,0 +1,43 @@
+### Créer un agent GP avec fichiers
+POST http://localhost:8080/api/agentgp
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="username"
+
+testagent123
+--WebAppBoundary
+Content-Disposition: form-data; name="password"
+
+Test123456
+--WebAppBoundary
+Content-Disposition: form-data; name="email"
+
+test123@example.com
+--WebAppBoundary
+Content-Disposition: form-data; name="nomagence"
+
+Agence Test
+--WebAppBoundary
+Content-Disposition: form-data; name="adresse"
+
+123 Rue Test
+--WebAppBoundary
+Content-Disposition: form-data; name="telephone"
+
+0102030405
+--WebAppBoundary
+Content-Disposition: form-data; name="destinations"
+
+Paris,Lyon
+--WebAppBoundary
+Content-Disposition: form-data; name="logo"; filename="logo.png"
+Content-Type: image/png
+
+< C:/Users/konem/Downloads/image.png
+--WebAppBoundary
+Content-Disposition: form-data; name="carteIdentite"; filename="carte.png"
+Content-Type: image/png
+
+< C:/Users/konem/Downloads/image.png
+--WebAppBoundary--
