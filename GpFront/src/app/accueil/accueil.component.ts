@@ -318,10 +318,26 @@ export class AccueilComponent implements OnInit, OnDestroy {
     }
   }
 
-  openWhatsapp(telephone: string): void {
+  // ✅ MODIFICATION: Méthode openWhatsapp avec message automatique pré-rempli
+  openWhatsapp(telephone: string, besoin?: Besoin): void {
     if (telephone) {
       const cleanedPhone = telephone.replace(/\s+/g, '');
-      window.open(`https://wa.me/${cleanedPhone}`, '_blank');
+
+      // Message pré-rempli pour les besoins
+      let message = '';
+      if (besoin) {
+        message = `Bonjour,\n\nJe vous contacte concernant votre besoin de transport publié sur GpMonde.\n\n` +
+          `Détails de votre demande :\n` +
+          `📦 Description : ${besoin.description}\n` +
+          `📅 Date limite : ${this.formatDate(besoin.dateline)}\n\n` +
+          `Je peux vous proposer mes services de transport. Pouvons-nous en discuter ?\n\n` +
+          `Cordialement`;
+      } else {
+        message = `Bonjour,\n\nJe vous contacte via GpMonde pour discuter de vos services de transport.\n\nCordialement`;
+      }
+
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/${cleanedPhone}?text=${encodedMessage}`, '_blank');
     }
   }
 
@@ -358,11 +374,23 @@ export class AccueilComponent implements OnInit, OnDestroy {
     this.showContactOptions.update(current => !current);
   }
 
+  // ✅ MODIFICATION: openWhatsApp pour les offres de transport
   openWhatsApp(): void {
-    const telephone = this.selectedProgramme()?.agentGp?.telephone;
-    if (telephone) {
-      window.open(`https://wa.me/${telephone}`, '_blank');
-    }
+    const programme = this.selectedProgramme();
+    if (!programme?.agentGp?.telephone) return;
+
+    const telephone = programme.agentGp.telephone;
+    const message = `Bonjour ${programme.agentGp.nomagence || 'Agence'},\n\n` +
+      `Je suis intéressé(e) par votre offre de transport :\n\n` +
+      `📍 Départ : ${programme.depart}\n` +
+      `📍 Destination : ${programme.destination}\n` +
+      `💰 Prix : ${this.formatPrice(programme.prix)}/kg\n` +
+      `📅 Date limite : ${programme.dateline}\n\n` +
+      `Pouvez-vous me donner plus d'informations ?\n\n` +
+      `Cordialement`;
+
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${telephone}?text=${encodedMessage}`, '_blank');
   }
 
   makePhoneCall(): void {
@@ -373,9 +401,15 @@ export class AccueilComponent implements OnInit, OnDestroy {
   }
 
   sendSms(): void {
-    const telephone = this.selectedProgramme()?.agentGp?.telephone;
-    if (telephone) {
-      window.open(`sms:+${telephone}`, '_blank');
-    }
+    const programme = this.selectedProgramme();
+    if (!programme?.agentGp?.telephone) return;
+
+    const telephone = programme.agentGp.telephone;
+    const message = `gpmonde.com
+    Bonjour, je suis intéressé(e) par votre offre ${programme.depart} → ${programme.destination}. Pouvez-vous me contacter ?`;
+
+
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`sms:+${telephone}?body=${encodedMessage}`, '_blank');
   }
 }

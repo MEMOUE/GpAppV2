@@ -121,11 +121,6 @@
           <h2 class="text-2xl font-bold text-gray-900 mb-1">Offres du Jour</h2>
           <p class="text-sm text-gray-600">Transport professionnel vers toutes destinations</p>
         </div>
-<!--        <a routerLink="/listgp"-->
-<!--           class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-sm group transition-colors">-->
-<!--          Toutes les offres-->
-<!--          <i class="pi pi-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>-->
-<!--        </a>-->
       </div>
 
       <!-- Loading -->
@@ -313,19 +308,17 @@
                   <span class="text-[10px] font-semibold text-gray-700 truncate">{{ besoin.telephone }}</span>
                 </div>
 
-                <!-- Boutons d'action - Version plus compacte -->
+                <!-- ✅ MODIFICATION: Passer l'objet besoin aux boutons WhatsApp -->
                 <div class="grid grid-cols-3 gap-1.5 mb-1.5">
                   <button
-                    (click)="openWhatsapp(besoin.telephone); $event.stopPropagation()"
+                    (click)="openWhatsapp(besoin.telephone, besoin); $event.stopPropagation()"
                     class="py-1.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md transition-all flex items-center justify-center gap-1 shadow-sm hover:shadow-md text-[10px]">
                     <i class="pi pi-whatsapp text-xs"></i>
-<!--                    <span>WhatsApp</span>-->
                   </button>
                   <button
                     (click)="callPhone(besoin.telephone); $event.stopPropagation()"
                     class="py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition-all flex items-center justify-center gap-1 shadow-sm hover:shadow-md text-[10px]">
                     <i class="pi pi-phone text-xs"></i>
-<!--                    <span>Appeler</span>-->
                   </button>
                 </div>
 
@@ -396,13 +389,13 @@
         </div>
       </div>
 
-      <!-- Actions de contact -->
+      <!-- ✅ MODIFICATION: Actions de contact avec message automatique -->
       <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-6">
         <h4 class="font-bold text-gray-900 mb-4 text-center text-lg">Contacter le client</h4>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <button
             class="py-3.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-            (click)="openWhatsapp(besoin.telephone)">
+            (click)="openWhatsapp(besoin.telephone, besoin)">
             <i class="pi pi-whatsapp text-2xl"></i>
             <span>WhatsApp</span>
           </button>
@@ -435,11 +428,6 @@
           <h2 class="text-3xl font-bold text-gray-900 mb-2">Agences Partenaires</h2>
           <p class="text-gray-600">Réseau de transporteurs professionnels vérifiés</p>
         </div>
-<!--        <a routerLink="/agences"-->
-<!--           class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold group">-->
-<!--          Toutes les agences-->
-<!--          <i class="pi pi-arrow-right text-sm group-hover:translate-x-1 transition-transform"></i>-->
-<!--        </a>-->
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
