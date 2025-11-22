@@ -1,0 +1,32 @@
+/* GpFront/src/app/profile/profile.component.css */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+::ng-deep .p-inputtext {
+  font-size: 0.875rem;
+}
+
+::ng-deep .p-button {
+  justify-content: center;
+}
+
+::ng-deep .p-chip {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+input[type="file"]::file-selector-button {
+  cursor: pointer;
+}
