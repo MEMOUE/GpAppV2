@@ -151,13 +151,7 @@ export class AppComponent implements OnInit {
         {
           label: this.translate.instant('profile'),
           icon: 'pi pi-user',
-          command: () => {
-            // Navigation vers profil
-          }
-        },
-        {
-          label: 'Paramètres',
-          icon: 'pi pi-cog'
+          command: () => this.router.navigate(['/profile'])  // ← Navigation vers le profil
         },
         {
           separator: true
