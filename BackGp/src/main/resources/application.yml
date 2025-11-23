@@ -14,20 +14,34 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     show-sql: true
 
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: "memko021@gmail.com"
+#    password: "mnzn abks ezlz dsdz"
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#            required: true
+#          ssl:
+#            trust: "*"
+
   mail:
-    host: smtp.gmail.com
+    host: mail.gpmonde.com
     port: 587
-    username: "memko021@gmail.com"
-    password: "mnzn abks ezlz dsdz"
+    username: contact@gpmonde.com
+    password: Gpmonde@2025
+    protocol: smtp
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-          ssl:
-            trust: "*"
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.ssl.enable: false
+      mail.smtp.localhost: gpmonde.com  # 👈 AJOUTEZ CETTE LIGNE
+      mail.smtp.from: contact@gpmonde.com  # 👈 ET CELLE-CI
 
   # Configuration pour l'upload de fichiers
   servlet:

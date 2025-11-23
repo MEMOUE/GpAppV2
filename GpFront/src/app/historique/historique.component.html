@@ -1,0 +1,398 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- En-tête -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800 mb-2">
+            <i class="pi pi-history mr-3 text-blue-600"></i>
+            Historique de mes programmes
+          </h1>
+          <p class="text-gray-600">
+            Gérez tous vos programmes de transport
+          </p>
+        </div>
+
+        <button
+          pButton
+          icon="pi pi-refresh"
+          label="Actualiser"
+          class="p-button-outlined"
+          (click)="refresh()"
+          [disabled]="loading"
+        ></button>
+      </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <!-- Total -->
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Total</p>
+            <p class="text-3xl font-bold text-gray-800 mt-2">{{ stats.total }}</p>
+          </div>
+          <div class="bg-blue-100 rounded-full p-4">
+            <i class="pi pi-list text-blue-600 text-2xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actifs -->
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500 cursor-pointer hover:shadow-xl transition-shadow"
+           (click)="onFilterStatusChange('actif')">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Actifs</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">{{ stats.actifs }}</p>
+          </div>
+          <div class="bg-green-100 rounded-full p-4">
+            <i class="pi pi-check-circle text-green-600 text-2xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expire bientôt -->
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500 cursor-pointer hover:shadow-xl transition-shadow"
+           (click)="onFilterStatusChange('expire-bientot')">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Expire bientôt</p>
+            <p class="text-3xl font-bold text-yellow-600 mt-2">{{ stats.expiresBientot }}</p>
+          </div>
+          <div class="bg-yellow-100 rounded-full p-4">
+            <i class="pi pi-exclamation-triangle text-yellow-600 text-2xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expirés -->
+      <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500 cursor-pointer hover:shadow-xl transition-shadow"
+           (click)="onFilterStatusChange('expire')">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm font-medium">Expirés</p>
+            <p class="text-3xl font-bold text-red-600 mt-2">{{ stats.expires }}</p>
+          </div>
+          <div class="bg-red-100 rounded-full p-4">
+            <i class="pi pi-times-circle text-red-600 text-2xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtres et recherche -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <!-- Recherche -->
+        <div class="flex-1">
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              placeholder="Rechercher par description, départ ou destination..."
+              [(ngModel)]="searchText"
+              (ngModelChange)="onSearchChange()"
+              class="w-full"
+            />
+          </span>
+        </div>
+
+        <!-- Boutons de filtre -->
+        <div class="flex gap-2 flex-wrap">
+          <button
+            pButton
+            [label]="'Tous (' + stats.total + ')'"
+            [class]="filterStatus === 'tous' ? 'p-button-primary' : 'p-button-outlined'"
+            (click)="onFilterStatusChange('tous')"
+          ></button>
+          <button
+            pButton
+            [label]="'Actifs (' + stats.actifs + ')'"
+            [class]="filterStatus === 'actif' ? 'p-button-success' : 'p-button-outlined'"
+            (click)="onFilterStatusChange('actif')"
+          ></button>
+          <button
+            pButton
+            [label]="'Expire bientôt (' + stats.expiresBientot + ')'"
+            [class]="filterStatus === 'expire-bientot' ? 'p-button-warning' : 'p-button-outlined'"
+            (click)="onFilterStatusChange('expire-bientot')"
+          ></button>
+          <button
+            pButton
+            [label]="'Expirés (' + stats.expires + ')'"
+            [class]="filterStatus === 'expire' ? 'p-button-danger' : 'p-button-outlined'"
+            (click)="onFilterStatusChange('expire')"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spinner de chargement -->
+    <div *ngIf="loading" class="flex justify-center items-center py-12">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+
+    <!-- Table des programmes -->
+    <div *ngIf="!loading" class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <p-table
+        [value]="filteredProgrammes"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} programmes"
+        [globalFilterFields]="['description', 'depart', 'destination']"
+        styleClass="p-datatable-striped"
+        [tableStyle]="{'min-width': '60rem'}"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="description">
+              Description
+              <p-sortIcon field="description"></p-sortIcon>
+            </th>
+            <th pSortableColumn="depart">
+              Départ
+              <p-sortIcon field="depart"></p-sortIcon>
+            </th>
+            <th pSortableColumn="destination">
+              Destination
+              <p-sortIcon field="destination"></p-sortIcon>
+            </th>
+            <th pSortableColumn="prix">
+              Prix
+              <p-sortIcon field="prix"></p-sortIcon>
+            </th>
+            <th pSortableColumn="garantie">
+              Garantie
+              <p-sortIcon field="garantie"></p-sortIcon>
+            </th>
+            <th pSortableColumn="dateline">
+              Date limite
+              <p-sortIcon field="dateline"></p-sortIcon>
+            </th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-programme>
+          <tr>
+            <td>
+              <div class="font-medium text-gray-900">{{ programme.description }}</div>
+            </td>
+            <td>
+              <div class="flex items-center">
+                <i class="pi pi-map-marker text-blue-600 mr-2"></i>
+                {{ programme.depart }}
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center">
+                <i class="pi pi-flag text-green-600 mr-2"></i>
+                {{ programme.destination }}
+              </div>
+            </td>
+            <td>
+              <div class="font-semibold text-blue-600">
+                {{ formatCurrency(programme.prix) }}
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center">
+                <i class="pi pi-shield text-purple-600 mr-2"></i>
+                {{ programme.garantie }}%
+              </div>
+            </td>
+            <td>
+              <div class="text-sm">
+                {{ formatDate(programme.dateline) }}
+              </div>
+            </td>
+            <td>
+              <p-tag
+                [value]="getStatutLabel(programme.dateline)"
+                [severity]="getStatutSeverity(programme.dateline)"
+              ></p-tag>
+            </td>
+            <td>
+              <div class="flex gap-2">
+                <button
+                  pButton
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-text p-button-info"
+                  pTooltip="Modifier"
+                  tooltipPosition="top"
+                  (click)="openEditDialog(programme)"
+                ></button>
+                <button
+                  pButton
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-text p-button-danger"
+                  pTooltip="Supprimer"
+                  tooltipPosition="top"
+                  (click)="confirmDelete(programme)"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="8" class="text-center py-12">
+              <div class="flex flex-col items-center gap-4">
+                <i class="pi pi-inbox text-gray-400 text-6xl"></i>
+                <p class="text-gray-600 text-lg">Aucun programme trouvé</p>
+                <button
+                  pButton
+                  label="Créer un programme"
+                  icon="pi pi-plus"
+                  routerLink="/addgp"
+                  class="p-button-outlined"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- Dialog de modification -->
+<p-dialog
+  [(visible)]="displayEditDialog"
+  [header]="'Modifier le programme'"
+  [modal]="true"
+  [style]="{width: '50vw'}"
+  [breakpoints]="{'960px': '75vw', '640px': '95vw'}"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="space-y-6" *ngIf="editedProgramme">
+    <!-- Description -->
+    <div>
+      <label for="edit-description" class="block text-sm font-semibold text-gray-700 mb-2">
+        Description
+      </label>
+      <textarea
+        pInputTextarea
+        id="edit-description"
+        [(ngModel)]="editedProgramme.description"
+        rows="3"
+        class="w-full"
+        placeholder="Description du programme"
+      ></textarea>
+    </div>
+
+    <!-- Départ et Destination -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label for="edit-depart" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="pi pi-map-marker text-blue-600 mr-1"></i>
+          Départ
+        </label>
+        <input
+          pInputText
+          id="edit-depart"
+          [(ngModel)]="editedProgramme.depart"
+          class="w-full"
+          placeholder="Ville de départ"
+        />
+      </div>
+
+      <div>
+        <label for="edit-destination" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="pi pi-flag text-green-600 mr-1"></i>
+          Destination
+        </label>
+        <input
+          pInputText
+          id="edit-destination"
+          [(ngModel)]="editedProgramme.destination"
+          class="w-full"
+          placeholder="Ville de destination"
+        />
+      </div>
+    </div>
+
+    <!-- Prix et Garantie -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label for="edit-prix" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="pi pi-money-bill text-blue-600 mr-1"></i>
+          Prix
+        </label>
+        <input
+          pInputText
+          id="edit-prix"
+          [(ngModel)]="editedProgramme.prix"
+          class="w-full"
+          placeholder="Prix (ex: 50000 XOF)"
+        />
+      </div>
+
+      <div>
+        <label for="edit-garantie" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="pi pi-shield text-purple-600 mr-1"></i>
+          Garantie (%)
+        </label>
+        <input
+          pInputText
+          id="edit-garantie"
+          type="number"
+          [(ngModel)]="editedProgramme.garantie"
+          class="w-full"
+          placeholder="Pourcentage de garantie"
+        />
+      </div>
+    </div>
+
+    <!-- Date limite -->
+    <div>
+      <label for="edit-dateline" class="block text-sm font-semibold text-gray-700 mb-2">
+        <i class="pi pi-calendar text-orange-600 mr-1"></i>
+        Date limite
+      </label>
+      <p-calendar
+        [(ngModel)]="editedProgramme.dateline"
+        [showIcon]="true"
+        [dateFormat]="'dd/mm/yy'"
+        [minDate]="minDate"
+        inputId="edit-dateline"
+        class="w-full"
+        placeholder="Sélectionnez une date"
+      ></p-calendar>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+      <button
+        pButton
+        label="Annuler"
+        icon="pi pi-times"
+        class="p-button-text p-button-secondary"
+        (click)="closeEditDialog()"
+      ></button>
+      <button
+        pButton
+        label="Enregistrer"
+        icon="pi pi-check"
+        class="p-button-primary"
+        (click)="saveProgramme()"
+        [disabled]="loading"
+      ></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Toast notifications -->
+<p-toast position="top-right"></p-toast>
+
+<!-- Confirmation dialog -->
+<p-confirmDialog></p-confirmDialog>
