@@ -89,7 +89,7 @@ export class AccueilComponent implements OnInit, OnDestroy {
   private readonly fallbackImage = 'icons/bag1.png';
 
   readonly phrases: readonly string[] = [
-    'Trouvez les meilleures offres de transport',
+    'Trouvez les meilleures offres de livraison',
     'Connectez-vous avec des agences fiables',
     'Expédiez vos colis en toute sécurité',
     'Des milliers de destinations disponibles'

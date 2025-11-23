@@ -1,0 +1,224 @@
+/* Styles personnalisés pour le composant historique */
+
+/* Animation pour le fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Styles pour les cartes de statistiques */
+.stat-card {
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles pour la table */
+::ng-deep .p-datatable {
+  font-size: 0.875rem;
+}
+
+::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-weight: 600;
+  padding: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody > tr {
+  transition: background-color 0.2s;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #f8fafc;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Styles pour les tags de statut */
+::ng-deep .p-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+::ng-deep .p-tag.p-tag-success {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+::ng-deep .p-tag.p-tag-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+::ng-deep .p-tag.p-tag-danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Styles pour les boutons d'action */
+::ng-deep .p-button.p-button-rounded {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+::ng-deep .p-button.p-button-rounded:hover {
+  transform: scale(1.1);
+}
+
+/* Styles pour le dialog */
+::ng-deep .p-dialog {
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+::ng-deep .p-dialog .p-dialog-header {
+  background-color: #f8fafc;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  padding: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+::ng-deep .p-dialog .p-dialog-content {
+  padding: 2rem;
+}
+
+::ng-deep .p-dialog .p-dialog-footer {
+  background-color: #f8fafc;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  padding: 1.5rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+/* Styles pour les inputs dans le dialog */
+::ng-deep .p-inputtext,
+::ng-deep .p-inputtextarea {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 2px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+::ng-deep .p-inputtext:focus,
+::ng-deep .p-inputtextarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+::ng-deep .p-calendar {
+  width: 100%;
+}
+
+::ng-deep .p-calendar .p-inputtext {
+  width: 100%;
+}
+
+/* Styles pour le message vide */
+.empty-message-container {
+  padding: 3rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  ::ng-deep .p-datatable .p-datatable-thead > tr > th,
+  ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  ::ng-deep .p-dialog {
+    width: 95vw !important;
+    max-width: none !important;
+  }
+}
+
+/* Styles pour le spinner de chargement */
+::ng-deep .p-progress-spinner {
+  width: 60px;
+  height: 60px;
+}
+
+::ng-deep .p-progress-spinner-circle {
+  stroke: #3b82f6;
+  animation: p-progress-spinner-dash 1.5s ease-in-out infinite;
+}
+
+/* Styles pour le confirm dialog */
+::ng-deep .p-confirm-dialog {
+  border-radius: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+::ng-deep .p-confirm-dialog .p-dialog-header {
+  background-color: #fef2f2;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+::ng-deep .p-confirm-dialog .p-confirm-dialog-icon {
+  color: #dc2626;
+  font-size: 2rem;
+}
+
+/* Styles pour les badges */
+::ng-deep .p-badge {
+  min-width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Hover effects */
+.hover-shadow:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Transitions */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* Couleurs personnalisées pour les statuts */
+.status-actif {
+  color: #059669;
+  background-color: #d1fae5;
+}
+
+.status-expire-bientot {
+  color: #d97706;
+  background-color: #fef3c7;
+}
+
+.status-expire {
+  color: #dc2626;
+  background-color: #fee2e2;
+}

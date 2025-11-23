@@ -19,6 +19,7 @@ import {VerifyComponent} from './verify/verify.component';
 import {NotificationComponent} from './notification/notification.component';
 import {FactureListComponent} from './facture-list/facture-list.component';
 import {ProfileComponent} from './profile/profile.component';
+import {HistoriqueComponent} from './historique/historique.component';
 
 export const routes: Routes = [
 
@@ -41,5 +42,10 @@ export const routes: Routes = [
   { path: 'verify', component: VerifyComponent },
   {path: 'notification', component: NotificationComponent},
   { path: 'profile', component: ProfileComponent },
-  {path: 'list-facture', component: FactureListComponent, canActivate: [AdminGuard]}
+  {path: 'list-facture', component: FactureListComponent, canActivate: [AdminGuard]},
+  {
+    path: 'historique',
+    component: HistoriqueComponent,
+    //canActivate: [AuthGuard] // Si vous avez un guard
+  }
 ];

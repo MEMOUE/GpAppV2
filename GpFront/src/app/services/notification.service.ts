@@ -20,8 +20,8 @@ export class NotificationService {
 
   constructor(private http: HttpClient) {
     this.stompClient = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/api/ws'),
-      //webSocketFactory: () => new SockJS('https://api.gpmonde.com/api/ws'),
+      //webSocketFactory: () => new SockJS('http://localhost:8080/api/ws'),
+      webSocketFactory: () => new SockJS('https://api.gpmonde.com/api/ws'),
       debug: (str) => console.log(str),
       reconnectDelay: 5000,
     });
