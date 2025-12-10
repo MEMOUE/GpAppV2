@@ -32,5 +32,5 @@ public class ProgrammeGp {
 
 	@ManyToOne
 	@JoinColumn(name = "agent_id", nullable = false)
-	private AgentGp agentGp;
+	private Utilisateur agentGp;
 }

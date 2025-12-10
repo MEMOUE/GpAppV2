@@ -53,6 +53,7 @@ public class SecurityConfig {
                                 "/api/files/cartes-identite/**",
                                 "/api/files/**",
                                 "/api/agentgp",
+                                "/login/oauth2/code/**",
 
                                 "/h2-console/**",
 								"/swagger-ui/**",

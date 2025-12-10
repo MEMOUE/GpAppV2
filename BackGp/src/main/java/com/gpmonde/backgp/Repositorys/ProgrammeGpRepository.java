@@ -1,6 +1,6 @@
 package com.gpmonde.backgp.Repositorys;
 
-import com.gpmonde.backgp.Entities.AgentGp;
+import com.gpmonde.backgp.Entities.Utilisateur;
 import com.gpmonde.backgp.Entities.ProgrammeGp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
