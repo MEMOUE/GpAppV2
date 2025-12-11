@@ -1,0 +1,91 @@
+spring:
+  application:
+    name: BackGp
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/gpmonde_db
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+
+  mail:
+    host: mail.gpmonde.com
+    port: 587
+    username: contact@gpmonde.com
+    password: Gpmonde@2025
+    protocol: smtp
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.ssl.enable: false
+      mail.smtp.localhost: gpmonde.com
+      mail.smtp.from: contact@gpmonde.com
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+      enabled: true
+
+  # ========== CONFIGURATION OAUTH2 ==========
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID:votre_client_id}
+            client-secret: ${FACEBOOK_CLIENT_SECRET:votre_client_secret}
+            scope:
+              - email
+              - public_profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+          facebook:
+            authorization-uri: https://www.facebook.com/v12.0/dialog/oauth
+            token-uri: https://graph.facebook.com/v12.0/oauth/access_token
+            user-info-uri: https://graph.facebook.com/me?fields=id,name,email,picture
+            user-name-attribute: id
+
+# Configuration JWT
+jwt:
+  secret: "ojJMx7uTkjO3Ov5BOjUimTFkk5Nb+zXvW+6wSRQUqSZeR9OjhseXki3vSA055PApH5ApNPXngdkkFfwOtax4eg=="
+
+# Configuration personnalisée
+app:
+  upload:
+    dir: "uploads"
+  oauth2:
+    redirect-uri: "http://localhost:4200/oauth2/redirect"
+
+logging:
+  level:
+    org:
+      springdoc: DEBUG
+      springframework:
+        web: DEBUG
+        security: DEBUG
+      io:
+        swagger.v3: DEBUG
